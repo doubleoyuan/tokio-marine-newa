@@ -11,7 +11,8 @@
   border-bottom:1px solid var(--page-border, #dde4ee);
   position:sticky; top:0; z-index:10;
 }
-.app-header .brand{display:flex; align-items:center; gap:12px;}
+.app-header .brand{display:flex; align-items:center; gap:12px; text-decoration:none; cursor:pointer; border-radius:8px; padding:4px 6px; margin:-4px -6px;}
+.app-header .brand:hover{background:var(--neutral-50);}
 .app-header .brand img,.app-header .brand svg{height:24px; width:auto; display:block;}
 .app-header .divider{width:1px; height:22px; background:var(--page-border, #dde4ee);}
 .app-header .case-title{font-size:var(--font-size-caption); color:var(--page-text-muted, #5c6a70);}
