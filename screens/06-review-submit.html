@@ -7,8 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../design-tokens.css">
-<link rel="stylesheet" href="../components.css">
+<link rel="stylesheet" href="../design/design-tokens.css">
+<link rel="stylesheet" href="../design/components.css">
 <style>
   :root{
     --page-bg:#f5f7fb;
@@ -69,7 +69,7 @@
 
   <header class="app-header">
     <div class="brand">
-      <img src="../assets/logo-horizontal-light.svg" alt="羅賓斯保險代理人">
+      <img src="../design/assets/logo-horizontal-light.svg" alt="羅賓斯保險代理人">
     </div>
     <div class="user">
       <div class="user-trigger" onclick="toggleAccountMenu()">
@@ -176,7 +176,7 @@
 
   </div>
 
-  <script src="../header.js"></script>
+  <script src="../design/header.js"></script>
   <script>
     /* ---- 送出投保:實際操作只會有一次送出動作,固定示範「通過核保」這條happy path。
        其餘PRD情境表列出的審查結果(需人工查核/C2101/其他C21xx/E9999/C9999/200/215/逾時)
