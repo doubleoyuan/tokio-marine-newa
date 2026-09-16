@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>車輛資料 — 新安東京商用車險線上試算報價</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../design-tokens.css">
+<link rel="stylesheet" href="../components.css">
+<style>
+  :root{
+    --page-bg:#f5f7fb;
+    --page-surface:#ffffff;
+    --page-border:#dde4ee;
+    --page-text:#232a2d;
+    --page-text-muted:#5c6a70;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --page-bg:#12161b; --page-surface:#1b2129; --page-border:#2c3742;
+      --page-text:#e8edf1; --page-text-muted:#95a5ad;
+    }
+  }
+  :root[data-theme="dark"]{
+    --page-bg:#12161b; --page-surface:#1b2129; --page-border:#2c3742;
+    --page-text:#e8edf1; --page-text-muted:#95a5ad;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--page-bg); color:var(--page-text);
+    font-family:"Noto Sans TC","Roboto",sans-serif; font-size:var(--font-size-body-md); line-height:var(--line-height-body-md);
+    display:flex; flex-direction:column; min-height:100vh;
+  }
+  .shell{max-width:880px; margin:0 auto; padding:0 24px; margin-bottom:24px; flex:1 0 auto; width:100%;}
+  .stage-title{padding:26px 24px 4px;}
+  .stage-title h1{font-size:var(--font-size-h1); line-height:var(--line-height-h1); margin:0 0 4px;}
+  .stage-title p{font-size:var(--font-size-body-md); color:var(--page-text-muted); margin:0;}
+
+  .stage-card{
+    background:#fff; border:1px solid var(--neutral-200); border-radius:14px;
+    margin-top:18px; overflow:hidden;
+  }
+  .stage-card .stage-title{padding:24px 24px 20px; margin:0;}
+  .stage-card .form-section{
+    background:none; border:none; border-radius:0; box-shadow:none;
+    margin-bottom:0; padding:24px; position:relative;
+  }
+  .stage-card .stage-title + .form-section{border-top:1px solid var(--neutral-100);}
+  .stage-card .form-section + .form-section::before{
+    content:""; position:absolute; top:0; left:24px; right:24px;
+    border-top:1px solid var(--neutral-100);
+  }
+</style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="brand">
+      <img src="../assets/logo-horizontal-light.svg" alt="羅賓斯保險代理人">
+    </div>
+    <div class="user">
+      <div class="user-trigger" onclick="toggleAccountMenu()">
+        <div class="user-text">
+          <div class="user-email">wang.xm@stockfeel.com.tw</div>
+          <div class="user-role">業務人員</div>
+        </div>
+        <div class="avatar">王</div>
+      </div>
+      <div class="account-menu" id="accountMenu">
+        <a class="account-menu-item" href="case-overview.html">案件總覽</a>
+        <a class="account-menu-item" href="00-login.html">登出</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="shell">
+
+    <div class="stepper" aria-label="投保流程階段">
+      <div class="step done"><div class="circle">✓</div><div class="label">險種選擇</div></div>
+      <div class="step-line done"></div>
+      <div class="step current"><div class="circle">2</div><div class="label">車輛資料</div></div>
+      <div class="step-line"></div>
+      <div class="step todo"><div class="circle">3</div><div class="label">被保險人資料</div></div>
+      <div class="step-line"></div>
+      <div class="step todo"><div class="circle">4</div><div class="label">要保人資料</div></div>
+      <div class="step-line"></div>
+      <div class="step todo"><div class="circle">5</div><div class="label">KYC 及其他</div></div>
+      <div class="step-line"></div>
+      <div class="step todo"><div class="circle">6</div><div class="label">審查與下載</div></div>
+    </div>
+
+    <div class="stage-card">
+    <div class="stage-title">
+      <h1><span style="font-family:'Roboto',sans-serif;">2.</span> 車輛資料</h1>
+      <p>已由險種選擇階段帶入部分資料，請補齊其餘車輛資訊。</p>
+    </div>
+
+    <div class="form-section">
+      <h3>基本資料</h3>
+      <div class="fields-row">
+        <div class="field" id="plateNoField">
+          <label>牌照號碼 <span class="req">*</span></label>
+          <input type="text" id="plateNo" value="AAA-0001">
+        </div>
+        <div class="field">
+          <label>車輛種類代號 <span class="req">*</span></label>
+          <select id="vehicleType" onchange="onVehicleTypeChange()">
+            <option value="07">07 營小客</option>
+            <option value="15" selected>15 計程車</option>
+            <option value="14">14 租賃小客車</option>
+            <option value="21">21 預留</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>T 牌種類 <span class="req">*</span></label>
+          <div class="option-row" id="taxiGroup">
+            <label><input type="radio" name="taxiType" id="taxiN" checked><span>小黃（N）</span></label>
+            <label><input type="radio" name="taxiType" id="taxiY"><span>多元（Y）</span></label>
+            <label><input type="radio" name="taxiType" id="taxiNA"><span>不適用</span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>廠牌與規格</h3>
+      <div class="pv-tag tag-success" id="brandLookupStatus" style="cursor:pointer; margin-bottom:16px;" onclick="toggleBrandLookupFail()" title="點擊示範查無資料狀態"><span class="dot"></span>已由廠代碼工具查詢帶入</div>
+      <div class="fields-row">
+        <div class="field readonly">
+          <label>廠牌車型代號（唯讀）</label>
+          <input type="text" id="brandId" value="8Y3K2N91" readonly>
+        </div>
+        <div class="field">
+          <label>廠牌 <span class="req">*</span></label>
+          <select id="brand" onchange="updateSeriesOptions()">
+            <option value="TOYOTA" selected>TOYOTA</option>
+            <option value="HONDA">HONDA</option>
+            <option value="NISSAN">NISSAN</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>車系 <span class="req">*</span></label>
+          <select id="series" onchange="updateModelOptions()"></select>
+        </div>
+        <div class="field">
+          <label>車款 <span class="req">*</span></label>
+          <select id="model"></select>
+        </div>
+      </div>
+      <div class="fields-row" style="margin-top:16px;">
+        <div class="field" id="manufacturedDateField">
+          <label>出廠年月 <span class="req">*</span></label>
+          <input type="date" id="manufacturedDate" value="2020-05-01">
+        </div>
+        <div class="field" id="cylinderField">
+          <label>排氣量／馬力（c.c.） <span class="req">*</span></label>
+          <input type="number" id="cylinder" value="1798" min="0" step="0.1">
+        </div>
+        <div class="field">
+          <label>重置價格（元） <span class="req">*</span></label>
+          <input type="number" id="vehiclePrice" value="650000" min="0">
+        </div>
+        <div class="field">
+          <label>配備金額（元）</label>
+          <input type="number" id="equipmentPrice" min="0" step="0.1">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>車輛細項</h3>
+      <p class="section-hint">引擎號碼與車身號碼請至少填寫一項。</p>
+      <div class="fields-row">
+        <div class="field" id="registrationDateField">
+          <label>原始發照日期 <span class="req">*</span></label>
+          <input type="date" id="registrationDate" value="2020-05-20">
+        </div>
+        <div class="field">
+          <label>乘載單位 <span class="req">*</span></label>
+          <div class="option-row">
+            <label><input type="radio" name="transportUnit" id="transportUnit0"><span>噸</span></label>
+            <label><input type="radio" name="transportUnit" id="transportUnit1" checked><span>乘載人數</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label>載運人數 <span class="req">*</span></label>
+          <select id="transportAmount">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5" selected>5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+        </div>
+      </div>
+      <div class="fields-row" style="margin-top:16px;">
+        <div class="field" id="engineField">
+          <label>引擎號碼</label>
+          <input type="text" id="engineId" maxlength="25" value="EG20205A123">
+        </div>
+        <div class="field" id="chassisField">
+          <label>車身號碼</label>
+          <input type="text" id="chassisId" maxlength="25">
+        </div>
+      </div>
+      <div class="err-msg" id="engineChassisErr" style="display:none; margin-top:10px;">⚠ 引擎號碼與車身號碼請至少填寫一項</div>
+    </div>
+
+    <div class="form-section">
+      <h3>配備</h3>
+      <div class="option-row">
+        <label><input type="checkbox" id="eq1"><span>音響</span></label>
+        <label><input type="checkbox" id="eq2"><span>車箱</span></label>
+        <label><input type="checkbox" id="eq3"><span>冷凍機組</span></label>
+        <label><input type="checkbox" id="eq4"><span>車框車斗</span></label>
+        <label><input type="checkbox" id="eq5"><span>昇降系統</span></label>
+        <label><input type="checkbox" id="eq6"><span>電動車系統</span></label>
+        <label><input type="checkbox" id="eq9" onchange="updateEquipmentOther()"><span>其他</span></label>
+      </div>
+      <div class="field" id="equipmentOtherField" style="margin-top:16px; display:none;">
+        <label>配備-其他說明 <span class="req">*</span></label>
+        <input type="text" id="equipmentOtherNote" maxlength="50">
+      </div>
+    </div>
+    </div>
+
+    <div id="submitResultMsg" style="margin:16px 2px 0; display:none;"></div>
+
+  </div>
+
+  <div class="page-actions">
+    <div class="page-actions-inner">
+      <button class="pv-btn outlined" onclick="location.href='01-prequalification.html'">上一步</button>
+      <button class="pv-btn primary" id="nextBtn" onclick="handleSubmit()">下一步：被保險人資料</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="vehicleTypeBlockModal">
+    <div class="modal-panel">
+      <div class="modal-icon">!</div>
+      <p>新安東京不支援此車輛種類代號</p>
+      <button class="pv-btn primary" onclick="document.getElementById('vehicleTypeBlockModal').classList.remove('open')">我知道了</button>
+    </div>
+  </div>
+
+  <script src="../header.js"></script>
+  <script>
+    /* ---- T牌種類跟車輛種類代號連動:非07/15時鎖定「不適用」;選21時彈窗阻擋 ---- */
+    function updateTaxiOptions(){
+      const vt = document.getElementById('vehicleType').value;
+      const eligible = (vt === '07' || vt === '15');
+      const n = document.getElementById('taxiN'), y = document.getElementById('taxiY'), na = document.getElementById('taxiNA');
+      n.disabled = !eligible; y.disabled = !eligible; na.disabled = eligible;
+      if(!eligible){ na.checked = true; }
+      else if(na.checked){ n.checked = true; }
+    }
+    function onVehicleTypeChange(){
+      updateTaxiOptions();
+      const vt = document.getElementById('vehicleType').value;
+      const nextBtn = document.getElementById('nextBtn');
+      if(vt === '21'){
+        document.getElementById('vehicleTypeBlockModal').classList.add('open');
+        nextBtn.disabled = true;
+      } else {
+        nextBtn.disabled = false;
+      }
+    }
+
+    /* ---- 廠牌→車系→車款 連動下拉(示意資料，待保發中心正式清冊替換) ---- */
+    const BRAND_DATA = {
+      TOYOTA: { series: { COROLLA:{label:'COROLLA', models:['1.8 經典款','1.8 豪華款']}, ALTIS:{label:'ALTIS', models:['1.8 標準款']} } },
+      HONDA:  { series: { CIVIC:{label:'CIVIC', models:['1.5 VTEC豪華款','1.5 VTEC旗艦款']} } },
+      NISSAN: { series: { SENTRA:{label:'SENTRA', models:['1.6 經典款']} } }
+    };
+    function updateSeriesOptions(){
+      const brand = document.getElementById('brand').value;
+      const seriesSel = document.getElementById('series');
+      const seriesData = BRAND_DATA[brand].series;
+      seriesSel.innerHTML = Object.keys(seriesData).map(function(key){ return '<option value="'+key+'">'+seriesData[key].label+'</option>'; }).join('');
+      updateModelOptions();
+    }
+    function updateModelOptions(){
+      const brand = document.getElementById('brand').value;
+      const series = document.getElementById('series').value;
+      const models = BRAND_DATA[brand].series[series].models;
+      document.getElementById('model').innerHTML = models.map(function(m){ return '<option>'+m+'</option>'; }).join('');
+    }
+
+    /* ---- 廠代碼工具查無此車牌:相關欄位開放手動填寫(這裡示範清空讓使用者能重新輸入) ---- */
+    const BRAND_LOOKUP_FIELDS = ['manufacturedDate','cylinder','vehiclePrice','engineId','chassisId'];
+    let brandLookupDefaults = null;
+    function toggleBrandLookupFail(){
+      const statusEl = document.getElementById('brandLookupStatus');
+      const brandIdField = document.getElementById('brandId');
+      const isFail = statusEl.classList.contains('tag-danger');
+      if(!isFail){
+        brandLookupDefaults = {};
+        BRAND_LOOKUP_FIELDS.forEach(function(id){ brandLookupDefaults[id] = document.getElementById(id).value; document.getElementById(id).value = ''; });
+        brandLookupDefaults.brandId = brandIdField.value;
+        brandIdField.value = '';
+        statusEl.className = 'pv-tag tag-danger';
+        statusEl.innerHTML = '<span class="dot"></span>查無此廠牌車型資料，相關欄位請手動填寫';
+      } else {
+        BRAND_LOOKUP_FIELDS.forEach(function(id){ document.getElementById(id).value = brandLookupDefaults[id]; });
+        brandIdField.value = brandLookupDefaults.brandId;
+        statusEl.className = 'pv-tag tag-success';
+        statusEl.innerHTML = '<span class="dot"></span>已由廠代碼工具查詢帶入';
+      }
+    }
+
+    /* ---- 配備-其他:勾選後才顯示且必填說明欄位 ---- */
+    function updateEquipmentOther(){
+      const checked = document.getElementById('eq9').checked;
+      const field = document.getElementById('equipmentOtherField');
+      field.style.display = checked ? 'block' : 'none';
+      if(!checked){
+        document.getElementById('equipmentOtherNote').value = '';
+        field.classList.remove('error');
+      }
+    }
+
+    /* ---- 送出前端驗證 ---- */
+    function validateForm(){
+      let ok = true;
+
+      [['plateNoField','plateNo','請輸入牌照號碼'],['manufacturedDateField','manufacturedDate','請輸入出廠年月'],['registrationDateField','registrationDate','請輸入行照原始發照日期']].forEach(function(item){
+        const field = document.getElementById(item[0]);
+        field.classList.remove('error');
+        const msg = field.querySelector('.err-msg');
+        if(msg) msg.remove();
+        if(!document.getElementById(item[1]).value.trim()){
+          field.classList.add('error');
+          field.insertAdjacentHTML('beforeend', '<div class="err-msg">⚠ '+item[2]+'</div>');
+          ok = false;
+        }
+      });
+
+      const cylinderField = document.getElementById('cylinderField');
+      const cylinderInput = document.getElementById('cylinder');
+      if(!cylinderInput.value){
+        cylinderField.classList.add('error');
+        if(!cylinderField.querySelector('.err-msg')){
+          cylinderField.insertAdjacentHTML('beforeend', '<div class="err-msg">⚠ 請輸入排氣量</div>');
+        }
+        ok = false;
+      } else {
+        cylinderField.classList.remove('error');
+        const msg = cylinderField.querySelector('.err-msg');
+        if(msg) msg.remove();
+      }
+
+      const engineOk = document.getElementById('engineId').value.trim() || document.getElementById('chassisId').value.trim();
+      const engineErr = document.getElementById('engineChassisErr');
+      document.getElementById('engineField').classList.toggle('error', !engineOk);
+      document.getElementById('chassisField').classList.toggle('error', !engineOk);
+      engineErr.style.display = engineOk ? 'none' : 'flex';
+      if(!engineOk) ok = false;
+
+      const eq9 = document.getElementById('eq9').checked;
+      const otherField = document.getElementById('equipmentOtherField');
+      const otherNote = document.getElementById('equipmentOtherNote');
+      if(eq9 && !otherNote.value.trim()){
+        otherField.classList.add('error');
+        if(!otherField.querySelector('.err-msg')){
+          otherField.insertAdjacentHTML('beforeend', '<div class="err-msg">⚠ 請填寫配備-其他說明</div>');
+        }
+        ok = false;
+      } else {
+        otherField.classList.remove('error');
+        const msg = otherField.querySelector('.err-msg');
+        if(msg) msg.remove();
+      }
+
+      return ok;
+    }
+
+    /* ---- 下一步:本地驗證通過後即送出成功並前往下一階段 ---- */
+    function handleSubmit(){
+      if(!validateForm()) return;
+      const msgEl = document.getElementById('submitResultMsg');
+      msgEl.innerHTML = '<span class="pv-tag tag-success"><span class="dot"></span>資料驗證通過</span>';
+      msgEl.style.display = 'block';
+      setTimeout(function(){ location.href = '03-insured-data.html'; }, 500);
+    }
+
+
+    updateSeriesOptions();
+  </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>案件總覽 — 新安東京商用車險線上試算報價</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../design-tokens.css">
+<link rel="stylesheet" href="../components.css">
+<style>
+  :root{
+    --page-bg:#f5f7fb;
+    --page-surface:#ffffff;
+    --page-border:#dde4ee;
+    --page-text:#232a2d;
+    --page-text-muted:#5c6a70;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --page-bg:#12161b; --page-surface:#1b2129; --page-border:#2c3742;
+      --page-text:#e8edf1; --page-text-muted:#95a5ad;
+    }
+  }
+  :root[data-theme="dark"]{
+    --page-bg:#12161b; --page-surface:#1b2129; --page-border:#2c3742;
+    --page-text:#e8edf1; --page-text-muted:#95a5ad;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--page-bg); color:var(--page-text);
+    font-family:"Noto Sans TC","Roboto",sans-serif; font-size:var(--font-size-body-md); line-height:var(--line-height-body-md);
+    display:flex; flex-direction:column; min-height:100vh;
+  }
+  .shell{max-width:1040px; margin:0 auto; padding:0 24px; margin-bottom:24px; flex:1 0 auto; width:100%;}
+  .page-head{display:flex; align-items:center; justify-content:space-between; padding:26px 0 18px;}
+  .page-head h1{font-size:var(--font-size-h1); line-height:var(--line-height-h1); margin:0;}
+
+  .overview-card{background:#fff; border:1px solid var(--neutral-200); border-radius:14px; padding:24px; overflow:hidden;}
+  .overview-toolbar{display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:16px; flex-wrap:wrap;}
+  .search-field{position:relative; min-width:280px;}
+  .search-field input{
+    width:100%; font-family:inherit; font-size:var(--font-size-body-md); padding:9px 11px 9px 34px;
+    border-radius:6px; border:1px solid var(--neutral-200); background:#fff; color:var(--page-text);
+  }
+  .search-field input:focus{outline:none; border-color:var(--primary-500); box-shadow:0 0 0 3px var(--primary-100);}
+  .search-field .icon{position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--neutral-400); font-size:14px;}
+
+  .overflow-x{overflow-x:auto;}
+  .dl-cell{display:flex; gap:6px;}
+  .dl-btn{
+    font-family:inherit; font-size:11px; font-weight:600; padding:5px 9px; border-radius:6px;
+    border:1px solid var(--primary-300); background:#fff; color:var(--primary-700); cursor:pointer; white-space:nowrap;
+  }
+  .dl-btn:hover{background:var(--primary-50);}
+  .dl-btn[disabled]{border-color:var(--neutral-200); color:var(--neutral-400); cursor:not-allowed; background:var(--neutral-50);}
+  .case-link{color:var(--primary-700); font-weight:600; text-decoration:none; cursor:pointer;}
+  .case-link:hover{text-decoration:underline;}
+  .snapshot-note{font-size:11px; color:var(--warn-800); margin-top:2px;}
+
+  .pagination{display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-top:16px; font-size:var(--font-size-caption); color:var(--page-text-muted);}
+  .pagination button{
+    font-family:inherit; background:#fff; border:1px solid var(--neutral-200); border-radius:6px;
+    padding:5px 10px; cursor:pointer; color:var(--page-text);
+  }
+  .pagination button[disabled]{opacity:.4; cursor:not-allowed;}
+
+  .empty-state{padding:60px 20px; text-align:center; color:var(--page-text-muted);}
+</style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="brand">
+      <img src="../assets/logo-horizontal-light.svg" alt="羅賓斯保險代理人">
+    </div>
+    <div class="user">
+      <div class="user-trigger" onclick="toggleAccountMenu()">
+        <div class="user-text">
+          <div class="user-email">wang.xm@stockfeel.com.tw</div>
+          <div class="user-role">業務人員</div>
+        </div>
+        <div class="avatar">王</div>
+      </div>
+      <div class="account-menu" id="accountMenu">
+        <a class="account-menu-item" href="case-overview.html">案件總覽</a>
+        <a class="account-menu-item" href="00-login.html">登出</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="shell">
+
+    <div class="page-head">
+      <h1>案件總覽</h1>
+      <button class="pv-btn primary" onclick="location.href='01-prequalification.html'">＋ 新增案件</button>
+    </div>
+
+    <div class="overview-card">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="proposal" onclick="switchTab('proposal')">要保書＆繳費單</button>
+        <button class="tab-btn" data-tab="quotation" onclick="switchTab('quotation')">報價單</button>
+        <button class="tab-btn" data-tab="failed" onclick="switchTab('failed')">失敗</button>
+      </div>
+
+      <div class="overview-toolbar">
+        <div class="search-field">
+          <span class="icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="搜尋車牌／要保人ID／要保人姓名" oninput="renderTable()">
+        </div>
+      </div>
+
+      <div class="overflow-x">
+        <table class="dtable" id="caseTable">
+          <thead>
+            <tr>
+              <th>流水號</th><th>使用者帳號</th><th>取得試算結果時間</th><th>車種</th><th>車牌號碼</th><th>方案</th><th>要保人ID</th><th>要保人姓名</th><th>下載</th>
+            </tr>
+          </thead>
+          <tbody id="caseTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" id="emptyState" style="display:none;">尚無詢價資料</div>
+
+      <div class="pagination">
+        <span id="pageInfo">第 1 頁</span>
+        <button disabled>上一頁</button>
+        <button disabled>下一頁</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../header.js"></script>
+  <script>
+    /* ---- 示意案件資料:3種狀態各1筆,對應3個Tab ---- */
+    const CASES = {
+      proposal: [
+        { id:'202609150001', account:'wang.xm@stockfeel.com.tw', time:'2026/09/15 10:30', vehicleType:'15', plate:'AAA-0001', plan:'T15-100200-300', applicantId:'A123456789', applicantName:'王小明', proposal:true, bill:true, quotation:false }
+      ],
+      quotation: [
+        { id:'202609140002', account:'wang.xm@stockfeel.com.tw', time:'2026/09/14 15:12', vehicleType:'07', plate:'BBB-5566', plan:'T07-21', applicantId:'B223456789', applicantName:'陳小華', proposal:false, bill:false, quotation:true, pendingReview:true }
+      ],
+      failed: [
+        { id:'202609130003', account:'wang.xm@stockfeel.com.tw', time:'2026/09/13 09:05', vehicleType:'14', plate:'CCC-7788', plan:'T14-300-10000-1', applicantId:'C323456789', applicantName:'林小美', proposal:false, bill:false, quotation:false }
+      ]
+    };
+    let currentTab = 'proposal';
+
+    function switchTab(tab){
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(function(btn){
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+      renderTable();
+    }
+
+    function downloadCell(row){
+      const items = [
+        { label:'要保書', has:row.proposal },
+        { label:'繳費單', has:row.bill },
+        { label:'報價單', has:row.quotation }
+      ];
+      return items.map(function(item){
+        return item.has
+          ? '<button class="dl-btn">下載'+item.label+'</button>'
+          : '<button class="dl-btn" disabled title="本案未產製此文件">下載'+item.label+'</button>';
+      }).join('');
+    }
+
+    function renderTable(){
+      const keyword = document.getElementById('searchInput').value.trim();
+      const rows = CASES[currentTab].filter(function(r){
+        if(!keyword) return true;
+        return r.plate.includes(keyword) || r.applicantId.includes(keyword) || r.applicantName.includes(keyword);
+      });
+      const tbody = document.getElementById('caseTableBody');
+      const table = document.getElementById('caseTable');
+      const emptyState = document.getElementById('emptyState');
+
+      if(rows.length === 0){
+        table.style.display = 'none';
+        emptyState.style.display = 'block';
+        emptyState.textContent = keyword ? '查無符合搜尋條件的案件' : '尚無詢價資料';
+        return;
+      }
+      table.style.display = '';
+      emptyState.style.display = 'none';
+
+      tbody.innerHTML = rows.map(function(r){
+        const snapshotNote = r.pendingReview ? '<div class="snapshot-note">狀態為送出當下快照，最新結果請洽新安東京</div>' : '';
+        return '<tr>'
+          + '<td><a class="case-link" href="01-prequalification.html">'+r.id+'</a>'+snapshotNote+'</td>'
+          + '<td>'+r.account+'</td>'
+          + '<td>'+r.time+'</td>'
+          + '<td>'+r.vehicleType+'</td>'
+          + '<td>'+r.plate+'</td>'
+          + '<td>'+r.plan+'</td>'
+          + '<td>'+r.applicantId+'</td>'
+          + '<td>'+r.applicantName+'</td>'
+          + '<td><div class="dl-cell">'+downloadCell(r)+'</div></td>'
+          + '</tr>';
+      }).join('');
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+/*
+ * 羅賓斯保險代理人 Design System — Design Tokens
+ * 依據《品牌識別規範手冊 v1, 2026.06.18》整理
+ * 詳細說明與視覺對照見 robins-design-system.html
+ *
+ * 標記說明：
+ *   [品牌強制] 手冊明訂數值，不可更動
+ *   [延伸提案] 手冊未涵蓋，依專案需求補齊，可與團隊討論調整
+ */
+
+:root {
+
+  /* ========================================================
+   * 1. Primitive — 羅賓斯藍 primary  [品牌強制]
+   * 品牌值：#5a8cdc (500) · Pantone 2129C · C70 M40 Y0 K0
+   * ======================================================== */
+  --primary-50:  #f2f6fc;
+  --primary-100: #e2eaf9;
+  --primary-200: #c4d6f3;
+  --primary-300: #9ab9ea;
+  --primary-400: #6895df;
+  --primary-500: #5a8cdc; /* 品牌指定原色 */
+  --primary-600: #275fb9; /* 文字/按鈕用安全色階 · 對白 6.1:1 */
+  --primary-700: #204e97; /* 連結/hover · 對白 8.1:1 */
+  --primary-800: #193d76;
+  --primary-900: #122b54;
+  --primary-950: #0c1e3b;
+
+  /* ========================================================
+   * 2. Primitive — 守護綠 secondary / success  [品牌強制]
+   * 品牌值：#49bfbb (500) · Pantone 3258C · C67 M4 Y35 K0
+   * ======================================================== */
+  --secondary-50:  #f4fbfb;
+  --secondary-100: #e5f6f5;
+  --secondary-200: #caeceb;
+  --secondary-300: #a4dfdd;
+  --secondary-400: #77cfcc;
+  --secondary-500: #49bfbb; /* 品牌指定原色 */
+  --secondary-600: #3aa6a2;
+  --secondary-700: #308885;
+  --secondary-800: #256a67; /* 文字/按鈕用安全色階 · 對白 6.3:1 */
+  --secondary-900: #1b4b4a;
+  --secondary-950: #133534;
+
+  /* ========================================================
+   * 3. Primitive — 向陽黃 warn  [品牌強制輔助色]
+   * 品牌值：#f5ee9e（約當 300 階）
+   * 注意：此色系天生高明度，文字一律用「深色文字」而非白字
+   * ======================================================== */
+  --warn-50:  #fefdf1;
+  --warn-100: #fcf9df;
+  --warn-200: #f8f4be;
+  --warn-300: #f4ec90;
+  --warn-400: #eee259; /* 建議的實色底（搭配深色文字，對比 15.6:1） */
+  --warn-500: #e8d821;
+  --warn-600: #cbbd15;
+  --warn-700: #a69a11;
+  --warn-800: #81780d;
+  --warn-900: #5c560a;
+  --warn-950: #413c07;
+
+  /* ========================================================
+   * 4. Primitive — 珊瑚橘 danger  [品牌強制輔助色]
+   * 品牌值：#f06543 (500)
+   * ======================================================== */
+  --danger-50:  #fef3f1;
+  --danger-100: #fce4de;
+  --danger-200: #fac9bd;
+  --danger-300: #f6a28e;
+  --danger-400: #f17455;
+  --danger-500: #ed451c; /* 品牌指定原色 */
+  --danger-600: #d03611; /* 文字/按鈕用安全色階 · 對白 5.0:1 */
+  --danger-700: #aa2c0e;
+  --danger-800: #84220b;
+  --danger-900: #5e1908;
+  --danger-950: #421105;
+
+  /* ========================================================
+   * 5. Primitive — 石墨黑 neutral  [品牌強制輔助色]
+   * 品牌值：#31393c（手冊指定內文字體與介面骨架核心色，約當 900 階）
+   * ======================================================== */
+  --neutral-50:  #f7f8f8;
+  --neutral-100: #ebeeef;
+  --neutral-200: #d8dddf;
+  --neutral-300: #bcc5c8;
+  --neutral-400: #9aa7ac;
+  --neutral-500: #788a91;
+  --neutral-600: #65757c;
+  --neutral-700: #536065;
+  --neutral-800: #404b4f;
+  --neutral-900: #2e3538; /* 品牌指定內文字色 */
+  --neutral-950: #202527;
+
+  /* ========================================================
+   * 6. Semantic tokens  [延伸提案 — 手冊未定義語意色，
+   *    依決議「用品牌輔助色接近」映射]
+   * ======================================================== */
+  --color-primary:            var(--primary-600);
+  --color-primary-hover:      var(--primary-700);
+  --color-primary-active:     var(--primary-800);
+  --color-primary-contrast:   #ffffff;
+
+  --color-secondary:          var(--secondary-800);
+  --color-secondary-hover:    var(--secondary-900);
+  --color-secondary-contrast: #ffffff;
+
+  --color-info:               var(--primary-600);   /* 沿用 primary */
+  --color-success:            var(--secondary-800);
+  --color-warn:               var(--warn-400);        /* 搭配深色文字 */
+  --color-warn-text:          var(--neutral-950);
+  --color-danger:             var(--danger-600);
+  --color-danger-contrast:    #ffffff;
+
+  --color-neutral:            var(--neutral-900);
+
+  /* 語意底色（soft tag / 提示區塊用：淡底 + 深字） */
+  --color-info-bg:    var(--primary-100);   --color-info-text:    var(--primary-800);
+  --color-success-bg: var(--secondary-100); --color-success-text: var(--secondary-800);
+  --color-warn-bg:    var(--warn-100);      --color-warn-text-soft: var(--warn-900);
+  --color-danger-bg:  var(--danger-100);    --color-danger-text:  var(--danger-800);
+  --color-neutral-bg: var(--neutral-200);   --color-neutral-text: var(--neutral-800);
+
+  /* ========================================================
+   * 7. Typography  [品牌強制字體 + 延伸提案字級]
+   * 字級方法論參照使用者過往專案（開店趣 Design System）的做法調整：
+   *   - 依斷點分兩套完整表：Desktop & Pad(≥768px) / Mobile(<768px)
+   *   - 標題(h1-h3)固定 600 字重；body 文字有 thin/normal/heavy 三種字重
+   *   - 命名沿用同一方法論，但層級數收斂到密集表單系統實際會用到的規模
+   *     （不含開店趣行銷站用的 mini/overline/display-sm/md/lg、h4-h6）
+   * ======================================================== */
+  --font-chinese: "Noto Sans TC", "思源黑體", sans-serif; /* 品牌強制 */
+  --font-latin:   "Roboto", -apple-system, sans-serif;    /* 品牌強制 */
+  --font-mono:    "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --font-weight-thin:   300;
+  --font-weight-normal: 400;
+  --font-weight-heavy:  600;
+
+  /* Desktop & Pad（≥768px）—— 預設值 */
+  --font-size-caption: 12px; --line-height-caption: 18px; --letter-spacing-caption: 0.2px;
+  --font-size-body-sm: 12px; --line-height-body-sm: 18px;
+  --font-size-body-md: 14px; --line-height-body-md: 22px;
+  --font-size-body-lg: 16px; --line-height-body-lg: 24px;
+  --letter-spacing-body: 0px;
+  --font-size-h3: 18px; --line-height-h3: 26px;
+  --font-size-h2: 22px; --line-height-h2: 30px;
+  --font-size-h1: 26px; --line-height-h1: 34px;
+  --letter-spacing-heading: 0px;
+
+  /* ========================================================
+   * 8. Spacing  [延伸提案，4px 基準]
+   * ======================================================== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ========================================================
+   * 9. Radius  [延伸提案，呼應標誌「圓潤而俐落」]
+   * ======================================================== */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-full: 999px;
+
+  /* ========================================================
+   * 10. Breakpoints  [延伸提案，對應 PRD 8.2 RWD 需求]
+   *     mobile: <768px (選配，PRD未要求) / desktop&pad: ≥768px (必要，桌機為主+平板RWD)
+   * ======================================================== */
+}
+
+/* Mobile（<768px）—— 覆寫字級 token，同一組變數名稱換一套較小的數值。
+   目前尚無手機寬度畫面，先建立備用，PRD 未要求手機支援。 */
+@media (max-width: 767px){
+  :root{
+    --font-size-caption: 11px; --line-height-caption: 18px;
+    --font-size-body-sm: 11px; --line-height-body-sm: 20px;
+    --font-size-body-md: 12px; --line-height-body-md: 20px;
+    --font-size-body-lg: 14px; --line-height-body-lg: 22px;
+    --font-size-h3: 16px; --line-height-h3: 24px;
+    --font-size-h2: 18px; --line-height-h2: 26px;
+    --font-size-h1: 20px; --line-height-h1: 28px;
+  }
+}

@@ -1,0 +1,223 @@
+/*
+ * 羅賓斯 Design System — 共用元件樣式
+ * 需搭配 design-tokens.css 一起載入（先載 tokens，再載這份）
+ * 視覺對照見 robins-design-system.html 的「元件視覺對照」章節
+ */
+
+/* ---------- App Header（各頁共用頂部列） ---------- */
+.app-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 24px; background:var(--page-surface, #fff);
+  border-bottom:1px solid var(--page-border, #dde4ee);
+  position:sticky; top:0; z-index:10;
+}
+.app-header .brand{display:flex; align-items:center; gap:12px;}
+.app-header .brand img,.app-header .brand svg{height:24px; width:auto; display:block;}
+.app-header .divider{width:1px; height:22px; background:var(--page-border, #dde4ee);}
+.app-header .case-title{font-size:var(--font-size-caption); color:var(--page-text-muted, #5c6a70);}
+.app-header .user{position:relative;}
+.app-header .user-trigger{display:flex; align-items:center; gap:10px; cursor:pointer; border-radius:8px; padding:4px 6px; margin:-4px -6px;}
+.app-header .user-trigger:hover{background:var(--neutral-50);}
+.app-header .user-text{display:flex; flex-direction:column; align-items:flex-end; line-height:1.35;}
+.app-header .user-email{font-size:var(--font-size-caption); font-weight:var(--font-weight-normal); color:var(--neutral-500);}
+.app-header .user-role{font-size:var(--font-size-caption); color:var(--neutral-500);}
+.app-header .user .avatar{width:28px; height:28px; border-radius:50%; background:var(--primary-100); color:var(--primary-800); display:flex; align-items:center; justify-content:center; font-size:var(--font-size-caption); font-weight:700; flex:none;}
+.account-menu{
+  position:absolute; top:calc(100% + 8px); right:0; min-width:160px;
+  background:var(--page-surface, #fff); border:1px solid var(--page-border, #dde4ee); border-radius:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12); padding:6px; display:none; z-index:50;
+}
+.account-menu.open{display:block;}
+.account-menu-item{
+  display:block; padding:9px 12px; border-radius:6px; font-size:var(--font-size-body-md);
+  color:var(--page-text, #232a2d); text-decoration:none; cursor:pointer; white-space:nowrap;
+}
+.account-menu-item:hover{background:var(--neutral-50);}
+
+/* ---------- Stepper（六階段流程列） ---------- */
+.stepper{display:flex; align-items:center; padding:18px 0;}
+.step{display:flex; align-items:center; gap:9px;}
+.step .circle{width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:var(--font-size-caption); font-weight:700; flex:none;}
+.step.done .circle{background:var(--primary-500); color:#fff;}
+.step.current .circle{background:var(--primary-700); color:#fff; box-shadow:0 0 0 4px var(--primary-100);}
+.step.todo .circle{background:var(--neutral-100); color:var(--neutral-500); border:1px solid var(--neutral-200);}
+.step .label{font-size:var(--font-size-caption); color:var(--neutral-500); white-space:nowrap;}
+.step.current .label{color:var(--page-text, #232a2d); font-weight:600;}
+.step-line{flex:1; height:2px; background:var(--neutral-200); margin:0 6px; min-width:14px;}
+.step-line.done{background:var(--primary-500);}
+@media (max-width:860px){ .step .label{display:none;} }
+
+/* ---------- Buttons ---------- */
+.pv-btn{
+  font-family:inherit; font-size:var(--font-size-body-md); font-weight:600; padding:9px 18px; border-radius:6px;
+  border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:7px;
+  transition:filter .12s ease;
+}
+.pv-btn:hover{filter:brightness(1.06);}
+.pv-btn:active{filter:brightness(.94);}
+.pv-btn:focus-visible{outline:2px solid var(--primary-400); outline-offset:2px;}
+.pv-btn.primary{background:var(--primary-600); color:#fff;}
+.pv-btn.secondary{background:var(--secondary-800); color:#fff;}
+.pv-btn.warn{background:var(--warn-400); color:var(--neutral-950);}
+.pv-btn.danger{background:var(--danger-600); color:#fff;}
+.pv-btn.outlined{background:transparent; border-color:var(--primary-600); color:var(--primary-700);}
+.pv-btn.text{background:transparent; color:var(--primary-700); padding-left:6px; padding-right:6px;}
+.pv-btn[disabled]{opacity:.42; cursor:not-allowed; filter:none;}
+
+/* ---------- Tags / status badges ---------- */
+.pv-tag{
+  display:inline-flex; align-items:center; gap:5px; font-size:var(--font-size-caption); font-weight:700;
+  padding:4px 11px; border-radius:999px;
+}
+.pv-tag .dot{width:6px; height:6px; border-radius:50%;}
+.tag-info{background:var(--primary-100); color:var(--primary-800);}
+.tag-info .dot{background:var(--primary-600);}
+.tag-warn{background:var(--warn-100); color:var(--warn-900);}
+.tag-warn .dot{background:var(--warn-700);}
+.tag-success{background:var(--secondary-100); color:var(--secondary-800);}
+.tag-success .dot{background:var(--secondary-600);}
+.tag-danger{background:var(--danger-100); color:var(--danger-800);}
+.tag-danger .dot{background:var(--danger-600);}
+.tag-neutral{background:var(--neutral-200); color:var(--neutral-800);}
+.tag-neutral .dot{background:var(--neutral-600);}
+
+/* ---------- Form fields ---------- */
+.field{display:flex; flex-direction:column; gap:6px;}
+.field label{font-size:var(--font-size-caption); font-weight:600; color:var(--neutral-600);}
+.field label .req{color:var(--danger-600);}
+.field input,.field select{
+  font-family:inherit; font-size:var(--font-size-body-md); padding:9px 11px; border-radius:6px;
+  border:1px solid var(--neutral-200); background:#fff; color:var(--page-text, #232a2d);
+  width:100%;
+}
+.field input:focus,.field select:focus{outline:none; border-color:var(--primary-500); box-shadow:0 0 0 3px var(--primary-100);}
+.field.error input,.field.error select{border-color:var(--danger-500); background:var(--danger-50);}
+.field .err-msg{font-size:var(--font-size-caption); color:var(--danger-700); display:flex; gap:4px; align-items:center;}
+.field .hint{font-size:var(--font-size-caption); color:var(--neutral-500);}
+.field.disabled input{background:var(--neutral-50); color:var(--neutral-500); cursor:not-allowed;}
+.field.readonly input{background:var(--neutral-50); color:var(--neutral-700);}
+.fields-row{display:flex; gap:20px; flex-wrap:wrap;}
+.fields-row .field{flex:1; min-width:200px;}
+
+/* ---------- Section card (表單分節) ---------- */
+.form-section{background:#fff; border:1px solid var(--neutral-200); border-radius:14px; padding:22px 24px; margin-bottom:20px;}
+.form-section h3{font-size:var(--font-size-h3); line-height:var(--line-height-h3); margin:0 0 4px;}
+.form-section .section-hint{font-size:var(--font-size-caption); color:var(--neutral-500); margin:0 0 18px;}
+.form-section h3 .req-note{font-size:var(--font-size-caption); font-weight:400; color:var(--neutral-500); margin-left:6px;}
+
+/* ---------- OCR Upload card ---------- */
+.ocr-upload{display:flex; gap:16px; flex-wrap:wrap;}
+.ocr-dropzone{
+  flex:1; min-width:220px; border:1.5px dashed var(--neutral-300); border-radius:10px;
+  padding:22px 16px; text-align:center; background:var(--neutral-50); cursor:pointer;
+  transition:border-color .15s, background .15s;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.ocr-dropzone:hover{border-color:var(--primary-400); background:var(--primary-50);}
+.ocr-dropzone .icon{font-size:22px; margin-bottom:6px;}
+.ocr-dropzone .title{font-size:var(--font-size-body-md); font-weight:600; color:var(--page-text, #232a2d);}
+.ocr-dropzone .sub{font-size:var(--font-size-caption); color:var(--neutral-500); margin-top:3px;}
+.ocr-dropzone.filled{border-style:solid; border-color:var(--secondary-400); background:var(--secondary-50); text-align:left; display:flex; flex-direction:column; align-items:stretch; gap:10px; padding:12px;}
+.ocr-dropzone.filled .thumb{width:100%; border-radius:6px; background:var(--secondary-200); overflow:hidden; border:1px solid var(--secondary-300); cursor:zoom-in;}
+.ocr-dropzone.filled .thumb img{width:100%; height:auto; max-height:160px; object-fit:cover; display:block;}
+.ocr-dropzone.pending{border-style:solid; border-color:var(--primary-300); background:var(--primary-50); text-align:left; display:flex; flex-direction:column; align-items:stretch; gap:10px; padding:12px;}
+.ocr-dropzone.pending .thumb{width:100%; border-radius:6px; background:var(--primary-100); overflow:hidden; border:1px solid var(--primary-200); cursor:zoom-in;}
+.ocr-dropzone.pending .thumb img{width:100%; height:auto; max-height:160px; object-fit:cover; display:block;}
+.ocr-check-icon{display:inline-flex; align-items:center; justify-content:center; width:15px; height:15px; border-radius:50%; background:var(--secondary-600); color:#fff; font-size:9px; margin-right:6px; flex:none;}
+.ocr-status{display:inline-flex; align-items:center; gap:6px; font-size:var(--font-size-caption); margin-top:10px; padding:5px 10px; border-radius:999px;}
+.ocr-status.busy{background:var(--primary-100); color:var(--primary-800);}
+.ocr-status.done{background:var(--secondary-100); color:var(--secondary-800);}
+.ocr-status.warn{background:var(--warn-100); color:var(--warn-900);}
+.ocr-status.fail{background:var(--danger-100); color:var(--danger-800);}
+
+/* compact 變體：當 OCR 上傳只是某欄位的輔助帶入捷徑，不是獨立必要步驟時使用 */
+.ocr-upload.compact .ocr-dropzone{padding:10px 14px; min-width:170px;}
+.ocr-upload.compact .ocr-dropzone .icon{font-size:16px; margin-bottom:2px;}
+.ocr-upload.compact .ocr-dropzone .title{font-size:var(--font-size-caption); font-weight:600;}
+.ocr-upload.compact .ocr-dropzone.filled{padding:10px;}
+.ocr-upload.compact .ocr-dropzone.filled .thumb img{max-height:110px;}
+.ocr-upload.compact .ocr-dropzone.pending{padding:10px;}
+.ocr-upload.compact .ocr-dropzone.pending .thumb img{max-height:110px;}
+.ocr-upload.compact .ocr-status{margin-top:2px;}
+.spin{display:inline-block; width:11px; height:11px; border-radius:50%; border:2px solid currentColor; border-right-color:transparent; animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ---------- Tab 切換列(案件總覽頁) ---------- */
+.tab-bar{display:flex; gap:4px; border-bottom:1px solid var(--neutral-200); margin-bottom:20px;}
+.tab-btn{background:none; border:none; padding:10px 16px; font-size:var(--font-size-body-md); font-weight:600; color:var(--neutral-500); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; font-family:inherit;}
+.tab-btn.active{color:var(--primary-700); border-bottom-color:var(--primary-600);}
+.tab-btn:hover:not(.active){color:var(--neutral-700);}
+
+/* ---------- 資料總覽(唯讀複核用) ---------- */
+.review-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px 24px;}
+.review-item .label{font-size:var(--font-size-caption); color:var(--neutral-500); margin-bottom:2px;}
+.review-item .value{font-size:var(--font-size-body-md); color:var(--page-text, #232a2d);}
+@media (max-width:640px){ .review-grid{grid-template-columns:1fr;} }
+
+/* ---------- 一般檔案附件(選填,單純附加/移除,無OCR辨識) ---------- */
+.file-dropzone{
+  border:1.5px dashed var(--neutral-300); border-radius:10px; padding:16px;
+  text-align:center; background:var(--neutral-50); cursor:pointer;
+  transition:border-color .15s, background .15s;
+  display:flex; align-items:center; justify-content:center; min-height:24px;
+}
+.file-dropzone:hover{border-color:var(--primary-400); background:var(--primary-50);}
+.file-dropzone .title{font-size:var(--font-size-body-md); font-weight:600; color:var(--page-text, #232a2d);}
+.file-dropzone.attached{
+  border-style:solid; border-color:var(--secondary-400); background:var(--secondary-50);
+  justify-content:space-between; padding:12px 16px;
+}
+.file-dropzone.attached .title{font-weight:400; color:var(--page-text, #232a2d);}
+.file-dropzone .remove-btn{background:none; border:none; color:var(--neutral-400); cursor:pointer; font-size:14px; padding:2px 6px; line-height:1; flex:none;}
+.file-dropzone .remove-btn:hover{color:var(--danger-600);}
+
+/* ---------- 一列多個 radio/checkbox 選項(共用) ---------- */
+.option-row{display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;}
+.option-row label{display:flex; align-items:center; gap:6px; font-weight:400; font-size:var(--font-size-body-md); color:var(--page-text, #232a2d); cursor:pointer; white-space:nowrap;}
+.option-row input:disabled + span{color:var(--neutral-400);}
+
+/* ---------- Plan code checklist ---------- */
+.plancode-list{border:1px solid var(--neutral-200); border-radius:10px; overflow:hidden;}
+.plancode-row{display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:1px solid var(--neutral-100); font-size:var(--font-size-body-md);}
+.plancode-row:last-child{border-bottom:none;}
+.plancode-row:hover{background:var(--neutral-50);}
+.plancode-row input[type="checkbox"]{width:16px; height:16px; accent-color:var(--primary-600); flex:none;}
+.plancode-row .code{font-family:"Roboto Mono",monospace; font-size:var(--font-size-caption); color:var(--neutral-600); width:150px; flex:none;}
+.plancode-row .name{flex:1;}
+.plancode-row .type{font-size:var(--font-size-caption); padding:2px 8px; border-radius:999px; background:var(--neutral-100); color:var(--neutral-600); flex:none;}
+.plancode-empty{padding:20px; text-align:center; font-size:var(--font-size-caption); color:var(--neutral-500);}
+
+/* ---------- 阻擋提示 Modal（例如選擇不支援的車輛種類代號時） ---------- */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(20,24,28,.65); display:none;
+  align-items:center; justify-content:center; z-index:300; padding:24px;
+}
+.modal-overlay.open{display:flex;}
+.modal-panel{background:#fff; border-radius:12px; max-width:360px; width:100%; padding:28px 24px; text-align:center;}
+.modal-panel .modal-icon{width:40px; height:40px; border-radius:50%; background:var(--danger-100); color:var(--danger-700); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; margin:0 auto 14px;}
+.modal-panel p{margin:0 0 20px; font-size:var(--font-size-body-md); color:var(--page-text, #232a2d);}
+.modal-panel .pv-btn{width:100%;}
+
+/* ---------- Blocker / open-question callout ---------- */
+.blocker-note{
+  display:flex; gap:9px; align-items:flex-start; font-size:var(--font-size-caption); color:var(--warn-900);
+  background:var(--warn-100); border:1px solid var(--warn-300); border-radius:8px; padding:10px 12px; margin-top:10px;
+}
+.blocker-note b{font-weight:700;}
+
+/* ---------- Data table ---------- */
+.dtable{width:100%; border-collapse:collapse; font-size:var(--font-size-caption);}
+.dtable th{background:var(--neutral-50); text-align:left; padding:9px 12px; font-weight:600; color:var(--neutral-600); font-size:var(--font-size-caption); text-transform:uppercase; letter-spacing:.02em; white-space:nowrap;}
+.dtable td{padding:10px 12px; border-bottom:1px solid var(--neutral-100);}
+.dtable tr:hover td{background:var(--neutral-50);}
+
+/* ---------- Page footer action bar（跟 .app-header 同一種做法：滿版列+邊框，不是漸層淡出） ---------- */
+.page-actions{
+  position:sticky; bottom:0; z-index:10;
+  background:var(--page-surface, #fff); border-top:1px solid var(--page-border, #dde4ee);
+  padding:0 24px;
+}
+.page-actions-inner{
+  max-width:832px; margin:0 auto; height:60px;
+  display:flex; justify-content:space-between; align-items:center;
+}

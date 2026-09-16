@@ -1,0 +1,1107 @@
+<meta charset="UTF-8">
+<title>羅賓斯 Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  /* brand primitive ramps — 羅賓斯藍 primary */
+  --primary-50:#f2f6fc; --primary-100:#e2eaf9; --primary-200:#c4d6f3; --primary-300:#9ab9ea;
+  --primary-400:#6895df; --primary-500:#5a8cdc; --primary-600:#275fb9; --primary-700:#204e97;
+  --primary-800:#193d76; --primary-900:#122b54; --primary-950:#0c1e3b;
+  /* 守護綠 secondary / success */
+  --secondary-50:#f4fbfb; --secondary-100:#e5f6f5; --secondary-200:#caeceb; --secondary-300:#a4dfdd;
+  --secondary-400:#77cfcc; --secondary-500:#49bfbb; --secondary-600:#3aa6a2; --secondary-700:#308885;
+  --secondary-800:#256a67; --secondary-900:#1b4b4a; --secondary-950:#133534;
+  /* 向陽黃 warn */
+  --warn-50:#fefdf1; --warn-100:#fcf9df; --warn-200:#f8f4be; --warn-300:#f4ec90; --warn-400:#eee259;
+  --warn-500:#e8d821; --warn-600:#cbbd15; --warn-700:#a69a11; --warn-800:#81780d; --warn-900:#5c560a; --warn-950:#413c07;
+  /* 珊瑚橘 danger */
+  --danger-50:#fef3f1; --danger-100:#fce4de; --danger-200:#fac9bd; --danger-300:#f6a28e; --danger-400:#f17455;
+  --danger-500:#ed451c; --danger-600:#d03611; --danger-700:#aa2c0e; --danger-800:#84220b; --danger-900:#5e1908; --danger-950:#421105;
+  /* 石墨黑 neutral / text */
+  --neutral-50:#f7f8f8; --neutral-100:#ebeeef; --neutral-200:#d8dddf; --neutral-300:#bcc5c8; --neutral-400:#9aa7ac;
+  --neutral-500:#788a91; --neutral-600:#65757c; --neutral-700:#536065; --neutral-800:#404b4f; --neutral-900:#2e3538; --neutral-950:#202527;
+
+  /* ---- page chrome (this reference page's own theme, NOT the brand tokens above) ---- */
+  --page-bg:#f5f7fb;
+  --page-surface:#ffffff;
+  --page-surface-2:#eef2f8;
+  --page-border:#dde4ee;
+  --page-text:#232a2d;
+  --page-text-muted:#5c6a70;
+  --page-accent:var(--primary-600);
+  --page-code-bg:#1b2430;
+  --page-code-text:#dce6f2;
+  --shadow-sm:0 1px 2px rgba(20,30,45,.06);
+  --shadow-md:0 6px 20px rgba(20,30,45,.10);
+  --radius-sm:4px; --radius-md:8px; --radius-lg:14px; --radius-full:999px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --page-bg:#12161b;
+    --page-surface:#1b2129;
+    --page-surface-2:#212a33;
+    --page-border:#2c3742;
+    --page-text:#e8edf1;
+    --page-text-muted:#95a5ad;
+    --page-accent:var(--primary-300);
+    --page-code-bg:#0e141c;
+    --page-code-text:#cfe0f2;
+    --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+    --shadow-md:0 10px 30px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --page-bg:#12161b;
+  --page-surface:#1b2129;
+  --page-surface-2:#212a33;
+  --page-border:#2c3742;
+  --page-text:#e8edf1;
+  --page-text-muted:#95a5ad;
+  --page-accent:var(--primary-300);
+  --page-code-bg:#0e141c;
+  --page-code-text:#cfe0f2;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+  --shadow-md:0 10px 30px rgba(0,0,0,.45);
+}
+
+/* ============ BASE ============ */
+*{box-sizing:border-box;}
+body{
+  background:var(--page-bg);
+  color:var(--page-text);
+  font-family:"Noto Sans TC","Roboto",-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:14px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-weight:700; text-wrap:balance; margin:0;}
+code,pre,.mono{font-family:"Roboto Mono",ui-monospace,SFMono-Regular,Menlo,monospace;}
+a{color:var(--page-accent);}
+::selection{background:var(--primary-200); color:var(--primary-950);}
+
+.layout{display:grid; grid-template-columns:232px 1fr; min-height:100vh;}
+.sidebar{
+  position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+  padding:28px 18px; border-right:1px solid var(--page-border);
+  background:var(--page-surface);
+}
+.brand-mark{display:flex; align-items:center; gap:10px; margin-bottom:22px;}
+.brand-mark svg{flex:none;}
+.brand-mark .name{font-weight:700; font-size:14.5px; line-height:1.3;}
+.brand-mark .sub{font-size:11px; color:var(--page-text-muted); letter-spacing:.02em;}
+.nav-group{margin-bottom:4px;}
+.nav-group-title{font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--page-text-muted); padding:14px 10px 6px;}
+.nav-link{
+  display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:var(--radius-sm);
+  color:var(--page-text); text-decoration:none; font-size:13px; font-weight:500;
+}
+.nav-link:hover{background:var(--page-surface-2);}
+.nav-link .dot{width:6px; height:6px; border-radius:50%; background:var(--page-border); flex:none;}
+
+.main{padding:36px 44px 90px; max-width:1180px;}
+section{padding-top:8px; margin-bottom:64px; scroll-margin-top:24px;}
+.page-title{font-size:26px; margin-bottom:6px;}
+.page-lead{color:var(--page-text-muted); max-width:640px; font-size:14.5px; margin-bottom:22px;}
+.section-title{font-size:20px; margin-bottom:6px; display:flex; align-items:center; gap:10px;}
+.section-desc{color:var(--page-text-muted); max-width:680px; font-size:13.5px; margin-bottom:22px;}
+
+.badge{
+  display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700;
+  padding:3px 9px; border-radius:var(--radius-full); letter-spacing:.02em; white-space:nowrap;
+}
+.badge-mandate{background:var(--primary-100); color:var(--primary-800);}
+.badge-proposal{background:var(--secondary-100); color:var(--secondary-800);}
+:root[data-theme="dark"] .badge-mandate, @media (prefers-color-scheme:dark){.badge-mandate{background:var(--primary-900); color:var(--primary-200);}}
+
+.legend{display:flex; gap:18px; flex-wrap:wrap; margin:18px 0 30px; padding:14px 16px; background:var(--page-surface); border:1px solid var(--page-border); border-radius:var(--radius-md);}
+.legend-item{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--page-text-muted);}
+
+.card{background:var(--page-surface); border:1px solid var(--page-border); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm);}
+.pad{padding:22px 24px;}
+
+/* logo */
+.logo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+.logo-tile{padding:26px 18px; text-align:center;}
+.logo-tile .cap{font-size:12px; color:var(--page-text-muted); margin-top:14px;}
+.placeholder-note{font-size:11.5px; color:var(--danger-700); background:var(--danger-50); border:1px dashed var(--danger-300); border-radius:var(--radius-sm); padding:8px 10px; margin-top:14px;}
+:root[data-theme="dark"] .placeholder-note, @media (prefers-color-scheme:dark){.placeholder-note{background:var(--danger-950); color:var(--danger-200); border-color:var(--danger-800);}}
+
+.clearspace-demo{position:relative; width:220px; height:150px; margin:0 auto; background:repeating-linear-gradient(45deg, var(--page-surface-2) 0 6px, transparent 6px 12px); border:1px solid var(--page-border); border-radius:var(--radius-sm);}
+.clearspace-demo .zone{position:absolute; inset:26px; border:1.5px dashed var(--primary-400); border-radius:4px; display:flex; align-items:center; justify-content:center;}
+
+.minsize-table{width:100%; border-collapse:collapse; font-size:13px;}
+.minsize-table th,.minsize-table td{padding:9px 10px; text-align:left; border-bottom:1px solid var(--page-border);}
+.minsize-table th{color:var(--page-text-muted); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em;}
+
+.bg-demo-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+.bg-demo{width:74px; height:56px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; border:1px solid var(--page-border);}
+
+.misuse-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:14px;}
+.misuse-tile{padding:14px 10px; text-align:center; border-radius:var(--radius-md); background:var(--page-surface-2);}
+.misuse-tile .x{color:var(--danger-600); font-size:11px; margin-top:8px; font-weight:600;}
+
+/* color ramps */
+.ramp-block{margin-bottom:26px;}
+.ramp-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:6px;}
+.ramp-head h4{font-size:14.5px;}
+.ramp-head .meta{font-size:12px; color:var(--page-text-muted);}
+.ramp-strip{display:grid; grid-template-columns:repeat(11,1fr); border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--page-border);}
+.swatch{height:66px; position:relative; display:flex; flex-direction:column; justify-content:flex-end; padding:5px 6px;}
+.swatch .stop{font-size:9.5px; font-weight:700; opacity:.85;}
+.swatch .hex{font-size:8.6px; font-family:"Roboto Mono",monospace; opacity:.8;}
+.swatch .aa{position:absolute; top:4px; right:5px; font-size:7.5px; font-weight:800; padding:1px 4px; border-radius:3px;}
+.aa-pass{background:rgba(20,120,60,.16); color:#1c6b3c;}
+.aa-fail{background:rgba(160,30,30,.14); color:#a01e1e;}
+
+.semantic-table{width:100%; border-collapse:collapse; font-size:12.8px;}
+.semantic-table th,.semantic-table td{padding:10px 12px; border-bottom:1px solid var(--page-border); text-align:left; vertical-align:top;}
+.semantic-table th{color:var(--page-text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.03em;}
+.swab{display:inline-block; width:14px; height:14px; border-radius:4px; vertical-align:-2px; margin-right:6px; border:1px solid rgba(0,0,0,.08);}
+
+/* typography */
+.type-row{display:grid; grid-template-columns:110px 1fr 140px; align-items:baseline; gap:18px; padding:16px 0; border-bottom:1px solid var(--page-border);}
+.type-row:last-child{border-bottom:none;}
+.type-row .tag{font-size:11px; color:var(--page-text-muted); font-family:"Roboto Mono",monospace;}
+.type-row .spec{font-size:11.5px; color:var(--page-text-muted); text-align:right; font-family:"Roboto Mono",monospace;}
+.font-sample-card{display:flex; gap:26px; margin-bottom:20px;}
+.font-sample{flex:1; padding:20px; border-radius:var(--radius-md); background:var(--page-surface-2);}
+.font-sample .glyphs{font-size:30px; margin-bottom:8px;}
+.font-sample .label{font-size:12px; color:var(--page-text-muted);}
+
+/* spacing */
+.spacing-row{display:flex; align-items:center; gap:16px; padding:9px 0;}
+.spacing-bar{background:var(--primary-500); height:14px; border-radius:3px;}
+.spacing-row .name{width:52px; font-family:"Roboto Mono",monospace; font-size:12px; color:var(--page-text-muted);}
+.spacing-row .px{width:44px; font-family:"Roboto Mono",monospace; font-size:12px;}
+
+.bp-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:16px;}
+.bp-card{padding:16px; text-align:center;}
+.bp-card .w{font-size:20px; font-weight:700; font-family:"Roboto Mono",monospace;}
+.bp-card .n{font-size:12px; color:var(--page-text-muted); margin-top:2px;}
+
+/* components */
+.comp-block{margin-bottom:34px;}
+.comp-block h4{font-size:14.5px; margin-bottom:12px;}
+.comp-row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+
+.pv-btn{
+  font-family:inherit; font-size:13.5px; font-weight:600; padding:9px 18px; border-radius:6px;
+  border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:7px;
+  transition:filter .12s ease;
+}
+.pv-btn:hover{filter:brightness(1.06);}
+.pv-btn:active{filter:brightness(.94);}
+.pv-btn:focus-visible{outline:2px solid var(--primary-400); outline-offset:2px;}
+.pv-btn.primary{background:var(--primary-600); color:#fff;}
+.pv-btn.secondary{background:var(--secondary-800); color:#fff;}
+.pv-btn.warn{background:var(--warn-400); color:var(--neutral-950);}
+.pv-btn.danger{background:var(--danger-600); color:#fff;}
+.pv-btn.outlined{background:transparent; border-color:var(--primary-600); color:var(--primary-700);}
+.pv-btn.text{background:transparent; color:var(--primary-700); padding-left:6px; padding-right:6px;}
+.pv-btn[disabled]{opacity:.42; cursor:not-allowed; filter:none;}
+
+.pv-tag{
+  display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700;
+  padding:4px 11px; border-radius:var(--radius-full);
+}
+.pv-tag .dot{width:6px; height:6px; border-radius:50%;}
+.tag-info{background:var(--primary-100); color:var(--primary-800);}
+.tag-info .dot{background:var(--primary-600);}
+.tag-warn{background:var(--warn-100); color:var(--warn-900);}
+.tag-warn .dot{background:var(--warn-700);}
+.tag-success{background:var(--secondary-100); color:var(--secondary-800);}
+.tag-success .dot{background:var(--secondary-600);}
+.tag-danger{background:var(--danger-100); color:var(--danger-800);}
+.tag-danger .dot{background:var(--danger-600);}
+.tag-neutral{background:var(--neutral-200); color:var(--neutral-800);}
+.tag-neutral .dot{background:var(--neutral-600);}
+
+.state-table{width:100%; border-collapse:collapse; font-size:12.8px;}
+.state-table th,.state-table td{padding:9px 12px; border-bottom:1px solid var(--page-border); text-align:left;}
+.state-table th{color:var(--page-text-muted); font-size:11px; text-transform:uppercase;}
+
+.field{display:flex; flex-direction:column; gap:6px; width:220px;}
+.field label{font-size:12px; font-weight:600; color:var(--page-text-muted);}
+.field input,.field select{
+  font-family:inherit; font-size:13.5px; padding:9px 11px; border-radius:6px;
+  border:1px solid var(--page-border); background:var(--page-surface); color:var(--page-text);
+}
+.field input:focus,.field select:focus{outline:none; border-color:var(--primary-500); box-shadow:0 0 0 3px var(--primary-100);}
+.field.error input{border-color:var(--danger-500); background:var(--danger-50);}
+.field .err-msg{font-size:11.5px; color:var(--danger-700); display:flex; gap:4px; align-items:center;}
+.field.disabled input{background:var(--page-surface-2); color:var(--page-text-muted); cursor:not-allowed;}
+.fields-row{display:flex; gap:20px; flex-wrap:wrap;}
+
+.stepper{display:flex; align-items:center; margin:8px 0 4px;}
+.step{display:flex; align-items:center; gap:9px;}
+.step .circle{width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex:none;}
+.step.done .circle{background:var(--primary-500); color:#fff;}
+.step.current .circle{background:var(--primary-700); color:#fff; box-shadow:0 0 0 4px var(--primary-100);}
+.step.todo .circle{background:var(--page-surface-2); color:var(--page-text-muted); border:1px solid var(--page-border);}
+.step .label{font-size:11.5px; color:var(--page-text-muted); white-space:nowrap;}
+.step.current .label{color:var(--page-text); font-weight:600;}
+.step-line{flex:1; height:2px; background:var(--page-border); margin:0 6px; min-width:14px;}
+.step-line.done{background:var(--primary-500);}
+
+.dtable{width:100%; border-collapse:collapse; font-size:12.6px;}
+.dtable th{background:var(--page-surface-2); text-align:left; padding:9px 12px; font-weight:600; color:var(--page-text-muted); font-size:11px; text-transform:uppercase; letter-spacing:.02em;}
+.dtable td{padding:10px 12px; border-bottom:1px solid var(--page-border);}
+.dtable tr:hover td{background:var(--page-surface-2);}
+
+/* -- new (自 01 險種選擇頁面新增的共用元件，同步收錄) -- */
+.app-header-demo{display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:var(--page-surface); border:1px solid var(--page-border); border-radius:var(--radius-md);}
+.app-header-demo .brand{display:flex; align-items:center; gap:12px;}
+.app-header-demo .brand svg{height:22px; width:auto;}
+.app-header-demo .divider{width:1px; height:20px; background:var(--page-border);}
+.app-header-demo .case-title{font-size:12.5px; color:var(--page-text-muted);}
+.app-header-demo .user{display:flex; align-items:center; gap:9px; font-size:12.5px;}
+.app-header-demo .avatar{width:26px; height:26px; border-radius:50%; background:var(--primary-100); color:var(--primary-800); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;}
+
+.ocr-upload{display:flex; gap:16px; flex-wrap:wrap;}
+.ocr-dropzone{flex:1; min-width:200px; border:1.5px dashed var(--neutral-300); border-radius:10px; padding:20px 16px; text-align:center; background:var(--neutral-50); display:flex; flex-direction:column; align-items:center; justify-content:center;}
+.ocr-dropzone .icon{font-size:20px; margin-bottom:6px;}
+.ocr-dropzone .title{font-size:12.5px; font-weight:600;}
+.ocr-dropzone .sub{font-size:11px; color:var(--page-text-muted); margin-top:3px;}
+.ocr-dropzone.filled{border-style:solid; border-color:var(--secondary-400); background:var(--secondary-50); text-align:left; display:flex; flex-direction:column; align-items:stretch; gap:10px; padding:10px;}
+.ocr-dropzone.filled .thumb{width:100%; border-radius:6px; background:var(--secondary-200); overflow:hidden; border:1px solid var(--secondary-300); cursor:zoom-in;}
+.ocr-dropzone.filled .thumb img{width:100%; height:auto; max-height:110px; object-fit:cover; display:block;}
+.ocr-dropzone.pending{border-style:solid; border-color:var(--primary-300); background:var(--primary-50); text-align:left; display:flex; flex-direction:column; align-items:stretch; gap:10px; padding:10px;}
+.ocr-dropzone.pending .thumb{width:100%; border-radius:6px; background:var(--primary-100); overflow:hidden; border:1px solid var(--primary-200); cursor:zoom-in;}
+.ocr-dropzone.pending .thumb img{width:100%; height:auto; max-height:110px; object-fit:cover; display:block;}
+.ocr-check-icon{display:inline-flex; align-items:center; justify-content:center; width:15px; height:15px; border-radius:50%; background:var(--secondary-600); color:#fff; font-size:9px; margin-right:6px; flex:none;}
+.ocr-status{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; margin-top:8px; padding:4px 9px; border-radius:999px;}
+.ocr-status.busy{background:var(--primary-100); color:var(--primary-800);}
+.ocr-status.done{background:var(--secondary-100); color:var(--secondary-800);}
+.ocr-status.fail{background:var(--danger-100); color:var(--danger-800);}
+.ocr-status.warn{background:var(--warn-100); color:var(--warn-900);}
+/* compact 變體:當 OCR 上傳只是輔助帶入欄位的捷徑,不是獨立必要步驟時使用(見「1·險種選擇」) */
+.ocr-upload.compact .ocr-dropzone{padding:10px 14px; min-width:170px;}
+.ocr-upload.compact .ocr-dropzone .title{font-size:11.5px;}
+.ocr-upload.compact .ocr-dropzone.filled{padding:8px 12px;}
+.ocr-upload.compact .ocr-dropzone.pending{padding:8px 12px;}
+.ocr-state-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px;}
+.ocr-state-grid .state-label{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--page-text-muted); margin-bottom:6px;}
+.spin{display:inline-block; width:10px; height:10px; border-radius:50%; border:2px solid currentColor; border-right-color:transparent; animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.plan-block{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+.plan-block select{
+  flex:1; font-family:inherit; font-size:12.5px; padding:9px 11px; border-radius:6px;
+  border:1px solid var(--page-border); background:#fff; color:var(--page-text, #232a2d);
+}
+.plan-tag{font-size:11px; padding:2px 8px; border-radius:999px; background:var(--page-surface-2); color:var(--page-text-muted); flex:none; white-space:nowrap;}
+.plan-remove{background:none; border:none; color:var(--neutral-400); cursor:pointer; font-size:14px; padding:4px 6px; flex:none; line-height:1;}
+
+.file-dropzone{border:1.5px dashed var(--neutral-300); border-radius:10px; padding:16px; text-align:center; background:var(--neutral-50); cursor:pointer; display:flex; align-items:center; justify-content:center; min-height:24px;}
+.file-dropzone .title{font-size:12.5px; font-weight:600; color:var(--page-text);}
+.file-dropzone.attached{border-style:solid; border-color:var(--secondary-400); background:var(--secondary-50); justify-content:space-between; padding:12px 16px;}
+.file-dropzone.attached .title{font-weight:400;}
+.file-dropzone .remove-btn{background:none; border:none; color:var(--neutral-400); cursor:pointer; font-size:14px; padding:2px 6px; line-height:1; flex:none;}
+
+.tab-bar{display:flex; gap:4px; border-bottom:1px solid var(--page-border); margin-bottom:20px;}
+.tab-btn{background:none; border:none; padding:10px 16px; font-size:12.5px; font-weight:600; color:var(--page-text-muted); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; font-family:inherit;}
+.tab-btn.active{color:var(--primary-700); border-bottom-color:var(--primary-600);}
+
+.dl-btn{font-family:inherit; font-size:11px; font-weight:600; padding:5px 9px; border-radius:6px; border:1px solid var(--primary-300); background:#fff; color:var(--primary-700); cursor:pointer; white-space:nowrap;}
+.dl-btn[disabled]{border-color:var(--page-border); color:var(--neutral-400); cursor:not-allowed; background:var(--page-surface-2);}
+
+.account-menu{background:#fff; border:1px solid var(--page-border); border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.12); padding:6px; min-width:150px; z-index:50;}
+.account-menu-item{display:block; padding:9px 12px; border-radius:6px; font-size:12.5px; color:var(--page-text); cursor:pointer;}
+.account-menu-item:hover{background:var(--page-surface-2);}
+
+.blocker-note{display:flex; gap:9px; align-items:flex-start; font-size:12px; color:var(--warn-900); background:var(--warn-100); border:1px solid var(--warn-300); border-radius:8px; padding:10px 12px;}
+:root[data-theme="dark"] .blocker-note, @media (prefers-color-scheme:dark){.blocker-note{background:var(--warn-950); color:var(--warn-100); border-color:var(--warn-800);}}
+
+.modal-panel{background:#fff; border-radius:12px; max-width:300px; width:100%; padding:24px 20px; text-align:center;}
+.modal-panel .modal-icon{width:36px; height:36px; border-radius:50%; background:var(--danger-100); color:var(--danger-700); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; margin:0 auto 12px;}
+.modal-panel p{margin:0 0 16px; font-size:12.5px; color:var(--page-text, #232a2d);}
+.modal-panel .pv-btn{width:100%;}
+
+/* code panel */
+.code-panel{background:var(--page-code-bg); color:var(--page-code-text); border-radius:var(--radius-lg); padding:20px 22px; overflow-x:auto; box-shadow:var(--shadow-md);}
+.code-panel pre{margin:0; font-size:12.4px; line-height:1.65;}
+.code-tab{display:flex; gap:16px; margin-bottom:14px; font-size:12px; color:var(--page-text-muted);}
+.code-tab b{color:var(--page-text);}
+
+.callout{display:flex; gap:10px; padding:13px 16px; border-radius:var(--radius-md); background:var(--warn-50); border:1px solid var(--warn-300); font-size:12.8px; color:var(--neutral-800); margin-bottom:20px;}
+:root[data-theme="dark"] .callout, @media (prefers-color-scheme:dark){.callout{background:var(--warn-950); border-color:var(--warn-800); color:var(--warn-100);}}
+
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+@media (max-width:900px){.layout{grid-template-columns:1fr;} .sidebar{position:static; height:auto;} .grid-2{grid-template-columns:1fr;} .logo-grid{grid-template-columns:1fr;} .misuse-grid{grid-template-columns:repeat(2,1fr);}}
+.overflow-x{overflow-x:auto;}
+</style>
+
+<svg style="position:absolute;width:0;height:0;overflow:hidden;" aria-hidden="true">
+  <defs>
+    <symbol id="logo-mark" viewBox="0 0 160 160">
+      <path d="M74.92 1.2422L62.8 15.5075C60.76 17.9117 62.68 21.5582 65.84 21.2376C73.68 20.4362 81.48 20.4362 89.32 21.2376C92.44 21.5582 94.4 17.9117 92.36 15.5075L80.24 1.2422C78.84 -0.40071 76.32 -0.40071 74.92 1.2422Z" fill="#5A8CDC"/>
+      <path d="M119.2 63.8732C113.52 59.5856 103.8 54.6569 88.4 53.0139V113.201C88.4 125.182 83.76 136.442 75.32 144.897C66.88 153.352 55.64 158.04 43.68 158.04H34.08C32.16 158.04 30.56 156.477 30.56 154.554V139.487C30.56 137.564 32.12 136.001 34.08 136.001H43.68C56.24 136.001 66.4 125.823 66.4 113.241V53.054C56.68 54.0959 48.08 56.5803 41.12 60.387C33.72 64.4342 28.2 69.964 25.68 75.9346L25.6 76.0948C24.4 78.7796 22.88 83.4278 22.16 86.6736C21.8 88.2764 20.36 89.4385 18.72 89.4385H3.47996C1.35996 89.4385 -0.280042 87.5552 -4.24981e-05 85.4715C0.999958 77.7378 4.51996 69.2026 5.39996 67.1991C7.63996 62.0299 10.88 57.1413 15.08 52.7335C19.4 48.2054 24.6 44.2785 30.56 41.0327C36.76 37.6667 43.8 35.0221 51.4 33.2589C55.4 32.3373 59.6 31.616 63.92 31.1352C68.24 30.6543 72.76 30.4139 77.36 30.4139C99.56 30.4139 118.6 35.9036 132.4 46.282C145.28 55.9792 152.68 69.2828 152.68 82.8669C152.68 85.1108 152.48 87.2747 152.08 89.3984H128.84C129.88 87.7555 130.68 85.6318 130.68 82.8669C130.68 76.3753 126.4 69.3228 119.2 63.9133V63.8732Z" fill="#5A8CDC"/>
+      <path d="M156.48 136.282C149.44 136.282 127.76 136.522 122 122.417C120.52 118.811 123.16 114.884 127.04 114.884C137.88 114.884 147.28 107.43 149.8 96.8917C149.8 96.8917 149.8 96.7715 149.72 96.7715H113.48C102.72 96.7715 97.96 102.582 97.96 114.884C97.96 114.884 96.68 158.04 154.96 158.04C155.2 158.04 156.92 158.04 157.16 158.04C158.72 158.04 160 156.798 160 155.275V139.407C160 138.085 159.08 136.322 156.48 136.322V136.282Z" fill="#49BFBB"/>
+      <path d="M109.68 89.5988C114.098 89.5988 117.68 86.0107 117.68 81.5846C117.68 77.1585 114.098 73.5704 109.68 73.5704C105.262 73.5704 101.68 77.1585 101.68 81.5846C101.68 86.0107 105.262 89.5988 109.68 89.5988Z" fill="#5A8CDC"/>
+    </symbol>
+    <symbol id="logo-horizontal" viewBox="0 0 1038 160">
+      <path d="M220.596 125.338C219.764 131.369 217.961 137.816 216.088 141.906C214.008 141.282 209.916 140.451 207.628 139.965C209.986 136.083 211.234 129.775 211.997 124.09L220.596 125.269V125.338ZM292.649 140.936H259.986V143.986H249.93V107.938L249.029 108.839C247.156 107.036 243.134 104.055 240.846 102.669C246.81 97.6083 251.941 89.9133 254.923 82.0797H228.363L233.287 84.1594C230.513 88.5268 226.768 93.1715 222.815 97.1923L229.542 96.8457C231.761 94.1421 234.05 91.3691 235.714 88.4575L244.036 93.2409C239.112 99.7573 232.663 106.482 225.866 112.236L236.407 111.196C235.783 109.532 235.02 108.007 234.327 106.551L241.608 103.917C244.244 108.769 246.948 115.078 247.642 119.168L239.875 122.218C239.667 121.04 239.32 119.515 238.834 118.059C218.03 120.416 214.424 121.04 211.997 121.941C211.511 120.485 209.847 116.88 208.668 114.939C211.095 114.593 213.314 112.86 216.296 110.364C217.475 109.324 219.833 107.314 222.607 104.471C214.979 105.095 212.69 105.581 211.165 106.135C210.61 104.541 208.946 101.005 207.697 99.0641C209.5 98.7868 211.026 97.6083 213.037 95.7365C214.701 94.1421 219.486 88.1802 222.884 82.0104H212.066V59.8267H287.655V82.0104H256.31L264.701 84.0901C263.661 86.8631 262.343 89.5667 260.957 92.2703H269.972C269.07 89.844 268.03 87.3483 266.92 85.1993L275.381 82.7036C277.045 85.6845 278.71 89.1508 279.75 92.2703H291.331V101.005H279.126V105.927H288.834V113.83H279.126V118.891H288.834V126.794H279.126V131.924H292.579V140.797L292.649 140.936ZM230.651 123.951C232.177 128.804 233.287 135.043 233.425 139.133L224.965 140.659C224.965 136.568 223.925 130.191 222.607 125.338L230.651 123.951ZM233.633 67.8683H222.746V74.1767H233.633V67.8683ZM241.47 122.218C243.828 126.516 246.255 132.27 247.226 136.222L239.181 138.163C238.28 134.35 235.991 128.388 233.772 123.882L241.4 122.218H241.47ZM243.828 74.1767H254.993V67.8683H243.828V74.1767ZM269.556 101.144H260.055V106.066H269.556V101.144ZM269.556 113.969H260.055V119.029H269.556V113.969ZM259.986 132.062H269.486V126.932H259.986V132.062ZM265.048 74.1767H276.49V67.8683H265.048V74.1767Z" fill="#5A8CDC"/>
+      <path d="M374.409 130.329C382.87 132.825 391.538 135.529 397.155 137.678L387.239 144.125C381.275 141.421 370.734 137.608 360.47 134.627L365.602 130.329H346.115L352.079 134.489C344.451 138.648 331.691 142.392 321.011 143.986C319.416 141.906 316.226 138.509 314.007 136.43C322.468 135.251 332.246 132.894 338.903 130.26H327.183V103.432C323.716 103.778 320.457 104.194 317.197 104.471C316.157 102.045 313.452 97.539 311.857 95.3206C315.88 95.1126 319.971 94.8353 324.063 94.558C322.537 92.8942 321.011 91.2305 319.763 90.1906C325.38 88.5962 331.344 86.0312 334.673 82.9116H331.067V75.2859H380.859V82.9116H377.669L385.505 87.071C380.165 90.6066 373.508 93.5875 365.949 95.9445H386.823V130.26H374.34L374.409 130.329ZM327.322 80.9705H317.336V63.1542H348.959C348.334 61.7677 347.572 60.4506 346.878 59.2721L357.419 55.5286C358.945 57.7469 360.609 60.5892 361.788 63.1542H395.075V80.9705H384.603V72.097H327.253V80.9705H327.322ZM344.867 84.922C342.162 88.1802 338.279 91.0918 334.049 93.5875C339.943 92.9636 345.63 91.993 351.039 90.9532V82.9116H338.556L344.867 84.8527V84.922ZM337.932 102.045V105.581H375.588V101.976H337.932V102.045ZM375.588 111.196H337.932V114.939H375.588V111.196ZM337.932 124.229H375.588V120.485H337.932V124.229ZM360.678 88.6655C366.296 87.2097 371.289 85.1993 375.103 82.9809H360.678V88.6655Z" fill="#5A8CDC"/>
+      <path d="M465.463 121.802H418.792V112.097H426.975V77.5043H419.902V67.799H426.975V57.8163H436.961V67.799H449.444V57.8163H459.638V67.799H465.116V77.5043H459.638V112.097H465.532V121.802H465.463ZM440.775 125.477C437.724 132.201 432.315 139.203 427.53 143.57C425.588 141.698 421.289 138.51 418.792 137.054C423.369 133.518 427.946 127.834 430.442 122.496L440.775 125.477ZM436.961 77.5737V83.0503H449.444V77.5737H436.961ZM436.961 97.331H449.444V91.5771H436.961V97.331ZM436.961 112.097H449.444V105.789H436.961V112.097ZM505.893 97.6776H497.849V143.778H487.308V97.6776H478.709V100.728C478.709 117.851 476.767 133.241 465.116 145.927C463.313 143.501 459.915 140.52 457.349 138.718C458.459 137.4 459.499 136.083 460.401 134.835L451.455 139.203C449.929 135.875 446.392 130.468 443.619 126.655L452.495 122.565C455.269 126.17 458.944 131.023 460.678 134.419C467.474 124.229 468.514 112.582 468.514 100.797V66.9671C478.778 64.3328 490.082 60.4506 496.739 56.4298L505.616 64.3328C497.849 68.1456 488.071 71.4038 478.639 73.7608V87.487H505.754V97.747L505.893 97.6776Z" fill="#5A8CDC"/>
+      <path d="M556.032 60.3813C553.535 66.8284 550.415 73.4142 546.809 79.6533V143.57H536.268V95.6672C534.118 98.3709 531.899 100.867 529.749 103.224C528.709 100.52 525.658 94.558 523.785 91.8544C532.454 83.4662 540.914 70.2253 545.768 56.9844L556.032 60.3119V60.3813ZM572.398 117.088C568.584 125.13 562.897 134.142 558.112 139.827C556.171 138.163 552.079 135.182 549.513 133.865C554.16 128.735 559.222 121.04 562.412 114.107L572.398 117.088ZM587.377 111.196V143.917H576.212V111.196H551.871V101.144H576.212V92.9636H557.974V60.9358H606.933V92.9636H587.447V101.144H611.58V111.196H587.447H587.377ZM568.445 83.1196H595.768V70.6412H568.445V83.1196ZM598.75 113.969C604.09 120.139 609.777 128.111 612.481 133.657L603.743 138.995C601.247 133.518 595.56 124.922 590.567 118.613L598.75 114.038V113.969Z" fill="#5A8CDC"/>
+      <path d="M673.716 80.6239C670.803 82.7036 667.682 84.6447 664.492 86.3085C663.106 84.3674 659.915 80.9705 657.696 79.0295C656.656 82.4957 655.824 85.8232 654.922 88.7348C659.707 95.9445 660.609 102.6 660.609 107.938C660.609 114.107 659.569 118.128 656.864 120.208C655.547 121.317 653.882 122.01 651.941 122.288C650.415 122.565 648.404 122.565 646.531 122.565C646.462 119.861 645.699 115.771 644.312 112.998C645.699 113.206 646.739 113.206 647.78 113.068C648.542 113.068 649.375 112.86 649.929 112.305C650.97 111.473 651.316 109.393 651.316 106.62C651.316 102.322 650.554 96.1525 646.115 89.7747C647.641 84.1594 649.305 76.5338 650.623 70.3639H643.827V143.64H634.604V60.5199H653.535L655.061 60.1733L661.927 64.1941C660.748 68.5615 659.291 73.4835 658.043 78.3362C668.653 72.8596 678.431 64.1941 683.702 55.6672L694.312 59.4107C693.757 60.312 693.203 61.3518 692.509 62.3223C699.374 67.9376 709.569 73.4142 718.723 76.3951C717.128 79.1681 715.255 83.9515 714.562 86.9324C710.193 85.0607 705.685 82.6343 701.316 80.0693V86.1005H673.924V80.6932L673.716 80.6239ZM679.749 117.158C679.194 119.029 678.431 120.901 677.669 122.634C680.928 124.783 684.534 127.418 686.545 129.359L680.928 136.707C679.333 134.835 676.42 132.409 673.577 130.26C669.971 135.945 665.463 140.589 660.262 144.125C658.806 142.253 655.2 138.648 653.119 137.123C661.302 132.27 667.266 124.437 670.11 115.009L679.818 117.088L679.749 117.158ZM662.759 90.6759H685.227V114.038H662.759V90.6759ZM670.734 106.69H676.975V98.0936H670.734V106.69ZM697.571 77.7123C693.549 75.078 689.804 72.2357 686.545 69.3241C683.771 72.305 680.789 75.078 677.599 77.7123H697.571ZM705.754 116.395C705.2 119.029 704.576 121.525 703.605 123.951C708.806 127.556 714.908 131.993 718.029 135.113L711.51 142.6C708.875 139.827 704.298 136.014 699.652 132.548C696.878 137.192 693.411 141.144 689.319 144.125C687.932 142.253 684.395 138.51 682.246 137.123C689.527 132.34 693.965 124.575 695.768 115.009L705.754 116.395ZM689.458 90.6759H712.551V114.038H689.458V90.6759ZM697.502 106.69H704.021V98.0936H697.502V106.69Z" fill="#5A8CDC"/>
+      <path d="M771.635 61.0745C769.208 66.7591 766.295 72.513 762.967 78.1976V143.709H751.386V94.766C748.196 98.6482 745.075 102.253 741.677 105.234C740.637 102.6 737.516 96.6378 735.505 93.9341C745.56 85.338 755.338 71.6811 760.956 57.6083L771.566 61.0745H771.635ZM797.225 94.766C799.86 115.425 804.784 129.22 812.204 130.191C814.354 130.399 815.463 125.685 816.226 115.355C818.306 117.782 823.23 120.555 825.241 121.664C822.883 139.619 817.89 143.917 812.689 143.64C796.947 142.184 789.596 124.645 786.198 96.2218L767.821 98.7175L766.226 87.9723L785.089 85.4766C784.465 77.0884 783.91 67.9376 783.563 58.1629H794.867C795.075 67.3137 795.422 76.0485 796.046 83.9515L822.606 80.4853L824.201 90.9532L797.155 94.6967L797.225 94.766ZM813.868 78.2669C811.51 73.8995 805.962 67.383 801.108 62.5996L809.43 57.4697C814.354 61.9757 820.179 68.0763 822.883 72.4437L813.937 78.1976L813.868 78.2669Z" fill="#5A8CDC"/>
+      <path d="M876.073 125.269C865.81 128.873 854.645 132.478 845.699 135.321L843.202 124.021C846.462 123.189 850.276 122.149 854.575 120.97V99.0641H845.144V88.8734H854.575V72.4436H844.312V62.1143H875.102V72.4436H865.116V88.8734H873.507V99.0641H865.116V117.712C868.167 116.811 871.288 115.84 874.27 114.801L876.142 125.269H876.073ZM931.413 130.953V141.005H871.496V130.953H897.224V122.08H877.945V112.097H897.224V104.055H878.57V60.7278H927.252V104.055H908.528V112.097H928.292V122.08H908.528V130.953H931.482H931.413ZM888.556 77.9202H898.126V70.1559H888.556V77.9202ZM888.556 94.6966H898.126V86.6551H888.556V94.6966ZM916.711 70.2252H907.488V77.9895H916.711V70.2252ZM916.711 86.6551H907.488V94.6966H916.711V86.6551Z" fill="#5A8CDC"/>
+      <path d="M999.096 56.9844C999.027 60.8665 998.819 65.9272 998.472 71.5424C999.79 84.0901 1005.48 119.237 1038 133.587C1034.53 136.291 1031.41 140.035 1029.89 143.154C1009.22 133.31 998.819 115.078 993.41 99.0641C988.278 115.494 978.5 132.34 959.083 143.709C957.141 140.728 953.604 137.192 949.859 134.697C987.723 114.454 985.92 72.7209 986.336 56.9844H999.096Z" fill="#5A8CDC"/>
+      <path d="M76.0057 1.24783L63.7311 15.7366C61.6506 18.1629 63.5924 21.9064 66.7824 21.5598C74.7574 20.7279 82.6631 20.7279 90.6381 21.5598C93.8281 21.9064 95.7698 18.1629 93.6894 15.7366L81.4148 1.24783C80.0279 -0.415945 77.3926 -0.415945 76.0057 1.24783Z" fill="#5A8CDC"/>
+      <path d="M120.943 64.6794C115.187 60.312 105.34 55.3206 89.6669 53.6568V114.593C89.6669 126.724 84.9512 138.094 76.3521 146.69C67.7529 155.286 56.3799 160 44.244 160H34.5353C32.5935 160 30.9985 158.406 30.9985 156.464V141.213C30.9985 139.272 32.5935 137.678 34.5353 137.678H44.244C57.004 137.678 67.3369 127.348 67.3369 114.662V53.6568C57.4894 54.6967 48.7516 57.2617 41.6781 61.0745C34.1192 65.1646 28.5714 70.7799 26.0055 76.8111V77.0191C24.6879 79.7227 23.1622 84.4367 22.4687 87.695C22.122 89.3587 20.6657 90.4679 19.0013 90.4679H3.53675C1.38696 90.4679 -0.277391 88.5962 3.75709e-07 86.4471C1.04022 78.6135 4.57696 69.948 5.47849 67.9376C7.76697 62.669 11.0263 57.747 15.3259 53.3102C19.6948 48.7348 24.9653 44.714 31.0679 41.4558C37.3785 38.0589 44.5214 35.3553 52.219 33.5529C56.3105 32.5823 60.5408 31.8891 64.9097 31.4038C69.2786 30.9185 73.8556 30.7106 78.5712 30.7106C101.109 30.7106 120.388 36.2565 134.396 46.7938C147.434 56.5685 154.993 70.0867 154.993 83.8822C154.993 86.1698 154.785 88.3882 154.369 90.5373H130.79C131.83 88.8735 132.663 86.7244 132.663 83.8822C132.663 77.2964 128.294 70.156 121.012 64.6794H120.943Z" fill="#5A8CDC"/>
+      <path d="M158.807 138.024C151.664 138.024 129.68 138.232 123.786 123.951C122.33 120.347 124.965 116.326 128.918 116.326C139.875 116.326 149.445 108.77 152.011 98.0936C152.011 98.0936 152.011 97.955 151.941 97.955H115.187C104.299 97.955 99.4448 103.848 99.4448 116.326C99.4448 116.326 98.1272 160 157.281 160C157.489 160 159.292 160 159.5 160C161.095 160 162.343 158.752 162.343 157.158V141.075C162.343 139.688 161.442 137.955 158.807 137.955V138.024Z" fill="#49BFBB"/>
+      <path d="M111.303 90.7452C115.784 90.7452 119.417 87.1138 119.417 82.6343C119.417 78.1548 115.784 74.5234 111.303 74.5234C106.822 74.5234 103.189 78.1548 103.189 82.6343C103.189 87.1138 106.822 90.7452 111.303 90.7452Z" fill="#5A8CDC"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="brand-mark">
+      <svg width="26" height="26" viewBox="0 0 160 160"><use href="#logo-mark"/></svg>
+      <div>
+        <div class="name">羅賓斯保險代理人</div>
+        <div class="sub">Design System v0.1</div>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">總覽</div>
+      <a class="nav-link" href="#intro"><span class="dot"></span>使用說明</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">品牌強制規範</div>
+      <a class="nav-link" href="#logo"><span class="dot"></span>標誌與淨空</a>
+      <a class="nav-link" href="#color"><span class="dot"></span>色彩系統</a>
+      <a class="nav-link" href="#type"><span class="dot"></span>字體</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">延伸提案</div>
+      <a class="nav-link" href="#semantic"><span class="dot"></span>語意色映射</a>
+      <a class="nav-link" href="#spacing"><span class="dot"></span>間距與斷點</a>
+      <a class="nav-link" href="#components"><span class="dot"></span>元件視覺對照</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">工程交付</div>
+      <a class="nav-link" href="#fieldmap"><span class="dot"></span>欄位對照表</a>
+      <a class="nav-link" href="#primevue"><span class="dot"></span>PrimeVue v4 Preset</a>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <section id="intro">
+      <h1 class="page-title">羅賓斯保險代理人 Design System</h1>
+      <p class="page-lead">依《品牌識別規範手冊 v1, 2026.06.18》整理，為新安東京商用車險線上試算報價系統的 PrimeVue v4 介面提供 token 依據。</p>
+      <div class="legend">
+        <div class="legend-item"><span class="badge badge-mandate">品牌強制</span> 手冊明訂，不可更動</div>
+        <div class="legend-item"><span class="badge badge-proposal">延伸提案</span> 手冊未涵蓋，由此文件補齊，待確認</div>
+      </div>
+      <div class="callout" style="background:var(--secondary-50); border-color:var(--secondary-300); color:var(--secondary-900);">
+        ✅ 已改用使用者提供的正式標誌檔（<span class="mono" style="font-family:'Roboto Mono',monospace;">design/assets/logo-mark-light.svg</span>、<span class="mono" style="font-family:'Roboto Mono',monospace;">logo-horizontal-light.svg</span>），色碼核對與手冊完全一致（#5A8CDC／#49BFBB）。<b>缺口：</b>手冊提到的「直式組合」目前沒有對應檔案；兩份檔名皆標註 <span class="mono" style="font-family:'Roboto Mono',monospace;">appearance=light</span>，暗示可能還有對應的深色/反白版本尚未提供——之後若要用在深色背景，需要跟你確認或索取。
+      </div>
+    </section>
+
+    <section id="logo">
+      <div class="section-title">標誌與淨空區域 <span class="badge badge-mandate">品牌強制</span></div>
+      <p class="section-desc">標誌由「R、雨傘、弓箭、C」四元素結合擬人化圓點構成，提供單獨標誌、直式組合、橫式組合三種配置。</p>
+
+      <div class="logo-grid" style="margin-bottom:16px;">
+        <div class="card logo-tile">
+          <svg width="64" height="64" viewBox="0 0 160 160"><use href="#logo-mark"/></svg>
+          <div class="cap">單獨標誌</div>
+        </div>
+        <div class="card logo-tile" style="display:flex; align-items:center; justify-content:center; background:var(--page-surface-2);">
+          <div style="font-size:12px; color:var(--page-text-muted);">缺少對應檔案<br>（直式組合）</div>
+        </div>
+        <div class="card logo-tile">
+          <svg width="180" height="28" viewBox="0 0 1038 160"><use href="#logo-horizontal"/></svg>
+          <div class="cap">橫式組合</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card pad">
+          <h4 style="font-size:13.5px;margin-bottom:14px;">淨空區域（以主幹線寬 x 為基準）</h4>
+          <div class="clearspace-demo">
+            <div class="zone">
+              <svg width="46" height="46" viewBox="0 0 160 160"><use href="#logo-mark"/></svg>
+            </div>
+          </div>
+          <p style="font-size:11.5px;color:var(--page-text-muted);margin-top:12px;">四周延伸 1x 範圍內禁止任何文字／圖形／背景線條侵入，不可與其他標誌過度擠壓。</p>
+        </div>
+
+        <div class="card pad">
+          <h4 style="font-size:13.5px;margin-bottom:14px;">最小尺寸限制</h4>
+          <table class="minsize-table">
+            <tr><th>配置</th><th>數位（寬度）</th><th>印刷（寬度）</th></tr>
+            <tr><td>單獨標誌</td><td>40 px</td><td>10 mm</td></tr>
+            <tr><td>直式組合</td><td>60 px</td><td>15 mm</td></tr>
+            <tr><td>橫式組合</td><td>150 px</td><td>53 mm</td></tr>
+          </table>
+          <p style="font-size:11.5px;color:var(--page-text-muted);margin-top:12px;">網頁／App 編排時，單獨標誌 icon 不得小於 40px（例如導覽列 favicon、載入畫面）。</p>
+        </div>
+      </div>
+
+      <div class="card pad" style="margin-top:16px;">
+        <h4 style="font-size:13.5px;margin-bottom:6px;">背景色彩應用</h4>
+        <p style="font-size:12px;color:var(--page-text-muted);">淺色背景用標準雙色；品牌色背景／深色背景須反白。</p>
+        <div class="bg-demo-row">
+          <div class="bg-demo" style="background:#fff;border-color:var(--page-border);"><svg width="30" height="30" viewBox="0 0 160 160"><use href="#logo-mark"/></svg></div>
+          <div class="bg-demo" style="background:var(--primary-600);"><svg width="30" height="30" viewBox="0 0 160 160" style="filter:brightness(0) invert(1);"><use href="#logo-mark"/></svg></div>
+          <div class="bg-demo" style="background:var(--secondary-600);"><svg width="30" height="30" viewBox="0 0 160 160" style="filter:brightness(0) invert(1);"><use href="#logo-mark"/></svg></div>
+          <div class="bg-demo" style="background:var(--neutral-950);"><svg width="30" height="30" viewBox="0 0 160 160" style="filter:brightness(0) invert(1);"><use href="#logo-mark"/></svg></div>
+        </div>
+        <div class="comp-row" style="margin-top:8px;">
+          <span style="font-size:10.5px;color:var(--page-text-muted);width:74px;text-align:center;">淺底雙色</span>
+          <span style="font-size:10.5px;color:var(--page-text-muted);width:74px;text-align:center;">品牌藍底反白*</span>
+          <span style="font-size:10.5px;color:var(--page-text-muted);width:74px;text-align:center;">品牌綠底反白*</span>
+          <span style="font-size:10.5px;color:var(--page-text-muted);width:74px;text-align:center;">深色底反白*</span>
+        </div>
+        <p style="font-size:11px;color:var(--page-text-muted);margin-top:8px;">*反白效果由 CSS filter 模擬（目前只有正式雙色版 SVG，尚無官方反白版本檔案）——正式使用前建議跟品牌方索取真正的反白標誌檔。</p>
+      </div>
+
+      <div class="card pad" style="margin-top:16px;">
+        <h4 style="font-size:13.5px;margin-bottom:4px;">錯誤應用範例（禁止）</h4>
+        <div class="misuse-grid">
+          <div class="misuse-tile">
+            <svg width="46" height="30" viewBox="0 0 160 160" style="transform:scaleX(1.8);"><use href="#logo-mark"/></svg>
+            <div class="x">✕ 比例不正確</div>
+          </div>
+          <div class="misuse-tile">
+            <div style="font-family:Georgia,serif;font-weight:700;color:var(--primary-600);font-size:15px;">羅賓斯保險代理人</div>
+            <div class="x">✕ 標準字換字體</div>
+          </div>
+          <div class="misuse-tile">
+            <svg width="36" height="36" viewBox="0 0 160 160" style="transform:rotate(20deg);"><use href="#logo-mark"/></svg>
+            <div class="x">✕ 傾斜標誌</div>
+          </div>
+          <div class="misuse-tile">
+            <svg width="36" height="36" viewBox="0 0 160 160" style="filter:hue-rotate(150deg) saturate(1.4);"><use href="#logo-mark"/></svg>
+            <div class="x">✕ 任意改色</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="color">
+      <div class="section-title">色彩系統 <span class="badge badge-mandate">品牌強制原色</span></div>
+      <p class="section-desc">品牌雙主色（羅賓斯藍／守護綠）與三輔助色為手冊指定的精確色票。下方每一階（50–950）為由品牌色延伸出的色階，供介面淺底色塊、hover、文字對比等情境選用；<span class="mono" style="font-family:'Roboto Mono',monospace;">AA</span> 徽章標示該色階作為「白底文字色」是否通過 WCAG AA（4.5:1）。</p>
+
+      <div class="ramp-block">
+        <div class="ramp-head"><h4>羅賓斯藍 · primary <span style="font-weight:400;color:var(--page-text-muted);">品牌值 #5a8cdc（500）</span></h4><span class="meta">Pantone 2129C · C70 M40 Y0 K0</span></div>
+        <div class="ramp-strip" id="ramp-primary"></div>
+      </div>
+      <div class="ramp-block">
+        <div class="ramp-head"><h4>守護綠 · secondary <span style="font-weight:400;color:var(--page-text-muted);">品牌值 #49bfbb（500）</span></h4><span class="meta">Pantone 3258C · C67 M4 Y35 K0</span></div>
+        <div class="ramp-strip" id="ramp-secondary"></div>
+      </div>
+      <div class="ramp-block">
+        <div class="ramp-head"><h4>向陽黃 · warn <span style="font-weight:400;color:var(--page-text-muted);">品牌值 #f5ee9e（300 附近）</span></h4><span class="meta">輔助色</span></div>
+        <div class="ramp-strip" id="ramp-warn"></div>
+      </div>
+      <div class="ramp-block">
+        <div class="ramp-head"><h4>珊瑚橘 · danger <span style="font-weight:400;color:var(--page-text-muted);">品牌值 #f06543（500）</span></h4><span class="meta">輔助色</span></div>
+        <div class="ramp-strip" id="ramp-danger"></div>
+      </div>
+      <div class="ramp-block">
+        <div class="ramp-head"><h4>石墨黑 · neutral <span style="font-weight:400;color:var(--page-text-muted);">品牌值 #31393c（900 附近）</span></h4><span class="meta">內文字／介面骨架指定色</span></div>
+        <div class="ramp-strip" id="ramp-neutral"></div>
+      </div>
+
+      <div class="callout" style="background:var(--primary-50); border-color:var(--primary-200); color:var(--primary-900);">
+        實測發現：手冊指定的品牌原色 <b>#5a8cdc</b>（對白 3.4:1）與 <b>#49bfbb</b>（對白 2.2:1）皆未達一般文字 WCAG AA 4.5:1。因此下方按鈕／連結等「文字用途」一律取用較深的 600–800 色階，品牌原色保留給大面積色塊、Logo、裝飾與 icon（僅需 3:1 之非文字門檻）使用——兩者並不衝突，是同一支色的不同深淺。
+      </div>
+    </section>
+
+    <section id="type">
+      <div class="section-title">字體 <span class="badge badge-mandate">品牌強制字體</span> <span class="badge badge-proposal">延伸提案字級</span></div>
+      <p class="section-desc">手冊指定繁中「思源黑體」、英數「Roboto」（品牌強制）。網頁環境以 Google Fonts 的 <span class="mono" style="font-family:'Roboto Mono',monospace;">Noto Sans TC</span>（思源黑體同源字族）對應。下方字級方法論參照使用者過往專案（開店趣 Design System）的做法：依斷點分 Desktop&amp;Pad／Mobile 兩套完整表，body 文字提供 thin/normal/heavy 三種字重，標題固定 600（延伸提案，手冊未定義）。</p>
+      <div class="font-sample-card">
+        <div class="font-sample">
+          <div class="glyphs" style="font-family:'Noto Sans TC';font-weight:700;">羅賓斯保險代理人</div>
+          <div class="glyphs" style="font-family:'Noto Sans TC';font-weight:400;font-size:20px;">試算報價 · 核保審查 · 要保書</div>
+          <div class="label">思源黑體 Noto Sans TC — Regular / Medium / Bold / Black</div>
+        </div>
+        <div class="font-sample">
+          <div class="glyphs" style="font-family:'Roboto';font-weight:700;">Robins Agent</div>
+          <div class="glyphs" style="font-family:'Roboto';font-weight:400;font-size:20px;">TagID · EstimateState · 0900-123-789</div>
+          <div class="label">Roboto — Regular / Medium / Bold</div>
+        </div>
+      </div>
+
+      <h4 style="font-size:14.5px;margin:30px 0 4px;">Desktop &amp; Pad（≥768px）</h4>
+      <p style="font-size:12px;color:var(--page-text-muted);margin:0 0 6px;">目前畫面實際使用中：h1／h2／h3／body-md-normal／caption。body-sm／body-lg／thin／heavy 先建好備用。</p>
+      <div class="type-row"><span class="tag">h1</span><span style="font-family:'Noto Sans TC';font-weight:600;font-size:26px;line-height:34px;">投保審查與文件下載</span><span class="spec">26 / 34 · 600</span></div>
+      <div class="type-row"><span class="tag">h2</span><span style="font-family:'Noto Sans TC';font-weight:600;font-size:22px;line-height:30px;">登入</span><span class="spec">22 / 30 · 600</span></div>
+      <div class="type-row"><span class="tag">h3</span><span style="font-family:'Noto Sans TC';font-weight:600;font-size:18px;line-height:26px;">方案清冊</span><span class="spec">18 / 26 · 600</span></div>
+      <div class="type-row"><span class="tag">body-lg</span><span style="font-family:'Noto Sans TC';font-weight:400;font-size:16px;line-height:24px;">上傳行照與駕照可自動辨識代入資料</span><span class="spec">16 / 24 · 300/400/600</span></div>
+      <div class="type-row"><span class="tag">body-md</span><span style="font-family:'Noto Sans TC';font-weight:400;font-size:14px;line-height:22px;">牌照號碼、駕照號碼（身分證）</span><span class="spec">14 / 22 · 300/400/600</span></div>
+      <div class="type-row"><span class="tag">body-sm</span><span style="font-family:'Noto Sans TC';font-weight:400;font-size:12px;line-height:18px;">依車種與 T 牌種類顯示可投保方案</span><span class="spec">12 / 18 · 300/400/600</span></div>
+      <div class="type-row"><span class="tag">caption</span><span style="font-family:'Noto Sans TC';font-weight:600;font-size:12px;line-height:18px;letter-spacing:.2px;">選填，可加快後續欄位填寫</span><span class="spec">12 / 18 · 600</span></div>
+
+      <h4 style="font-size:14.5px;margin:30px 0 4px;">Mobile（&lt;768px）</h4>
+      <p style="font-size:12px;color:var(--page-text-muted);margin:0 0 6px;">PRD 未要求手機支援，先建立備用；目前沒有手機寬度畫面驗證過，數值屬草案。</p>
+      <div class="type-row"><span class="tag">h1</span><span style="font-family:'Noto Sans TC';font-weight:600;font-size:20px;line-height:28px;">投保審查與文件下載</span><span class="spec">20 / 28 · 600</span></div>
+      <div class="type-row"><span class="tag">h2</span><span style="font-family:'Noto Sans TC';font-weight:600;font-size:18px;line-height:26px;">登入</span><span class="spec">18 / 26 · 600</span></div>
+      <div class="type-row"><span class="tag">h3</span><span style="font-family:'Noto Sans TC';font-weight:600;font-size:16px;line-height:24px;">方案清冊</span><span class="spec">16 / 24 · 600</span></div>
+      <div class="type-row"><span class="tag">body-lg</span><span style="font-family:'Noto Sans TC';font-weight:400;font-size:14px;line-height:22px;">上傳行照與駕照可自動辨識代入資料</span><span class="spec">14 / 22 · 300/400/600</span></div>
+      <div class="type-row"><span class="tag">body-md</span><span style="font-family:'Noto Sans TC';font-weight:400;font-size:12px;line-height:20px;">牌照號碼、駕照號碼（身分證）</span><span class="spec">12 / 20 · 300/400/600</span></div>
+      <div class="type-row"><span class="tag">body-sm</span><span style="font-family:'Noto Sans TC';font-weight:400;font-size:11px;line-height:20px;">依車種與 T 牌種類顯示可投保方案</span><span class="spec">11 / 20 · 300/400/600</span></div>
+      <div class="type-row"><span class="tag">caption</span><span style="font-family:'Noto Sans TC';font-weight:600;font-size:11px;line-height:18px;letter-spacing:.2px;">選填，可加快後續欄位填寫</span><span class="spec">11 / 18 · 600</span></div>
+    </section>
+
+    <section id="semantic">
+      <div class="section-title">語意色映射 <span class="badge badge-proposal">延伸提案</span></div>
+      <p class="section-desc">品牌手冊沒有定義成功／警告／錯誤／資訊等語意色。依你的決定「用品牌輔助色接近」，映射如下——石墨黑本就是手冊指定的內文字色，直接沿用。</p>
+      <div class="overflow-x">
+      <table class="semantic-table">
+        <tr><th>語意</th><th>來源</th><th>用途</th><th>文字安全色階</th></tr>
+        <tr><td><span class="swab" style="background:var(--primary-600);"></span>primary</td><td>羅賓斯藍</td><td>主要操作、連結、當前步驟</td><td class="mono" style="font-family:'Roboto Mono',monospace;">600 (#275fb9) · 6.1:1</td></tr>
+        <tr><td><span class="swab" style="background:var(--primary-600);"></span>info</td><td>羅賓斯藍（沿用 primary）</td><td>報價中／處理中提示</td><td class="mono" style="font-family:'Roboto Mono',monospace;">600 · 6.1:1</td></tr>
+        <tr><td><span class="swab" style="background:var(--secondary-800);"></span>success</td><td>守護綠</td><td>核保通過、送出成功</td><td class="mono" style="font-family:'Roboto Mono',monospace;">800 (#256a67) · 6.3:1</td></tr>
+        <tr><td><span class="swab" style="background:var(--warn-400);"></span>warn</td><td>向陽黃</td><td>需人工查核、待確認</td><td class="mono" style="font-family:'Roboto Mono',monospace;">深色文字於 400 底色 · 15.6:1（黃色系用深字，不用白字）</td></tr>
+        <tr><td><span class="swab" style="background:var(--danger-600);"></span>danger</td><td>珊瑚橘</td><td>核保不通過、驗證錯誤</td><td class="mono" style="font-family:'Roboto Mono',monospace;">600 (#d03611) · 5.0:1</td></tr>
+        <tr><td><span class="swab" style="background:var(--neutral-800);"></span>neutral</td><td>石墨黑</td><td>已結案／已封存（799 已出單日結）</td><td class="mono" style="font-family:'Roboto Mono',monospace;">900 (#2e3538) · 12.4:1</td></tr>
+      </table>
+      </div>
+
+      <h4 style="font-size:13.5px;margin:26px 0 10px;">EstimateState（7 種報價狀態）標籤映射</h4>
+      <div class="overflow-x">
+      <table class="state-table">
+        <tr><th>代碼</th><th>意義</th><th>標籤</th></tr>
+        <tr><td class="mono" style="font-family:'Roboto Mono',monospace;">100</td><td>報價中</td><td><span class="pv-tag tag-info"><span class="dot"></span>報價中</span></td></tr>
+        <tr><td class="mono" style="font-family:'Roboto Mono',monospace;">200</td><td>拒保</td><td><span class="pv-tag tag-danger"><span class="dot"></span>拒保</span></td></tr>
+        <tr><td class="mono" style="font-family:'Roboto Mono',monospace;">215</td><td>審核不通過</td><td><span class="pv-tag tag-danger"><span class="dot"></span>審核不通過</span></td></tr>
+        <tr><td class="mono" style="font-family:'Roboto Mono',monospace;">250</td><td>核保中（需人工查核）</td><td><span class="pv-tag tag-warn"><span class="dot"></span>需人工查核</span></td></tr>
+        <tr><td class="mono" style="font-family:'Roboto Mono',monospace;">500</td><td>自動報價通過</td><td><span class="pv-tag tag-success"><span class="dot"></span>通過核保</span></td></tr>
+        <tr><td class="mono" style="font-family:'Roboto Mono',monospace;">510</td><td>報價通過</td><td><span class="pv-tag tag-success"><span class="dot"></span>報價通過</span></td></tr>
+        <tr><td class="mono" style="font-family:'Roboto Mono',monospace;">799</td><td>已出單日結</td><td><span class="pv-tag tag-neutral"><span class="dot"></span>已出單日結</span></td></tr>
+      </table>
+      </div>
+    </section>
+
+    <section id="spacing">
+      <div class="section-title">間距、圓角與斷點 <span class="badge badge-proposal">延伸提案</span></div>
+      <p class="section-desc">手冊未定義。以 4px 為基準訂出間距刻度；圓角呼應標誌「圓潤而俐落」的視覺語彙，採中等圓角而非全圓。</p>
+      <div class="grid-2">
+        <div class="card pad">
+          <h4 style="font-size:13.5px;margin-bottom:12px;">間距刻度</h4>
+          <div class="spacing-row"><span class="name">space-1</span><span class="px">4px</span><div class="spacing-bar" style="width:4px;"></div></div>
+          <div class="spacing-row"><span class="name">space-2</span><span class="px">8px</span><div class="spacing-bar" style="width:8px;"></div></div>
+          <div class="spacing-row"><span class="name">space-3</span><span class="px">12px</span><div class="spacing-bar" style="width:12px;"></div></div>
+          <div class="spacing-row"><span class="name">space-4</span><span class="px">16px</span><div class="spacing-bar" style="width:16px;"></div></div>
+          <div class="spacing-row"><span class="name">space-6</span><span class="px">24px</span><div class="spacing-bar" style="width:24px;"></div></div>
+          <div class="spacing-row"><span class="name">space-8</span><span class="px">32px</span><div class="spacing-bar" style="width:32px;"></div></div>
+          <div class="spacing-row"><span class="name">space-12</span><span class="px">48px</span><div class="spacing-bar" style="width:48px;"></div></div>
+        </div>
+        <div class="card pad">
+          <h4 style="font-size:13.5px;margin-bottom:12px;">響應式斷點（PRD 8.2：桌機為主，支援平板 RWD）</h4>
+          <div class="bp-grid">
+            <div class="card bp-card"><div class="w">&lt;768</div><div class="n">mobile（選配）</div></div>
+            <div class="card bp-card"><div class="w">768–1279</div><div class="n">tablet（PRD 必要）</div></div>
+            <div class="card bp-card"><div class="w">≥1280</div><div class="n">desktop（主要目標）</div></div>
+          </div>
+          <h4 style="font-size:13.5px;margin:20px 0 10px;">圓角刻度</h4>
+          <div class="comp-row">
+            <div style="width:44px;height:32px;background:var(--primary-100);border-radius:4px;"></div><span class="mono" style="font-family:'Roboto Mono',monospace;font-size:12px;">sm 4px</span>
+            <div style="width:44px;height:32px;background:var(--primary-100);border-radius:8px;"></div><span class="mono" style="font-family:'Roboto Mono',monospace;font-size:12px;">md 8px</span>
+            <div style="width:44px;height:32px;background:var(--primary-100);border-radius:14px;"></div><span class="mono" style="font-family:'Roboto Mono',monospace;font-size:12px;">lg 14px</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="components">
+      <div class="section-title">元件視覺對照 <span class="badge badge-proposal">延伸提案</span></div>
+      <p class="section-desc">以 token 手工還原 PrimeVue Aura 風格的視覺對照（非即時 PrimeVue 元件），供快速檢視色彩／字級／間距套用效果。</p>
+
+      <div class="card pad comp-block">
+        <h4>按鈕（Button）</h4>
+        <div class="comp-row">
+          <button class="pv-btn primary">送出投保</button>
+          <button class="pv-btn secondary">儲存草稿</button>
+          <button class="pv-btn warn">需人工查核</button>
+          <button class="pv-btn danger">刪除詢價</button>
+          <button class="pv-btn outlined">上一步</button>
+          <button class="pv-btn text">查看說明</button>
+          <button class="pv-btn primary" disabled>送出投保（disabled）</button>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>表單欄位（含錯誤／禁用狀態）</h4>
+        <div class="fields-row">
+          <div class="field">
+            <label>牌照號碼 <span style="color:var(--danger-600);">*</span></label>
+            <input type="text" value="AAA-0001">
+          </div>
+          <div class="field error">
+            <label>身分證字號 <span style="color:var(--danger-600);">*</span></label>
+            <input type="text" value="A12345678">
+            <div class="err-msg">⚠ 身分證字號格式不正確</div>
+          </div>
+          <div class="field disabled">
+            <label>強制險到期日</label>
+            <input type="text" value="2027-08-01" disabled>
+          </div>
+          <div class="field">
+            <label>車輛種類代號</label>
+            <select><option>15 計程車</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>六階段流程（Stepper）</h4>
+        <div class="stepper">
+          <div class="step done"><div class="circle">✓</div><div class="label">險種選擇</div></div>
+          <div class="step-line done"></div>
+          <div class="step done"><div class="circle">✓</div><div class="label">車輛資料</div></div>
+          <div class="step-line done"></div>
+          <div class="step current"><div class="circle">3</div><div class="label">被保險人資料</div></div>
+          <div class="step-line"></div>
+          <div class="step todo"><div class="circle">4</div><div class="label">要保人資料</div></div>
+          <div class="step-line"></div>
+          <div class="step todo"><div class="circle">5</div><div class="label">KYC 及其他</div></div>
+          <div class="step-line"></div>
+          <div class="step todo"><div class="circle">6</div><div class="label">審查與下載</div></div>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>案件總覽 Tab 切換列 <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 依PRD 6.7，三個Tab對應不同下載項是否有值</span></h4>
+        <div class="tab-bar" style="margin-bottom:0;">
+          <button class="tab-btn active">要保書＆繳費單</button>
+          <button class="tab-btn">報價單</button>
+          <button class="tab-btn">失敗</button>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>案件總覽（DataTable，依PRD 6.7實際欄位）</h4>
+        <div class="overflow-x">
+        <table class="dtable">
+          <tr><th>流水號</th><th>使用者帳號</th><th>取得試算結果時間</th><th>車種</th><th>車牌號碼</th><th>方案</th><th>要保人ID</th><th>要保人姓名</th><th>下載</th></tr>
+          <tr>
+            <td class="mono" style="font-family:'Roboto Mono',monospace;">202609150001</td>
+            <td>wang.xm@stockfeel.com.tw</td>
+            <td>2026/09/15 10:30</td>
+            <td>15</td>
+            <td>AAA-0001</td>
+            <td>T15-100200-300</td>
+            <td>A123456789</td>
+            <td>王小明</td>
+            <td>
+              <button class="dl-btn">下載要保書</button>
+              <button class="dl-btn">下載繳費單</button>
+              <button class="dl-btn" disabled title="本案未產製此文件">下載報價單</button>
+            </td>
+          </tr>
+        </table>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>角色權限差異（PRD 6.8） <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 這不是獨立畫面，是案件總覽頁依登入角色決定「刪除」是否顯示；目前實際畫面身分固定是業務人員(普通權限)，只會呈現左邊這種</span></h4>
+        <div class="comp-row" style="align-items:flex-start; gap:32px;">
+          <div>
+            <div class="state-label">普通權限（業務人員）</div>
+            <div style="display:flex; gap:6px;">
+              <button class="dl-btn">下載要保書</button>
+              <button class="dl-btn">下載繳費單</button>
+            </div>
+          </div>
+          <div>
+            <div class="state-label">管理權限（管理人員）</div>
+            <div style="display:flex; gap:6px;">
+              <button class="dl-btn">下載要保書</button>
+              <button class="dl-btn">下載繳費單</button>
+              <button class="dl-btn" style="border-color:var(--danger-300); color:var(--danger-700);">刪除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>App Header <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 點擊右上角姓名/頭像展開帳號選單（案件總覽／登出），這裡直接展示展開後的狀態</span></h4>
+        <div class="app-header-demo" style="position:relative;">
+          <div class="brand">
+            <svg viewBox="0 0 1038 160"><use href="#logo-horizontal"/></svg>
+          </div>
+          <div class="user" style="position:relative;"><div class="user-text" style="display:flex;flex-direction:column;align-items:flex-end;line-height:1.35;"><div style="font-size:11.5px;font-weight:400;color:var(--neutral-500);">wang.xm@stockfeel.com.tw</div><div style="font-size:11.5px;color:var(--page-text-muted);">業務人員</div></div><div class="avatar">王</div>
+            <div class="account-menu open" style="position:absolute; top:calc(100% + 8px); right:0;">
+              <div class="account-menu-item">案件總覽</div>
+              <div class="account-menu-item">登出</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>OCR 上傳卡 <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 用於階段1／3／4 的證件上傳，樣式與「1·險種選擇」一致，不用 emoji</span></h4>
+        <p style="font-size:11.5px;color:var(--page-text-muted);margin:0 0 14px;">五種狀態不會同時出現在同一顆上傳格子上，這裡並列列出讓工程知道每種狀態長怎樣。逾時／失敗時卡片本身仍維持「待辨識」樣式(可重新點擊OCR辨識重試)，結果訊息顯示在 OCR 辨識按鈕旁。</p>
+        <div class="ocr-state-grid">
+          <div>
+            <div class="state-label">1 空狀態</div>
+            <div class="ocr-dropzone compact"><div class="title">上傳行照</div></div>
+          </div>
+          <div>
+            <div class="state-label">2 待辨識</div>
+            <div class="ocr-dropzone pending compact">
+              <div class="thumb"><img src="assets/行照.jpg" alt="行照證件對照預覽"></div>
+              <div>
+                <div class="title">行照.jpg</div>
+                <div class="ocr-status" style="background:var(--neutral-100); color:var(--neutral-600);">待辨識</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="state-label">3 辨識完成</div>
+            <div class="ocr-dropzone filled compact">
+              <div class="thumb"><img src="assets/行照.jpg" alt="行照證件對照預覽"></div>
+              <div>
+                <div class="title"><span class="ocr-check-icon">✓</span>行照.jpg</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="state-label">4 辨識逾時（&gt;5秒）</div>
+            <div class="ocr-dropzone pending compact" style="margin-bottom:8px;">
+              <div class="thumb"><img src="assets/行照.jpg" alt="行照證件對照預覽"></div>
+              <div><div class="title">行照.jpg</div></div>
+            </div>
+            <span class="ocr-status warn">⚠ 辨識服務忙碌，請稍後重試或手動輸入</span>
+          </div>
+          <div>
+            <div class="state-label">5 辨識失敗</div>
+            <div class="ocr-dropzone pending compact" style="margin-bottom:8px;">
+              <div class="thumb"><img src="assets/行照.jpg" alt="行照證件對照預覽"></div>
+              <div><div class="title">行照.jpg</div></div>
+            </div>
+            <span class="ocr-status fail">✕ 辨識失敗，請重新上傳清晰圖檔或手動輸入</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>廠代碼工具查詢狀態 <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 查詢在階段1觸發，結果分別呈現在階段1與階段2</span></h4>
+        <p style="font-size:11.5px;color:var(--page-text-muted);margin:0 0 14px;">階段1（查詢進行中／查無此車牌）：</p>
+        <div class="comp-row">
+          <span class="ocr-status busy"><span class="spin"></span> 廠代碼工具查詢中…</span>
+          <span class="ocr-status fail">✕ 查無此廠牌車型資料，請確認車牌後手動填寫</span>
+        </div>
+        <p style="font-size:11.5px;color:var(--page-text-muted);margin:14px 0 8px;">階段2（查詢結果帶入車輛規格欄位）：</p>
+        <div class="comp-row">
+          <span class="pv-tag tag-success"><span class="dot"></span>已由廠代碼工具查詢帶入</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>查無此廠牌車型資料，相關欄位請手動填寫</span>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>方案清冊 Dropdown 區塊 <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 用於階段1，PlanCode 每組各自一個Dropdown，最多可新增3組</span></h4>
+        <div class="plan-block">
+          <select><option>T15-100200-300　強制險＋任意險（示例方案 A）</option></select>
+          <span class="plan-tag">強+任</span>
+        </div>
+        <div class="plan-block">
+          <select><option>T15-21　單一強制險（示例方案 B）</option></select>
+          <span class="plan-tag">單強</span>
+          <button class="plan-remove" aria-label="移除方案">✕</button>
+        </div>
+        <button class="pv-btn text" style="margin-top:2px;">＋ 新增方案（最多 3 組）</button>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>一般檔案附件 File Dropzone <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 用於階段5，單純附加/移除，無OCR辨識，跟證件上傳卡樣式區隔</span></h4>
+        <div class="comp-row">
+          <div class="file-dropzone" style="width:200px;"><div class="title">上傳長租合約</div></div>
+          <div class="file-dropzone attached" style="width:200px;"><div class="title">勘車照.jpg</div><button class="remove-btn" aria-label="移除附件">✕</button></div>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>阻擋提示 Modal <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 用於階段1／2，選擇不支援的車輛種類代號(21)時彈出，須改選其他值才能關閉/繼續</span></h4>
+        <div style="position:relative; background:var(--page-surface-2); border-radius:10px; padding:40px 20px; display:flex; justify-content:center;">
+          <div class="modal-panel" style="position:static; box-shadow:0 8px 24px rgba(0,0,0,.12);">
+            <div class="modal-icon">!</div>
+            <p>新安東京不支援此車輛種類代號</p>
+            <button class="pv-btn primary">我知道了</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>車輛資料送出結果 <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 階段2「下一步」實際畫面只會走成功路徑並前往階段3；以下5種API錯誤碼是PRD情境表列出的送出後結果，畫面上不會有按鈕可切換，這裡集中收錄供核對</span></h4>
+        <div class="comp-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
+          <span class="pv-tag tag-success"><span class="dot"></span>資料驗證通過</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>車牌[AAA-0001]與車種不一致（C2102）</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>排氣量與車種不一致（C2103）</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>輸入車種[15]與監理站資料不符[07]，請確認後再報價（C2106）</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>電動車不可投保，本案件標記為不可投保（C2116）</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>監理站查無資料，請確認車輛後重試（C2117）</span>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>審查與下載送出結果 <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 階段6「送出投保」實際畫面固定示範「通過核保」這條happy path；以下是PRD情境表列出的其餘審查結果，畫面上不會有按鈕可切換，這裡集中收錄供核對</span></h4>
+        <div class="comp-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
+          <span class="pv-tag tag-success"><span class="dot"></span>通過核保（500）— 提供下載要保書、繳費單</span>
+          <span class="pv-tag tag-warn"><span class="dot"></span>需人工查核（250／C2001）— 提供下載報價單，等待保險公司通知</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>資恐名單，停止交易（C2101）— 案件標記為終止，不可重送</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>其他C21xx審核訊息 — 顯示API原文訊息，可返回修正後重送</span>
+          <span class="pv-tag tag-warn"><span class="dot"></span>系統暫時無法使用（E9999）— 已填資料保留，可重試</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>資料初始化錯誤（C9999）— 請聯繫系統管理員，記錄錯誤日誌</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>本案經評估後不予承保（EstimateState=200）</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>審核不通過（EstimateState=215）— 附ErrorMessage原文</span>
+          <span class="pv-tag tag-warn"><span class="dot"></span>連線逾時（&gt;30秒）— 請確認案件狀態後再重送，不自動重試</span>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>阻礙提示 Blocker Note <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 標示畫面上尚待確認的 PRD↔SD 落差</span></h4>
+        <div class="blocker-note">
+          <span>🚧</span>
+          <div><b>已知阻礙：</b>用於提醒欄位背後有未定案的規格問題（例如方案清冊、生效日門檻），示意資料與真實邏輯待補齊。</div>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>登入狀態提示 <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 「00·登入頁」的邊界狀態，每次只會出現其中一種，這裡集中收錄方便查閱</span></h4>
+        <div class="grid-2">
+          <div>
+            <div class="comp-row" style="margin-bottom:10px;"><span class="pv-tag tag-danger"><span class="dot"></span>網域不允許</span></div>
+            <p style="font-size:12px;color:var(--page-text-muted);margin:0 0 8px;">SSO 回傳的 Email 網域不含 stockfeel 時顯示。</p>
+            <div class="blocker-note" style="background:var(--danger-50); border-color:var(--danger-200); color:var(--danger-800);">
+              <span>⚠</span>
+              <div>此帳號網域不允許登入，請使用 stockfeel 網域帳號，或聯繫系統管理員。</div>
+            </div>
+          </div>
+          <div>
+            <div class="comp-row" style="margin-bottom:10px;"><span class="pv-tag tag-warn"><span class="dot"></span>尚未啟用</span></div>
+            <p style="font-size:12px;color:var(--page-text-muted);margin:0 0 8px;">SSO 驗證通過，但帳號還沒被賦予「普通」或「管理」角色時顯示，無法進入系統功能。</p>
+            <div class="blocker-note">
+              <span>⏳</span>
+              <div>帳號已通過驗證，但尚未被設定使用角色，請聯繫管理人員為您設定後再登入。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="fieldmap">
+      <div class="section-title">欄位對照表 <span class="badge badge-proposal">工程交付</span></div>
+      <p class="section-desc">畫面欄位名稱對照新安東京 API 欄位（RobinsProposalCarPolicy）。權威定義以 spec-flow 登記的 SD 文件為準，這裡只是跨畫面查表用，每加一個階段畫面就補一張表。</p>
+
+      <h4 style="font-size:14px;margin:22px 0 10px;">1. 險種選擇</h4>
+      <div class="overflow-x">
+      <table class="semantic-table">
+        <tr><th>畫面欄位</th><th>API 欄位</th><th>型態／規則</th><th>備註</th></tr>
+        <tr><td>車牌前段＋車牌後段</td><td class="mono" style="font-family:'Roboto Mono',monospace;">TagID</td><td>string(12)</td><td>送出前組合為單一欄位</td></tr>
+        <tr><td>駕照號碼（身分證）</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredID</td><td>string(10)，需通過身分證檢核演算法</td><td>此階段先暫存，實際送出於被保險人資料階段</td></tr>
+        <tr><td>駕照用途</td><td class="mono" style="font-family:'Roboto Mono',monospace;">—（無對應API，畫面邏輯用）</td><td>radio，選填</td><td>決定 OCR 姓名/性別/生日/住址是否代入階段3被保險人資料；這4個欄位本身不在階段1顯示</td></tr>
+        <tr><td>車輛種類代號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">VehicleType</td><td>Dropdown，必填</td><td>07/14/15；21 為預留碼，選擇時阻擋</td></tr>
+        <tr><td>T 牌種類</td><td class="mono" style="font-family:'Roboto Mono',monospace;">IsDiversifiedTaxi</td><td>radio，必填</td><td>Y:多元／N:小黃或不適用</td></tr>
+        <tr><td>方案清冊（每組各一個 Dropdown）</td><td class="mono" style="font-family:'Roboto Mono',monospace;">PlanCode</td><td>Dropdown，必填，最多新增3組</td><td>依車種與 T 牌種類顯示可投保方案；系統仍逐筆送出</td></tr>
+        <tr><td>強制險生效日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">CompelDateBegin</td><td>YYYYMMDD，條件必填</td><td>選擇的方案中有強制險時才需要，其餘停用</td></tr>
+        <tr><td>強制險到期日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">CompelDateEnd</td><td>唯讀</td><td>生效日 + 1 年，系統自動計算</td></tr>
+        <tr><td>任意險生效日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ChoiceDateBegin</td><td>YYYYMMDD，條件必填</td><td>選擇的方案中有任意險時才需要，其餘停用</td></tr>
+        <tr><td>任意險到期日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ChoiceDateEnd</td><td>唯讀</td><td>生效日 + 1 年，系統自動計算</td></tr>
+      </table>
+      </div>
+
+      <h4 style="font-size:14px;margin:22px 0 10px;">2. 車輛資料</h4>
+      <div class="overflow-x">
+      <table class="semantic-table">
+        <tr><th>畫面欄位</th><th>API 欄位</th><th>型態／規則</th><th>備註</th></tr>
+        <tr><td>牌照號碼</td><td class="mono" style="font-family:'Roboto Mono',monospace;">TagID</td><td>text，必填</td><td>由階段1帶入，可修正</td></tr>
+        <tr><td>車輛種類代號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">VehicleType</td><td>Dropdown，必填</td><td>由階段1帶入；21選擇時彈窗阻擋且「下一步」停用</td></tr>
+        <tr><td>T 牌種類</td><td class="mono" style="font-family:'Roboto Mono',monospace;">IsDiversifiedTaxi</td><td>radio，必填</td><td>由階段1帶入；車種非07/15時鎖定「不適用」</td></tr>
+        <tr><td>廠牌車型代號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">BrandID</td><td>string(8)，唯讀，必填</td><td>廠代碼工具自動代入，查無資料回E1501</td></tr>
+        <tr><td>廠牌／車系／車款</td><td class="mono" style="font-family:'Roboto Mono',monospace;">—（無對應API，畫面選項用）</td><td>Dropdown連動，必填</td><td>選項清單來源為保發中心資料，PRD/SD未附加，目前為示意資料（已知阻礙項）</td></tr>
+        <tr><td>出廠年月</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ManufacturedDate</td><td>date picker，必填</td><td>廠代碼工具可自動代入，錯誤對應C0008/C2112</td></tr>
+        <tr><td>排氣量／馬力</td><td class="mono" style="font-family:'Roboto Mono',monospace;">Cylinder</td><td>number,decimal，必填</td><td>錯誤對應C0006/C2103/C2114；為空時前端阻擋</td></tr>
+        <tr><td>重置價格</td><td class="mono" style="font-family:'Roboto Mono',monospace;">VehiclePrice</td><td>number,int，必填</td><td>廠代碼工具可自動代入</td></tr>
+        <tr><td>配備金額</td><td class="mono" style="font-family:'Roboto Mono',monospace;">VehicleEquipmentPrice</td><td>number,decimal，選填</td><td>—</td></tr>
+        <tr><td>原始發照日期</td><td class="mono" style="font-family:'Roboto Mono',monospace;">RegistrationIssueDate</td><td>date picker，必填</td><td>OCR辨識行照可自動代入，若無手動填寫；錯誤對應C0009/C2113（PRD欄位表誤植為駕照OCR，以6.1功能描述之行照OCR為準）</td></tr>
+        <tr><td>乘載單位</td><td class="mono" style="font-family:'Roboto Mono',monospace;">TransportUnit</td><td>radio，必填</td><td>預設：1(乘載人數)</td></tr>
+        <tr><td>載運人數</td><td class="mono" style="font-family:'Roboto Mono',monospace;">TransportAmount</td><td>Dropdown 2~9，必填</td><td>OCR辨識行照可自動代入，若無手動填寫；錯誤對應C0007</td></tr>
+        <tr><td>引擎號碼／車身號碼</td><td class="mono" style="font-family:'Roboto Mono',monospace;">EngineID（同一API欄位）</td><td>text(25)，條件必填</td><td>兩者擇一，皆空時前端阻擋</td></tr>
+        <tr><td>配備1~6、9</td><td class="mono" style="font-family:'Roboto Mono',monospace;">Equipment1~Equipment6,Equipment9</td><td>checkbox，選填</td><td>勾選1未勾0，預設0</td></tr>
+        <tr><td>配備-其他說明</td><td class="mono" style="font-family:'Roboto Mono',monospace;">Nequipment9</td><td>text(50)，條件必填</td><td>Equipment9勾選時前端阻擋必填</td></tr>
+      </table>
+      </div>
+
+      <h4 style="font-size:14px;margin:22px 0 10px;">3. 被保險人資料</h4>
+      <div class="overflow-x">
+      <table class="semantic-table">
+        <tr><th>畫面欄位</th><th>API 欄位</th><th>型態／規則</th><th>備註</th></tr>
+        <tr><td>被保險人性質</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredType</td><td>radio，必填</td><td>1:國內自然人／2:國內法人，切換時動態顯示/隱藏對應欄位</td></tr>
+        <tr><td>被保險人ID</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredID</td><td>string(10)，必填</td><td>可由階段1(駕照號碼)代入；自然人做身分證檢核演算法驗證(E0001/E0002)</td></tr>
+        <tr><td>姓名／公司名稱</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredName</td><td>string(50)，必填</td><td>可由階段1(駕照OCR姓名)代入（E0003）</td></tr>
+        <tr><td>生日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredBirthday</td><td>date picker，條件必填</td><td>自然人必填，法人空白；需≥18足歲(C3009)；可由階段1代入</td></tr>
+        <tr><td>性別</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredSex</td><td>唯讀，條件必填</td><td>可由階段1代入；若無則依身分證第2碼自動判斷(1/8=男,2/9=女)</td></tr>
+        <tr><td>婚姻</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredMarriageType</td><td>radio，條件必填</td><td>自然人必填，預設未婚；法人空白</td></tr>
+        <tr><td>法人代表人</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredDeputy</td><td>string(25)，條件必填</td><td>法人必填，自然人空白</td></tr>
+        <tr><td>郵遞區號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredZip</td><td>唯讀，必填</td><td>依縣市/鄉鎮市區自動代入，示意資料(2縣市)，待正式郵遞區號對照表</td></tr>
+        <tr><td>地址(縣市/鄉鎮市區/詳細地址)</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredAddress</td><td>Dropdown+Dropdown+text，必填</td><td>可由階段1(駕照OCR住址)代入；為空時錯誤(C0016)</td></tr>
+        <tr><td>Email</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredEmail</td><td>email，選填</td><td>—</td></tr>
+        <tr><td>手機號碼</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredMobilePhone</td><td>string(20)，必填</td><td>09xx-xxx-xxx</td></tr>
+        <tr><td>聯繫電話</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredTel</td><td>string(20)，選填</td><td>市話含區碼</td></tr>
+        <tr><td>職業別</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredOccupy</td><td>radio，必填</td><td>預設一般職(N)；(E0011/E0012)</td></tr>
+        <tr><td>高風險職業代號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredOccupyCode</td><td>Dropdown，條件必填</td><td>非一般職時必填(E0014)，一般職時不可有值(E0013)；PRD列19碼，SD另有時效性補充碼(已知阻礙項#3)</td></tr>
+        <tr><td>國別註記</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredCntry</td><td>Dropdown，必填</td><td>預設9本國人；(E0015/E0016)</td></tr>
+        <tr><td>國別名稱</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredCntryName</td><td>string(25)，條件必填</td><td>選「其他」時必填，現行僅開放本國人</td></tr>
+        <tr><td>保單寄送方式</td><td class="mono" style="font-family:'Roboto Mono',monospace;">send_way</td><td>radio，必填</td><td>預設紙本；(C3105)</td></tr>
+      </table>
+      </div>
+
+      <h4 style="font-size:14px;margin:22px 0 10px;">4. 要保人資料</h4>
+      <p style="font-size:11.5px;color:var(--page-text-muted);margin:0 0 10px;">跟階段3幾乎同結構，但<b>沒有「婚姻」欄位</b>（PRD 6.4未列），多了「與被保險人關係」。勾選「要保人與被保險人為同一人」會鎖定「要保人性質」與「與被保險人關係」(=本人)，並一次性代入階段3的示意資料(非連動)。</p>
+      <div class="overflow-x">
+      <table class="semantic-table">
+        <tr><th>畫面欄位</th><th>API 欄位</th><th>型態／規則</th><th>備註</th></tr>
+        <tr><td>與被保險人為同一人</td><td class="mono" style="font-family:'Roboto Mono',monospace;">—（畫面邏輯用）</td><td>checkbox</td><td>勾選時鎖定性質/關係並一鍵代入階段3資料；取消則清空並改用系統預設值</td></tr>
+        <tr><td>與被保險人關係</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantRelationDescription</td><td>Dropdown 本人/配偶/父母/子女/其他，必填</td><td>同一人時回傳「本人」；非本人但ID與被保險人相同→錯誤(E0020，見下方阻礙項)</td></tr>
+        <tr><td>關係補充說明</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantRelationDescription(併入)</td><td>text，條件必填</td><td>關係選「其他」時必填</td></tr>
+        <tr><td>要保人性質</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantType</td><td>radio，必填</td><td>同一人時鎖定並代入被保險人性質</td></tr>
+        <tr><td>要保人ID</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantID</td><td>string(10)，必填</td><td>同一人時代入；自然人做身分證檢核；關係=本人但ID與被保險人不同→錯誤(E0017)</td></tr>
+        <tr><td>姓名／公司名稱</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantName</td><td>string(50)，必填</td><td>同一人時代入</td></tr>
+        <tr><td>生日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantBirthday</td><td>date picker，條件必填</td><td>自然人必填，法人空白；同一人時代入</td></tr>
+        <tr><td>性別</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantSex</td><td>唯讀，條件必填</td><td>依身分證第2碼自動判斷(1/8=男,2/9=女)；<b>無婚姻欄位</b></td></tr>
+        <tr><td>法人代表人</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantDeputy</td><td>string(25)，條件必填</td><td>法人必填</td></tr>
+        <tr><td>郵遞區號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantZip</td><td>唯讀，必填</td><td>依縣市/鄉鎮市區自動代入，示意資料同階段3</td></tr>
+        <tr><td>地址</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantAddress</td><td>Dropdown+Dropdown+text，必填</td><td>同一人時代入</td></tr>
+        <tr><td>Email</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantEmail</td><td>email，選填</td><td>—</td></tr>
+        <tr><td>手機號碼</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantMobilePhone</td><td>string(20)，必填</td><td>同一人時代入</td></tr>
+        <tr><td>聯繫電話</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantTel</td><td>string(20)，選填</td><td>—</td></tr>
+        <tr><td>職業別</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantOccupy</td><td>radio，必填</td><td>若無代入預設一般職(N)</td></tr>
+        <tr><td>高風險職業代號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantOccupyCode</td><td>Dropdown，條件必填</td><td>PRD列19碼，同階段3已知阻礙項#3</td></tr>
+        <tr><td>國別註記</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantCntry</td><td>Dropdown，必填</td><td>若無代入預設9本國人</td></tr>
+        <tr><td>國別名稱</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantCntryName</td><td>string(25)，條件必填</td><td>選「其他」時必填，現行僅開放本國人</td></tr>
+      </table>
+      </div>
+
+      <h4 style="font-size:14px;margin:22px 0 10px;">5. KYC 及其他</h4>
+      <p style="font-size:11.5px;color:var(--page-text-muted);margin:0 0 10px;">6個欄位全部選填，跟前4階段沒有資料代入關聯。頁尾CTA為「送出投保」（非「下一步」），對應PRD 6.5情境表用詞。</p>
+      <div class="overflow-x">
+      <table class="semantic-table">
+        <tr><th>畫面欄位</th><th>API 欄位</th><th>型態／規則</th><th>備註</th></tr>
+        <tr><td>保險費來源</td><td class="mono" style="font-family:'Roboto Mono',monospace;">PremSource</td><td>Dropdown，選填</td><td>預設薪資</td></tr>
+        <tr><td>長租合約／勘車照／其他檔案</td><td class="mono" style="font-family:'Roboto Mono',monospace;">OtherFileZip（三者共用同一API欄位）</td><td>file→BASE64，選填</td><td>送出時打包為單一壓縮檔；大小上限同已知阻礙項#4</td></tr>
+        <tr><td>同業強制證號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">XCardID</td><td>string(20)，選填</td><td>可不提供</td></tr>
+        <tr><td>受理編號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">iroute_accept</td><td>text，選填</td><td>可不提供</td></tr>
+      </table>
+      </div>
+
+      <h4 style="font-size:14px;margin:22px 0 10px;">6. 審查與下載</h4>
+      <p style="font-size:11.5px;color:var(--page-text-muted);margin:0 0 10px;">這頁沒有使用者輸入欄位，是「資料總覽(唯讀複核，彙整階段1~5)→送出投保→顯示審查結果」的流程頁。以下是API的回傳欄位。</p>
+      <div class="overflow-x">
+      <table class="semantic-table">
+        <tr><th>回傳欄位</th><th>API 欄位</th><th>型態／規則</th><th>備註</th></tr>
+        <tr><td>是否執行成功</td><td class="mono" style="font-family:'Roboto Mono',monospace;">IsSuccess</td><td>bool</td><td>不可單獨作為成功判斷依據，需搭配ErrorCode/EstimateState</td></tr>
+        <tr><td>錯誤代碼</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ErrorCode</td><td>string</td><td>需trim()後比對，API範例出現過前導空白</td></tr>
+        <tr><td>錯誤訊息</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ErrorMessage</td><td>string</td><td>含動態值(如車牌[XXX-XXX])，需原文顯示</td></tr>
+        <tr><td>報價單號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">EstimateId</td><td>string</td><td>需存入本地案件紀錄</td></tr>
+        <tr><td>報價狀態</td><td class="mono" style="font-family:'Roboto Mono',monospace;">EstimateState</td><td>string</td><td>100/200/215/250/500/510/799</td></tr>
+        <tr><td>報價單／要保書／繳費單PDF</td><td class="mono" style="font-family:'Roboto Mono',monospace;">QuotationPDF／ProposalPDF／BillPDF</td><td>BASE64</td><td>依報價狀態決定是否有值；畫面只顯示「有值」的下載項</td></tr>
+      </table>
+      </div>
+      <p style="font-size:11.5px;color:var(--page-text-muted);margin:14px 0 0;">下載檔名規則（PRD 6.6 規格/限制）：<span class="mono" style="font-family:'Roboto Mono',monospace;">&lt;車牌號碼&gt;_&lt;要保人ID&gt;_&lt;文件類型&gt;.pdf</span>。這頁的下載按鈕與6.7案件總覽頁的「有值可下載、無值disabled」規則不同——本頁無值時直接不顯示該下載項（見上方PDF備註）。</p>
+
+      <h4 style="font-size:14px;margin:22px 0 10px;">案件總覽頁（登入後首頁，PRD 6.7）</h4>
+      <p style="font-size:11.5px;color:var(--page-text-muted);margin:0 0 10px;">不屬於六階段流程，是登入後的首頁；點擊流水號進入編輯直接複用階段1~6(比照PlanCode/廠牌等demo資料模式，非真正讀取已儲存案件)。</p>
+      <div class="overflow-x">
+      <table class="semantic-table">
+        <tr><th>畫面欄位</th><th>格式</th><th>備註</th></tr>
+        <tr><td>流水號</td><td>唯讀，12碼：西元年+月+日+順序</td><td>清單主鍵，可點擊進入編輯（複用階段1~6，非獨立唯讀/編輯頁）</td></tr>
+        <tr><td>使用者帳號</td><td>唯讀</td><td>登入EMAIL，連動6.0 SSO</td></tr>
+        <tr><td>取得試算結果時間</td><td>唯讀</td><td>清單預設依此由新到舊排序</td></tr>
+        <tr><td>車種／車牌號碼／方案</td><td>唯讀</td><td>方案可多個</td></tr>
+        <tr><td>要保人ID／姓名</td><td>唯讀</td><td>—</td></tr>
+        <tr><td>要保書／繳費單／報價單PDF</td><td>下載鈕</td><td>有值可下載、無值disabled+Tooltip「本案未產製此文件」；跟階段6「無值不顯示」規則不同</td></tr>
+      </table>
+      </div>
+      <p style="font-size:11.5px;color:var(--page-text-muted);margin:10px 0 0;">分頁規則PRD內部不一致：需求段落寫「每頁最多20筆」，情境表寫「顯示第1頁15筆」——已列入PO確認清單，畫面採用20筆版本。刪除功能依角色顯示（見上方「角色權限差異」demo），角色設定畫面本身仍是先前確認過的「不做」範圍，但這條顯示/隱藏邏輯不受影響、仍要實作。</p>
+    </section>
+
+    <section id="primevue">
+      <div class="section-title">PrimeVue v4 Preset <span class="badge badge-proposal">工程交付</span></div>
+      <p class="section-desc">Aura 主題基礎上覆寫 primitive／semantic token。色階數值與上方色彩系統一致，可直接複製到專案的 theme 設定檔。請依專案實際 PrimeVue 版本核對 API（definePreset 介面偶有調整）。</p>
+      <div class="code-panel">
+        <div class="code-tab"><b>theme/robins-preset.ts</b></div>
+<pre>import { definePreset } from '@primevue/themes';
+import Aura from '@primevue/themes/aura';
+
+export const RobinsPreset = definePreset(Aura, {
+  semantic: {
+    primary: {
+      50:  '#f2f6fc', 100: '#e2eaf9', 200: '#c4d6f3', 300: '#9ab9ea',
+      400: '#6895df', 500: '#5a8cdc', 600: '#275fb9', 700: '#204e97',
+      800: '#193d76', 900: '#122b54', 950: '#0c1e3b'
+    },
+    colorScheme: {
+      light: {
+        primary:   { color: '{primary.600}',   contrastColor: '#ffffff', hoverColor: '{primary.700}',   activeColor: '{primary.800}' },
+        secondary: { color: '#256a67',          contrastColor: '#ffffff', hoverColor: '#1b4b4a',         activeColor: '#133534' },
+        success:   { color: '#256a67',          contrastColor: '#ffffff' },
+        info:      { color: '{primary.600}',    contrastColor: '#ffffff' },
+        warn:      { color: '#eee259',          contrastColor: '#202527' }, // 黃色系用深字，不用白字
+        danger:    { color: '#d03611',          contrastColor: '#ffffff' },
+        surface: {
+          0: '#ffffff', 50: '#f7f8f8', 100: '#ebeeef', 200: '#d8dddf',
+          300: '#bcc5c8', 400: '#9aa7ac', 500: '#788a91', 600: '#65757c',
+          700: '#536065', 800: '#404b4f', 900: '#2e3538', 950: '#202527'
+        },
+        text: { color: '#31393c' } // 石墨黑：品牌指定內文字色
+      }
+    }
+  },
+  components: {
+    button: { borderRadius: '6px' },
+    inputtext: { borderRadius: '6px' },
+    tag: { borderRadius: '999px' }
+  }
+});
+
+// main.ts
+// app.use(PrimeVue, { theme: { preset: RobinsPreset, options: { darkModeSelector: '.app-dark' } } });
+</pre>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  var ramps = {
+    'ramp-primary':   {name:'primary',   base:500, values:['f2f6fc','e2eaf9','c4d6f3','9ab9ea','6895df','5a8cdc','275fb9','204e97','193d76','122b54','0c1e3b'], contrast:[1.08,1.21,1.47,2.01,3.01,3.37,6.11,8.07,10.70,13.96,16.55]},
+    'ramp-secondary': {name:'secondary', base:500, values:['f4fbfb','e5f6f5','caeceb','a4dfdd','77cfcc','49bfbb','3aa6a2','308885','256a67','1b4b4a','133534'], contrast:[1.05,1.12,1.25,1.48,1.81,2.21,2.93,4.22,6.32,9.71,13.28]},
+    'ramp-warn':      {name:'warn',      base:500, values:['fefdf1','fcf9df','f8f4be','f4ec90','eee259','e8d821','cbbd15','a69a11','81780d','5c560a','413c07'], contrast:[1.03,1.06,1.13,1.22,1.34,1.47,1.94,2.88,4.53,7.53,11.21]},
+    'ramp-danger':    {name:'danger',    base:500, values:['fef3f1','fce4de','fac9bd','f6a28e','f17455','ed451c','d03611','aa2c0e','84220b','5e1908','421105'], contrast:[1.09,1.21,1.49,2.00,2.85,3.84,4.98,6.82,9.44,12.96,15.95]},
+    'ramp-neutral':   {name:'neutral',   base:900, values:['f7f8f8','ebeeef','d8dddf','bcc5c8','9aa7ac','788a91','65757c','536065','404b4f','2e3538','202527'], contrast:[1.07,1.17,1.37,1.76,2.46,3.58,4.77,6.51,9.02,12.44,15.44]}
+  };
+  var stops = [50,100,200,300,400,500,600,700,800,900,950];
+  Object.keys(ramps).forEach(function(id){
+    var r = ramps[id], el = document.getElementById(id);
+    if(!el) return;
+    var html = '';
+    stops.forEach(function(stop, i){
+      var hex = '#' + r.values[i];
+      var textColor = stop <= 400 ? '#20242a' : '#ffffff';
+      var c = r.contrast[i];
+      var pass = c >= 4.5;
+      html += '<div class="swatch" style="background:'+hex+';color:'+textColor+';">'
+            + '<span class="aa '+(pass?'aa-pass':'aa-fail')+'">'+ (pass? 'AA ✓' : c.toFixed(1)) +'</span>'
+            + '<span class="stop">'+stop+'</span>'
+            + '<span class="hex">'+hex+'</span>'
+            + '</div>';
+    });
+    el.innerHTML = html;
+  });
+})();
+</script>

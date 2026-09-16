@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>審查與下載 — 新安東京商用車險線上試算報價</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../design-tokens.css">
+<link rel="stylesheet" href="../components.css">
+<style>
+  :root{
+    --page-bg:#f5f7fb;
+    --page-surface:#ffffff;
+    --page-border:#dde4ee;
+    --page-text:#232a2d;
+    --page-text-muted:#5c6a70;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --page-bg:#12161b; --page-surface:#1b2129; --page-border:#2c3742;
+      --page-text:#e8edf1; --page-text-muted:#95a5ad;
+    }
+  }
+  :root[data-theme="dark"]{
+    --page-bg:#12161b; --page-surface:#1b2129; --page-border:#2c3742;
+    --page-text:#e8edf1; --page-text-muted:#95a5ad;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--page-bg); color:var(--page-text);
+    font-family:"Noto Sans TC","Roboto",sans-serif; font-size:var(--font-size-body-md); line-height:var(--line-height-body-md);
+    display:flex; flex-direction:column; min-height:100vh;
+  }
+  .shell{max-width:880px; margin:0 auto; padding:0 24px; margin-bottom:24px; flex:1 0 auto; width:100%;}
+  .stage-title{padding:26px 24px 4px;}
+  .stage-title h1{font-size:var(--font-size-h1); line-height:var(--line-height-h1); margin:0 0 4px;}
+  .stage-title p{font-size:var(--font-size-body-md); color:var(--page-text-muted); margin:0;}
+
+  .stage-card{
+    background:#fff; border:1px solid var(--neutral-200); border-radius:14px;
+    margin-top:18px; overflow:hidden;
+  }
+  .stage-card .stage-title{padding:24px 24px 20px; margin:0;}
+  .stage-card .form-section{
+    background:none; border:none; border-radius:0; box-shadow:none;
+    margin-bottom:0; padding:24px; position:relative;
+  }
+  .stage-card .stage-title + .form-section{border-top:1px solid var(--neutral-100);}
+  .stage-card .form-section + .form-section::before{
+    content:""; position:absolute; top:0; left:24px; right:24px;
+    border-top:1px solid var(--neutral-100);
+  }
+  .stage-card .form-section h4{font-size:var(--font-size-body-md); font-weight:700; margin:0 0 14px;}
+
+  .result-panel{
+    background:#fff; border:1px solid var(--neutral-200); border-radius:14px;
+    margin-top:18px; padding:24px; display:none;
+  }
+  .result-panel.open{display:block;}
+  .result-panel .result-title{font-size:var(--font-size-h3); line-height:var(--line-height-h3); font-weight:700; margin:0 0 6px;}
+  .result-panel .result-msg{font-size:var(--font-size-body-md); color:var(--page-text-muted); margin:0 0 16px;}
+  .result-downloads{display:flex; gap:12px; flex-wrap:wrap;}
+</style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="brand">
+      <img src="../assets/logo-horizontal-light.svg" alt="羅賓斯保險代理人">
+    </div>
+    <div class="user">
+      <div class="user-trigger" onclick="toggleAccountMenu()">
+        <div class="user-text">
+          <div class="user-email">wang.xm@stockfeel.com.tw</div>
+          <div class="user-role">業務人員</div>
+        </div>
+        <div class="avatar">王</div>
+      </div>
+      <div class="account-menu" id="accountMenu">
+        <a class="account-menu-item" href="case-overview.html">案件總覽</a>
+        <a class="account-menu-item" href="00-login.html">登出</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="shell">
+
+    <div class="stepper" aria-label="投保流程階段">
+      <div class="step done"><div class="circle">✓</div><div class="label">險種選擇</div></div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="circle">✓</div><div class="label">車輛資料</div></div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="circle">✓</div><div class="label">被保險人資料</div></div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="circle">✓</div><div class="label">要保人資料</div></div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="circle">✓</div><div class="label">KYC 及其他</div></div>
+      <div class="step-line done"></div>
+      <div class="step current"><div class="circle">6</div><div class="label">審查與下載</div></div>
+    </div>
+
+    <div class="stage-card">
+    <div class="stage-title">
+      <h1><span style="font-family:'Roboto',sans-serif;">6.</span> 審查與下載</h1>
+      <p>請複核以下資料，確認無誤後送出投保。</p>
+    </div>
+
+    <div class="form-section">
+      <h4>1. 險種選擇</h4>
+      <div class="review-grid">
+        <div class="review-item"><div class="label">牌照號碼</div><div class="value">AAA-0001</div></div>
+        <div class="review-item"><div class="label">駕照號碼（身分證）</div><div class="value">A123456789</div></div>
+        <div class="review-item"><div class="label">車輛種類代號</div><div class="value">15 計程車</div></div>
+        <div class="review-item"><div class="label">T 牌種類</div><div class="value">小黃（N）</div></div>
+        <div class="review-item"><div class="label">投保方案</div><div class="value">T15-100200-300　強制險＋任意險</div></div>
+        <div class="review-item"><div class="label">強制險期間</div><div class="value">2026-08-01 ～ 2027-08-01</div></div>
+        <div class="review-item"><div class="label">任意險期間</div><div class="value">2026-08-01 ～ 2027-08-01</div></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h4>2. 車輛資料</h4>
+      <div class="review-grid">
+        <div class="review-item"><div class="label">廠牌／車系／車款</div><div class="value">TOYOTA COROLLA 1.8 經典款</div></div>
+        <div class="review-item"><div class="label">出廠年月</div><div class="value">2020-05-01</div></div>
+        <div class="review-item"><div class="label">排氣量</div><div class="value">1798 c.c.</div></div>
+        <div class="review-item"><div class="label">重置價格</div><div class="value">650,000 元</div></div>
+        <div class="review-item"><div class="label">引擎號碼</div><div class="value">EG20205A123</div></div>
+        <div class="review-item"><div class="label">乘載人數</div><div class="value">5 人</div></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h4>3. 被保險人資料</h4>
+      <div class="review-grid">
+        <div class="review-item"><div class="label">姓名</div><div class="value">王小明</div></div>
+        <div class="review-item"><div class="label">被保險人ID</div><div class="value">A123456789</div></div>
+        <div class="review-item"><div class="label">生日／性別</div><div class="value">1990-05-20／男</div></div>
+        <div class="review-item"><div class="label">通訊地址</div><div class="value">台北市大安區忠孝東路四段1號</div></div>
+        <div class="review-item"><div class="label">手機號碼</div><div class="value">0912-345-678</div></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h4>4. 要保人資料</h4>
+      <div class="review-grid">
+        <div class="review-item"><div class="label">與被保險人關係</div><div class="value">本人</div></div>
+        <div class="review-item"><div class="label">姓名／ID</div><div class="value">王小明／A123456789</div></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h4>5. KYC 及其他</h4>
+      <div class="review-grid">
+        <div class="review-item"><div class="label">保險費來源</div><div class="value">薪資</div></div>
+        <div class="review-item"><div class="label">附件</div><div class="value">未附加</div></div>
+      </div>
+    </div>
+    </div>
+
+    <div class="page-actions" style="position:static; border:none; background:none; margin-top:16px;">
+      <div class="page-actions-inner" style="max-width:none; padding:0;">
+        <button class="pv-btn outlined" onclick="location.href='05-kyc-other.html'">上一步</button>
+        <button class="pv-btn primary" id="submitBtn" onclick="submitPolicy()">送出投保</button>
+      </div>
+    </div>
+
+    <div class="result-panel" id="resultPanel">
+      <div class="result-title" id="resultTitle"></div>
+      <p class="result-msg" id="resultMsg"></p>
+      <div class="result-downloads" id="resultDownloads"></div>
+    </div>
+
+  </div>
+
+  <script src="../header.js"></script>
+  <script>
+    /* ---- 送出投保:實際操作只會有一次送出動作,固定示範「通過核保」這條happy path。
+       其餘PRD情境表列出的審查結果(需人工查核/C2101/其他C21xx/E9999/C9999/200/215/逾時)
+       屬於「送出就是送出一次,不是拿來讓人反覆點著看不同結果」的情境,已收錄在Design System
+       的元件展示區供核對,不放在這顆按鈕上循環示範。 ---- */
+    const SUCCESS_OUTCOME = { tag:'success', title:'通過核保', msg:'系統已自動核保通過。', downloads:['要保書','繳費單'] };
+
+    function submitPolicy(){
+      const btn = document.getElementById('submitBtn');
+      if(btn.disabled) return;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spin"></span> 處理中…';
+
+      setTimeout(function(){
+        showResult(SUCCESS_OUTCOME);
+        btn.textContent = '已送出投保';
+      }, 700);
+    }
+
+    function showResult(outcome){
+      const panel = document.getElementById('resultPanel');
+      const titleEl = document.getElementById('resultTitle');
+      const msgEl = document.getElementById('resultMsg');
+      const downloadsEl = document.getElementById('resultDownloads');
+
+      const color = outcome.tag === 'success' ? 'var(--secondary-700)' : (outcome.tag === 'warn' ? 'var(--warn-900)' : 'var(--danger-700)');
+      titleEl.textContent = outcome.title;
+      titleEl.style.color = color;
+      msgEl.textContent = outcome.msg;
+      msgEl.style.display = outcome.msg ? 'block' : 'none';
+
+      downloadsEl.innerHTML = outcome.downloads.map(function(label){
+        return '<button class="pv-btn outlined">下載'+label+'</button>';
+      }).join('');
+
+      panel.classList.add('open');
+      panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+  </script>
+</body>
+</html>

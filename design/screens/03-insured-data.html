@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>被保險人資料 — 新安東京商用車險線上試算報價</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../design-tokens.css">
+<link rel="stylesheet" href="../components.css">
+<style>
+  :root{
+    --page-bg:#f5f7fb;
+    --page-surface:#ffffff;
+    --page-border:#dde4ee;
+    --page-text:#232a2d;
+    --page-text-muted:#5c6a70;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --page-bg:#12161b; --page-surface:#1b2129; --page-border:#2c3742;
+      --page-text:#e8edf1; --page-text-muted:#95a5ad;
+    }
+  }
+  :root[data-theme="dark"]{
+    --page-bg:#12161b; --page-surface:#1b2129; --page-border:#2c3742;
+    --page-text:#e8edf1; --page-text-muted:#95a5ad;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--page-bg); color:var(--page-text);
+    font-family:"Noto Sans TC","Roboto",sans-serif; font-size:var(--font-size-body-md); line-height:var(--line-height-body-md);
+    display:flex; flex-direction:column; min-height:100vh;
+  }
+  .shell{max-width:880px; margin:0 auto; padding:0 24px; margin-bottom:24px; flex:1 0 auto; width:100%;}
+  .stage-title{padding:26px 24px 4px;}
+  .stage-title h1{font-size:var(--font-size-h1); line-height:var(--line-height-h1); margin:0 0 4px;}
+  .stage-title p{font-size:var(--font-size-body-md); color:var(--page-text-muted); margin:0;}
+
+  .stage-card{
+    background:#fff; border:1px solid var(--neutral-200); border-radius:14px;
+    margin-top:18px; overflow:hidden;
+  }
+  .stage-card .stage-title{padding:24px 24px 20px; margin:0;}
+  .stage-card .form-section{
+    background:none; border:none; border-radius:0; box-shadow:none;
+    margin-bottom:0; padding:24px; position:relative;
+  }
+  .stage-card .stage-title + .form-section{border-top:1px solid var(--neutral-100);}
+  .stage-card .form-section + .form-section::before{
+    content:""; position:absolute; top:0; left:24px; right:24px;
+    border-top:1px solid var(--neutral-100);
+  }
+</style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="brand">
+      <img src="../assets/logo-horizontal-light.svg" alt="羅賓斯保險代理人">
+    </div>
+    <div class="user">
+      <div class="user-trigger" onclick="toggleAccountMenu()">
+        <div class="user-text">
+          <div class="user-email">wang.xm@stockfeel.com.tw</div>
+          <div class="user-role">業務人員</div>
+        </div>
+        <div class="avatar">王</div>
+      </div>
+      <div class="account-menu" id="accountMenu">
+        <a class="account-menu-item" href="case-overview.html">案件總覽</a>
+        <a class="account-menu-item" href="00-login.html">登出</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="shell">
+
+    <div class="stepper" aria-label="投保流程階段">
+      <div class="step done"><div class="circle">✓</div><div class="label">險種選擇</div></div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="circle">✓</div><div class="label">車輛資料</div></div>
+      <div class="step-line done"></div>
+      <div class="step current"><div class="circle">3</div><div class="label">被保險人資料</div></div>
+      <div class="step-line"></div>
+      <div class="step todo"><div class="circle">4</div><div class="label">要保人資料</div></div>
+      <div class="step-line"></div>
+      <div class="step todo"><div class="circle">5</div><div class="label">KYC 及其他</div></div>
+      <div class="step-line"></div>
+      <div class="step todo"><div class="circle">6</div><div class="label">審查與下載</div></div>
+    </div>
+
+    <div class="stage-card">
+    <div class="stage-title">
+      <h1><span style="font-family:'Roboto',sans-serif;">3.</span> 被保險人資料</h1>
+      <p>已由險種選擇階段的駕照辨識結果帶入部分資料，請確認並補齊其餘資訊。</p>
+    </div>
+
+    <div class="form-section">
+      <h3>基本資料</h3>
+      <div class="field">
+        <label>被保險人性質 <span class="req">*</span></label>
+        <div class="option-row">
+          <label><input type="radio" name="assuredType" id="assuredTypeNatural" checked onchange="onAssuredTypeChange()"><span>國內自然人</span></label>
+          <label><input type="radio" name="assuredType" id="assuredTypeCorp" onchange="onAssuredTypeChange()"><span>國內法人</span></label>
+        </div>
+      </div>
+      <div class="fields-row" style="margin-top:16px;">
+        <div class="field" id="assuredIdField">
+          <label id="assuredIdLabel">被保險人ID（身分證） <span class="req">*</span></label>
+          <input type="text" id="assuredId" value="A123456789" maxlength="10" oninput="onAssuredIdInput()">
+        </div>
+        <div class="field" id="assuredNameField">
+          <label id="assuredNameLabel">姓名 <span class="req">*</span></label>
+          <input type="text" id="assuredName" value="王小明" maxlength="50">
+        </div>
+      </div>
+      <div class="fields-row" id="naturalOnlyFields" style="margin-top:16px;">
+        <div class="field" id="assuredBirthdayField">
+          <label>生日 <span class="req">*</span></label>
+          <input type="date" id="assuredBirthday" value="1990-05-20">
+        </div>
+        <div class="field" id="assuredSexField">
+          <label>性別（唯讀，依身分證自動判斷）</label>
+          <input type="text" id="assuredSex" readonly value="男">
+        </div>
+        <div class="field" id="assuredMarriageField">
+          <label>婚姻 <span class="req">*</span></label>
+          <div class="option-row">
+            <label><input type="radio" name="assuredMarriage" id="marriageMarried"><span>已婚</span></label>
+            <label><input type="radio" name="assuredMarriage" id="marriageSingle" checked><span>未婚</span></label>
+          </div>
+        </div>
+      </div>
+      <div class="field" id="assuredDeputyField" style="margin-top:16px; display:none;">
+        <label>法人代表人 <span class="req">*</span></label>
+        <input type="text" id="assuredDeputy" maxlength="25">
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>聯絡資訊</h3>
+      <div class="fields-row">
+        <div class="field">
+          <label>縣市 <span class="req">*</span></label>
+          <select id="addrCity" onchange="updateDistrictOptions()"></select>
+        </div>
+        <div class="field">
+          <label>鄉鎮市區 <span class="req">*</span></label>
+          <select id="addrDistrict" onchange="updateZip()"></select>
+        </div>
+        <div class="field readonly">
+          <label>郵遞區號（唯讀）</label>
+          <input type="text" id="addrZip" readonly>
+        </div>
+      </div>
+      <div class="field" id="addrDetailField" style="margin-top:16px;">
+        <label>詳細地址 <span class="req">*</span></label>
+        <input type="text" id="addrDetail" value="忠孝東路四段1號">
+      </div>
+      <div class="fields-row" style="margin-top:16px;">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="assuredEmail" maxlength="50">
+        </div>
+        <div class="field" id="assuredMobileField">
+          <label>手機號碼 <span class="req">*</span></label>
+          <input type="text" id="assuredMobile" value="0912-345-678" placeholder="09xx-xxx-xxx">
+        </div>
+        <div class="field">
+          <label>聯繫電話</label>
+          <input type="text" id="assuredTel" placeholder="02-88727777">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>其他資訊</h3>
+      <div class="field">
+        <label>職業別 <span class="req">*</span></label>
+        <div class="option-row">
+          <label><input type="radio" name="assuredOccupy" id="occupyN" checked onchange="onOccupyChange()"><span>一般職</span></label>
+          <label><input type="radio" name="assuredOccupy" id="occupyY" onchange="onOccupyChange()"><span>非一般職</span></label>
+        </div>
+      </div>
+      <div class="field" id="occupyCodeField" style="display:none; margin-top:16px; max-width:400px;">
+          <label>高風險職業代號 <span class="req">*</span></label>
+          <select id="occupyCode">
+            <option value="">請選擇</option>
+            <option value="001">001 律師</option>
+            <option value="002">002 會計師</option>
+            <option value="003">003 公證人</option>
+            <option value="004">004 軍火商、不動產經紀業</option>
+            <option value="005">005 融資從業人員</option>
+            <option value="008">008 提供虛擬資產服務之事業或人員</option>
+            <option value="010">010 銀樓業</option>
+            <option value="011">011 藝術品拍賣業</option>
+            <option value="015">015 博弈產業/公司</option>
+            <option value="018">018 辦理儲金匯兌之郵政機構</option>
+            <option value="019">019 國際金融業務分行（OBU）</option>
+            <option value="020">020 國際證券業務分公司（OSU）</option>
+            <option value="021">021 國際保險業務分公司（OIU）</option>
+            <option value="022">022 證券商</option>
+            <option value="023">023 提供第三方支付服務之事業或人員</option>
+            <option value="024">024 外國銀行在臺分行</option>
+            <option value="025">025 本國銀行</option>
+            <option value="026">026 人壽保險公司</option>
+            <option value="027">027 農業金融機構（含全國農業金庫、農會信用部及漁會信用部）</option>
+          </select>
+      </div>
+      <div class="fields-row" style="margin-top:16px;">
+        <div class="field">
+          <label>國別註記 <span class="req">*</span></label>
+          <select id="assuredCntry" onchange="onCntryChange()">
+            <option value="9" selected>9 本國人</option>
+            <option value="1">1 高風險國家</option>
+            <option value="2">2 大陸人士(不含港澳)</option>
+            <option value="3">3 歐盟國家</option>
+            <option value="4">4 加強監督國家及地區</option>
+            <option value="5">5 經濟制裁國家</option>
+            <option value="8">8 其他</option>
+          </select>
+        </div>
+        <div class="field" id="cntryNameField" style="display:none;">
+          <label>國別名稱 <span class="req">*</span></label>
+          <input type="text" id="cntryName" maxlength="25">
+        </div>
+        <div class="field">
+          <label>保單寄送方式 <span class="req">*</span></label>
+          <div class="option-row">
+            <label><input type="radio" name="sendWay" id="sendPaper" checked><span>紙本</span></label>
+            <label><input type="radio" name="sendWay" id="sendElectronic"><span>電子</span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div id="submitResultMsg" style="margin:16px 2px 0; display:none;"></div>
+
+  </div>
+
+  <div class="page-actions">
+    <div class="page-actions-inner">
+      <button class="pv-btn outlined" onclick="location.href='02-vehicle-data.html'">上一步</button>
+      <button class="pv-btn primary" onclick="handleSubmit()">下一步：要保人資料</button>
+    </div>
+  </div>
+
+  <script src="../header.js"></script>
+  <script>
+    /* ---- 被保險人性質:自然人/法人動態顯示欄位 ---- */
+    function onAssuredTypeChange(){
+      const isCorp = document.getElementById('assuredTypeCorp').checked;
+      document.getElementById('naturalOnlyFields').style.display = isCorp ? 'none' : 'flex';
+      document.getElementById('assuredDeputyField').style.display = isCorp ? 'block' : 'none';
+      document.getElementById('assuredIdLabel').innerHTML = (isCorp ? '被保險人ID（統一編號）' : '被保險人ID（身分證）') + ' <span class="req">*</span>';
+      document.getElementById('assuredNameLabel').innerHTML = (isCorp ? '公司名稱' : '姓名') + ' <span class="req">*</span>';
+      document.getElementById('assuredId').maxLength = isCorp ? 8 : 10;
+    }
+
+    /* ---- 身分證檢核演算法(自然人):字母轉兩位數值 + 加權總和需被10整除 ---- */
+    const ID_LETTER_VALUE = {A:10,B:11,C:12,D:13,E:14,F:15,G:16,H:17,I:34,J:18,K:19,L:20,M:21,N:22,O:35,P:23,Q:24,R:25,S:26,T:27,U:28,V:29,W:32,X:30,Y:31,Z:33};
+    function isValidTaiwanId(id){
+      if(!/^[A-Z][1289][0-9]{8}$/.test(id)) return false;
+      const v = ID_LETTER_VALUE[id[0]];
+      const d1 = Math.floor(v/10), d2 = v%10;
+      const n = id.slice(1).split('').map(Number);
+      const weights = [8,7,6,5,4,3,2,1,1];
+      let sum = d1*1 + d2*9;
+      for(let i=0;i<9;i++){ sum += n[i]*weights[i]; }
+      return sum % 10 === 0;
+    }
+    /* ---- 依身分證第2碼自動判斷性別(唯讀欄位);格式不正確則留白 ---- */
+    function onAssuredIdInput(){
+      const isCorp = document.getElementById('assuredTypeCorp').checked;
+      if(isCorp) return;
+      const id = document.getElementById('assuredId').value.toUpperCase();
+      const sexField = document.getElementById('assuredSex');
+      if(isValidTaiwanId(id)){
+        const genderDigit = id[1];
+        sexField.value = (genderDigit === '1' || genderDigit === '8') ? '男' : '女';
+      } else {
+        sexField.value = '';
+      }
+    }
+
+    /* ---- 地址連動:縣市→鄉鎮市區→自動代入郵遞區號(示意資料) ---- */
+    const ADDRESS_DATA = {
+      '台北市': { '大安區':'106', '信義區':'110', '中山區':'104' },
+      '新北市': { '板橋區':'220', '三重區':'241' }
+    };
+    function initAddressOptions(){
+      const citySel = document.getElementById('addrCity');
+      citySel.innerHTML = Object.keys(ADDRESS_DATA).map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+      citySel.value = '台北市';
+      updateDistrictOptions();
+      document.getElementById('addrDistrict').value = '大安區';
+      updateZip();
+    }
+    function updateDistrictOptions(){
+      const city = document.getElementById('addrCity').value;
+      const districts = ADDRESS_DATA[city];
+      document.getElementById('addrDistrict').innerHTML = Object.keys(districts).map(function(d){ return '<option value="'+d+'">'+d+'</option>'; }).join('');
+      updateZip();
+    }
+    function updateZip(){
+      const city = document.getElementById('addrCity').value;
+      const district = document.getElementById('addrDistrict').value;
+      document.getElementById('addrZip').value = ADDRESS_DATA[city][district] || '';
+    }
+
+    /* ---- 職業別:非一般職才顯示且必填高風險代號;改回一般職自動清空並隱藏 ---- */
+    function onOccupyChange(){
+      const isHighRisk = document.getElementById('occupyY').checked;
+      const field = document.getElementById('occupyCodeField');
+      field.style.display = isHighRisk ? 'block' : 'none';
+      if(!isHighRisk){
+        document.getElementById('occupyCode').value = '';
+        field.classList.remove('error');
+      }
+    }
+
+    /* ---- 國別註記選「其他」才顯示國別名稱 ---- */
+    function onCntryChange(){
+      const isOther = document.getElementById('assuredCntry').value === '8';
+      const field = document.getElementById('cntryNameField');
+      field.style.display = isOther ? 'block' : 'none';
+      if(!isOther){
+        document.getElementById('cntryName').value = '';
+        field.classList.remove('error');
+      }
+    }
+
+    /* ---- 送出前端驗證 ---- */
+    function setFieldError(fieldId, message){
+      const field = document.getElementById(fieldId);
+      field.classList.add('error');
+      if(!field.querySelector('.err-msg')){
+        field.insertAdjacentHTML('beforeend', '<div class="err-msg">⚠ '+message+'</div>');
+      }
+    }
+    function clearFieldError(fieldId){
+      const field = document.getElementById(fieldId);
+      field.classList.remove('error');
+      const msg = field.querySelector('.err-msg');
+      if(msg) msg.remove();
+    }
+    function validateForm(){
+      let ok = true;
+      const isCorp = document.getElementById('assuredTypeCorp').checked;
+
+      ['assuredIdField','assuredNameField','assuredDeputyField','addrDetailField','assuredMobileField','occupyCodeField','cntryNameField'].forEach(clearFieldError);
+
+      if(!document.getElementById('assuredMobile').value.trim()){
+        setFieldError('assuredMobileField', '請輸入被保險人手機號碼'); ok = false;
+      }
+      const idVal = document.getElementById('assuredId').value.trim();
+      if(!idVal){
+        setFieldError('assuredIdField', '請輸入被保險人ID'); ok = false;
+      } else if(!isCorp && !isValidTaiwanId(idVal.toUpperCase())){
+        setFieldError('assuredIdField', '被保險人ID錯誤'); ok = false;
+      } else if(isCorp && !/^[0-9]{8}$/.test(idVal)){
+        setFieldError('assuredIdField', '被保險人ID錯誤'); ok = false;
+      }
+      if(!document.getElementById('assuredName').value.trim()){
+        setFieldError('assuredNameField', '請輸入被保險人姓名'); ok = false;
+      }
+      if(isCorp && !document.getElementById('assuredDeputy').value.trim()){
+        setFieldError('assuredDeputyField', '請輸入法人代表人'); ok = false;
+      }
+      if(!document.getElementById('addrDetail').value.trim()){
+        setFieldError('addrDetailField', '請輸入通訊地址'); ok = false;
+      }
+      if(document.getElementById('occupyY').checked && !document.getElementById('occupyCode').value){
+        setFieldError('occupyCodeField', '被保險人為非一般職／行業別時，請輸入高風險職業代碼'); ok = false;
+      }
+      if(document.getElementById('assuredCntry').value === '8' && !document.getElementById('cntryName').value.trim()){
+        setFieldError('cntryNameField', '請輸入國別名稱'); ok = false;
+      }
+
+      if(!isCorp){
+        const birthday = document.getElementById('assuredBirthday').value;
+        if(!birthday){
+          setFieldError('assuredBirthdayField', '請輸入被保險人生日'); ok = false;
+        } else {
+          const age = (Date.now() - new Date(birthday).getTime()) / (365.25*24*60*60*1000);
+          if(age < 18){
+            setFieldError('assuredBirthdayField', '未滿 18 足歲，無法投保'); ok = false;
+          }
+        }
+        if(!document.getElementById('assuredSex').value){
+          setFieldError('assuredSexField', '請輸入被保險人性別'); ok = false;
+        }
+        if(!document.querySelector('input[name="assuredMarriage"]:checked')){
+          setFieldError('assuredMarriageField', '請輸入被保險人婚姻'); ok = false;
+        }
+      }
+
+      return ok;
+    }
+
+    function handleSubmit(){
+      const msgEl = document.getElementById('submitResultMsg');
+      if(!validateForm()){
+        msgEl.style.display = 'none';
+        return;
+      }
+      msgEl.innerHTML = '<span class="pv-tag tag-success"><span class="dot"></span>資料驗證通過</span>';
+      msgEl.style.display = 'block';
+      setTimeout(function(){ location.href = '04-applicant-data.html'; }, 500);
+    }
+
+    initAddressOptions();
+    onAssuredIdInput();
+  </script>
+</body>
+</html>

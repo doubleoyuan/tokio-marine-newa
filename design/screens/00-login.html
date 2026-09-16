@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登入 — 新安東京商用車險線上試算報價</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../design-tokens.css">
+<link rel="stylesheet" href="../components.css">
+<style>
+  :root{
+    --page-bg:#f5f7fb;
+    --page-surface:#ffffff;
+    --page-border:#dde4ee;
+    --page-text:#232a2d;
+    --page-text-muted:#5c6a70;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --page-bg:#12161b; --page-surface:#1b2129; --page-border:#2c3742;
+      --page-text:#e8edf1; --page-text-muted:#95a5ad;
+    }
+  }
+  :root[data-theme="dark"]{
+    --page-bg:#12161b; --page-surface:#1b2129; --page-border:#2c3742;
+    --page-text:#e8edf1; --page-text-muted:#95a5ad;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--page-bg); color:var(--page-text); font-family:"Noto Sans TC","Roboto",sans-serif; font-size:var(--font-size-body-md); line-height:var(--line-height-body-md);}
+  .mono{font-family:"Roboto Mono",monospace;}
+
+  .hero{
+    min-height:64vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:60px 20px 30px; text-align:center;
+    background:
+      radial-gradient(560px 280px at 50% -10%, var(--primary-100), transparent),
+      var(--page-bg);
+  }
+  .hero img{height:34px; margin-bottom:22px;}
+
+  .login-card{
+    width:100%; max-width:360px; background:var(--page-surface); border:1px solid var(--page-border);
+    border-radius:14px; padding:var(--space-8); box-shadow:0 8px 28px rgba(20,30,45,.08);
+  }
+  .login-card h1{font-size:var(--font-size-h2); line-height:var(--line-height-h2); margin:0 0 var(--space-8);}
+  .sso-btn{
+    width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
+    font-family:inherit; font-size:var(--font-size-body-md); font-weight:600; padding:12px 18px; border-radius:8px;
+    border:none; background:var(--primary-600); color:#fff; cursor:pointer;
+  }
+  .sso-btn:hover{filter:brightness(1.06);}
+  .domain-hint{font-size:var(--font-size-caption); color:var(--neutral-500); margin-top:var(--space-8);}
+  .domain-hint b{color:var(--page-text);}
+
+  /* ---- 模擬第三方 OAuth 彈窗（僅供原型點擊測試，非正式串接） ---- */
+  .oauth-overlay{
+    position:fixed; inset:0; background:rgba(20,24,28,.55); display:none;
+    align-items:center; justify-content:center; z-index:100;
+  }
+  .oauth-overlay.open{display:flex;}
+  .oauth-dialog{
+    width:100%; max-width:400px; background:#fff; color:#202124; border-radius:12px;
+    box-shadow:0 12px 40px rgba(0,0,0,.28); font-family:"Roboto",Arial,sans-serif; overflow:hidden;
+  }
+  .oauth-head{padding:28px 24px 8px; text-align:center;}
+  .oauth-head .provider-icon{
+    width:40px; height:40px; border-radius:50%; margin:0 auto 14px;
+    background:conic-gradient(from 0deg, #4285F4 0 25%, #34A853 25% 50%, #FBBC05 50% 75%, #EA4335 75% 100%);
+  }
+  .oauth-head h2{font-size:var(--font-size-h2); line-height:var(--line-height-h2); margin:0 0 4px; font-weight:500;}
+  .oauth-head p{font-size:var(--font-size-body-md); color:#5f6368; margin:0;}
+  .oauth-body{padding:18px 24px 8px;}
+  .oauth-body label{display:block; font-size:var(--font-size-caption); color:#5f6368; margin-bottom:6px;}
+  .oauth-body input{
+    width:100%; padding:11px 12px; border:1px solid #dadce0; border-radius:6px; font-size:var(--font-size-body-md);
+    font-family:inherit; color:#202124;
+  }
+  .oauth-body input:focus{outline:none; border-color:#4285F4; box-shadow:0 0 0 1px #4285F4;}
+  .oauth-actions{display:flex; justify-content:space-between; align-items:center; padding:20px 24px 26px;}
+  .oauth-actions .cancel{background:none; border:none; color:#1a73e8; font-size:var(--font-size-body-md); font-weight:600; cursor:pointer; padding:8px;}
+  .oauth-actions .next{background:#1a73e8; color:#fff; border:none; border-radius:6px; padding:9px 22px; font-size:var(--font-size-body-md); font-weight:600; cursor:pointer;}
+  .oauth-actions .next:hover{background:#1765cc;}
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <img src="../assets/logo-horizontal-light.svg" alt="羅賓斯保險代理人">
+
+    <div class="login-card">
+      <h1>商用車險線上試算報價系統</h1>
+      <button class="sso-btn" id="ssoBtn">
+        使用 stockfeel SSO 登入
+      </button>
+      <div class="domain-hint">僅開放 <b>@stockfeel.com.tw</b> 網域帳號登入；登入後需由管理人員設定角色才能使用系統功能。</div>
+    </div>
+  </div>
+
+  <div class="oauth-overlay" id="oauthOverlay">
+    <div class="oauth-dialog">
+      <div class="oauth-head">
+        <div class="provider-icon"></div>
+        <h2>登入</h2>
+        <p>繼續前往「商用車險線上試算報價系統」</p>
+      </div>
+      <div class="oauth-body">
+        <label>電子郵件地址或電話號碼</label>
+        <input type="text" id="oauthEmail" placeholder="name@stockfeel.com.tw" autocomplete="off">
+        <div id="oauthError" style="display:none; margin-top:10px; padding:10px 12px; border-radius:6px; background:var(--danger-50); border:1px solid var(--danger-200); color:var(--danger-800); font-size:13px;"></div>
+      </div>
+      <div class="oauth-actions">
+        <button class="cancel" id="oauthCancel">取消</button>
+        <button class="next" id="oauthNext">繼續</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const overlay = document.getElementById('oauthOverlay');
+    document.getElementById('ssoBtn').addEventListener('click', () => {
+      overlay.classList.add('open');
+      document.getElementById('oauthEmail').focus();
+    });
+    document.getElementById('oauthCancel').addEventListener('click', () => {
+      overlay.classList.remove('open');
+    });
+    /* ---- PRD 6.0:EMAIL網域須含stockfeel才可登入,否則擋下並顯示錯誤 ---- */
+    function proceed(){
+      const email = document.getElementById('oauthEmail').value.trim();
+      const errorEl = document.getElementById('oauthError');
+      const domain = email.split('@')[1] || '';
+      if(!domain.toLowerCase().includes('stockfeel')){
+        errorEl.textContent = '此帳號網域不允許登入，請使用 stockfeel 網域帳號，或聯繫系統管理員。';
+        errorEl.style.display = 'block';
+        return;
+      }
+      errorEl.style.display = 'none';
+      window.location.href = 'case-overview.html';
+    }
+    document.getElementById('oauthNext').addEventListener('click', proceed);
+    document.getElementById('oauthEmail').addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') proceed();
+    });
+  </script>
+</body>
+</html>
