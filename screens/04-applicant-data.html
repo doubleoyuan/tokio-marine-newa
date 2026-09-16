@@ -257,7 +257,7 @@
   <div class="page-actions">
     <div class="page-actions-inner">
       <button class="pv-btn outlined" onclick="location.href='03-insured-data.html'">上一步</button>
-      <button class="pv-btn primary" onclick="handleSubmit()">下一步：KYC 及其他</button>
+      <button class="pv-btn primary" id="nextBtn" disabled onclick="handleSubmit()">下一步：KYC 及其他</button>
     </div>
   </div>
 
@@ -499,8 +499,42 @@
       setTimeout(function(){ location.href = '05-kyc-other.html'; }, 500);
     }
 
+    /* ---- 即時判斷必填是否都已填妥,控制「下一步」是否可點擊(不顯示錯誤訊息,對應PRD「所有必填欄位正確填寫→下一步啟用」) ---- */
+    function isFormValid(){
+      const isCorp = document.getElementById('applicantTypeCorp').checked;
+      if(!document.getElementById('applicantMobile').value.trim()) return false;
+      const idVal = document.getElementById('applicantId').value.trim();
+      if(!idVal) return false;
+      if(!isCorp && !isValidTaiwanId(idVal.toUpperCase())) return false;
+      if(isCorp && !/^[0-9]{8}$/.test(idVal)) return false;
+      if(!document.getElementById('applicantName').value.trim()) return false;
+      if(isCorp && !document.getElementById('applicantDeputy').value.trim()) return false;
+      if(!document.getElementById('applicantDetail').value.trim()) return false;
+      if(document.getElementById('applicantOccupyY').checked && !document.getElementById('applicantOccupyCode').value) return false;
+      if(document.getElementById('applicantCntry').value === '8' && !document.getElementById('applicantCntryName').value.trim()) return false;
+      const relation = document.getElementById('relationDesc').value;
+      if(!relation) return false;
+      if(relation === '其他' && !document.getElementById('relationNote').value.trim()) return false;
+      if(idVal){
+        const sameId = idVal.toUpperCase() === ASSURED_DEMO.id;
+        if(relation && relation !== '本人' && sameId) return false;
+        if(relation === '本人' && !sameId) return false;
+      }
+      if(!isCorp){
+        if(!document.getElementById('applicantBirthday').value) return false;
+        if(!document.getElementById('applicantSex').value) return false;
+      }
+      return true;
+    }
+    function updateNextBtnState(){
+      document.getElementById('nextBtn').disabled = !isFormValid();
+    }
+
     initApplicantAddressOptions();
     toggleSameAsAssured();
+    document.addEventListener('input', updateNextBtnState);
+    document.addEventListener('change', updateNextBtnState);
+    updateNextBtnState();
   </script>
 </body>
 </html>

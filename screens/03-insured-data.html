@@ -245,7 +245,7 @@
   <div class="page-actions">
     <div class="page-actions-inner">
       <button class="pv-btn outlined" onclick="location.href='02-vehicle-data.html'">上一步</button>
-      <button class="pv-btn primary" onclick="handleSubmit()">下一步：要保人資料</button>
+      <button class="pv-btn primary" id="nextBtn" disabled onclick="handleSubmit()">下一步：要保人資料</button>
     </div>
   </div>
 
@@ -413,8 +413,38 @@
       setTimeout(function(){ location.href = '04-applicant-data.html'; }, 500);
     }
 
+    /* ---- 即時判斷必填是否都已填妥,控制「下一步」是否可點擊(不顯示錯誤訊息,對應PRD「所有必填欄位正確填寫→下一步啟用」) ---- */
+    function isFormValid(){
+      const isCorp = document.getElementById('assuredTypeCorp').checked;
+      if(!document.getElementById('assuredMobile').value.trim()) return false;
+      const idVal = document.getElementById('assuredId').value.trim();
+      if(!idVal) return false;
+      if(!isCorp && !isValidTaiwanId(idVal.toUpperCase())) return false;
+      if(isCorp && !/^[0-9]{8}$/.test(idVal)) return false;
+      if(!document.getElementById('assuredName').value.trim()) return false;
+      if(isCorp && !document.getElementById('assuredDeputy').value.trim()) return false;
+      if(!document.getElementById('addrDetail').value.trim()) return false;
+      if(document.getElementById('occupyY').checked && !document.getElementById('occupyCode').value) return false;
+      if(document.getElementById('assuredCntry').value === '8' && !document.getElementById('cntryName').value.trim()) return false;
+      if(!isCorp){
+        const birthday = document.getElementById('assuredBirthday').value;
+        if(!birthday) return false;
+        const age = (Date.now() - new Date(birthday).getTime()) / (365.25*24*60*60*1000);
+        if(age < 18) return false;
+        if(!document.getElementById('assuredSex').value) return false;
+        if(!document.querySelector('input[name="assuredMarriage"]:checked')) return false;
+      }
+      return true;
+    }
+    function updateNextBtnState(){
+      document.getElementById('nextBtn').disabled = !isFormValid();
+    }
+
     initAddressOptions();
     onAssuredIdInput();
+    document.addEventListener('input', updateNextBtnState);
+    document.addEventListener('change', updateNextBtnState);
+    updateNextBtnState();
   </script>
 </body>
 </html>

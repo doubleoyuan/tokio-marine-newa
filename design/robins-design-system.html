@@ -857,7 +857,20 @@ section{padding-top:8px; margin-bottom:64px; scroll-margin-top:24px;}
           <span class="pv-tag tag-danger"><span class="dot"></span>資料初始化錯誤（C9999）— 請聯繫系統管理員，記錄錯誤日誌</span>
           <span class="pv-tag tag-danger"><span class="dot"></span>本案經評估後不予承保（EstimateState=200）</span>
           <span class="pv-tag tag-danger"><span class="dot"></span>審核不通過（EstimateState=215）— 附ErrorMessage原文</span>
-          <span class="pv-tag tag-warn"><span class="dot"></span>連線逾時（&gt;30秒）— 請確認案件狀態後再重送，不自動重試</span>
+          <span class="pv-tag tag-warn"><span class="dot"></span>連線逾時（&gt;30秒）— 顯示「連線逾時，請確認案件狀態後再重送」，不自動重試，案件標記為「送出結果未知」供人工處理</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>投保方案代碼錯誤（C3002）</span>
+          <span class="pv-tag tag-warn"><span class="dot"></span>網路連線異常 — 顯示「網路連線異常，資料已暫存，請恢復連線後重送」</span>
+          <span class="pv-tag tag-neutral"><span class="dot"></span>未定義的報價狀態（fallback）— 顯示「未知報價狀態（&lt;代碼&gt;），請聯繫系統管理員」，並記錄完整回應至日誌</span>
+          <span class="pv-tag tag-neutral"><span class="dot"></span>回傳成功但對應PDF欄位為空字串 — 該下載項不顯示，並記錄告警（見06頁`showResult()`已加`filter(Boolean)`防呆）</span>
+        </div>
+      </div>
+
+      <div class="card pad comp-block">
+        <h4>險種選擇送出預查結果 <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 階段1「送出預查」實際畫面固定示範「預查通過」這條happy path；以下是PRD情境表列出的其餘結果，畫面上不會有按鈕可切換，這裡集中收錄供核對</span></h4>
+        <div class="comp-row" style="flex-direction:column; align-items:flex-start; gap:8px;">
+          <span class="pv-tag tag-success"><span class="dot"></span>預查通過 — 「下一步」按鈕變為可點擊</span>
+          <span class="pv-tag tag-warn"><span class="dot"></span>預查逾時 — 顯示「預查逾時，請稍後再試」，已填資料保留</span>
+          <span class="pv-tag tag-danger"><span class="dot"></span>預查未通過 — 顯示未通過原因，「下一步」維持停用</span>
         </div>
       </div>
 
