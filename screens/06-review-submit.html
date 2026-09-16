@@ -208,7 +208,8 @@
       msgEl.textContent = outcome.msg;
       msgEl.style.display = outcome.msg ? 'block' : 'none';
 
-      downloadsEl.innerHTML = outcome.downloads.map(function(label){
+      /* PRD情境:回傳成功但對應PDF欄位為空字串時,該下載項不應顯示(僅filter防呆,本頁固定happy path不會實際觸發空值) */
+      downloadsEl.innerHTML = outcome.downloads.filter(Boolean).map(function(label){
         return '<button class="pv-btn outlined">下載'+label+'</button>';
       }).join('');
 

@@ -133,13 +133,16 @@
       <h3>基本資料</h3>
 
       <div class="ocr-upload compact">
-        <div class="ocr-dropzone compact" id="ocrLicense" data-state="empty" data-filename="行照.jpg" data-empty-text="上傳行照" data-done-text="已帶入牌照號碼" data-preview="../assets/行照.jpg" data-plate-front="AAA" data-plate-rear="0001" onclick="toggleUpload('ocrLicense')">
+        <div class="ocr-dropzone compact" id="ocrLicense" data-state="empty" data-filename="行照.jpg" data-empty-text="上傳行照" data-done-text="已帶入牌照號碼" data-preview="../design/assets/行照.jpg" data-plate-front="AAA" data-plate-rear="0001" onclick="onDropzoneClick('ocrLicense')">
           <div class="title">上傳行照</div>
         </div>
-        <div class="ocr-dropzone compact" id="ocrDriver" data-state="empty" data-filename="駕照.jpg" data-empty-text="上傳駕照" data-done-text="已帶入駕照號碼" data-preview="../assets/駕照.jpg" data-driver-id="A123456789" onclick="toggleUpload('ocrDriver')">
+        <div class="ocr-dropzone compact" id="ocrDriver" data-state="empty" data-filename="駕照.jpg" data-empty-text="上傳駕照" data-done-text="已帶入駕照號碼" data-preview="../design/assets/駕照.jpg" data-driver-id="A123456789" onclick="onDropzoneClick('ocrDriver')">
           <div class="title">上傳駕照</div>
         </div>
+        <input type="file" id="ocrLicenseFile" accept="image/jpeg,image/png,application/pdf" style="display:none" onchange="onFilePicked('ocrLicense', this)">
+        <input type="file" id="ocrDriverFile" accept="image/jpeg,image/png,application/pdf" style="display:none" onchange="onFilePicked('ocrDriver', this)">
       </div>
+      <div id="uploadErrorMsg" style="display:none; margin-top:8px;"></div>
       <div style="display:flex; align-items:center; gap:10px; margin-top:12px;">
         <button class="pv-btn primary" id="ocrTriggerBtn" disabled onclick="runOcr()" title="點擊可依序示範成功／逾時／失敗三種辨識結果">OCR 辨識</button>
         <div id="ocrResultMsg" style="display:none;"></div>
@@ -159,15 +162,15 @@
       </div>
 
       <div class="fields-row" style="margin-top:20px;">
-        <div class="field">
+        <div class="field" id="plateFrontField">
           <label>車牌前段 <span class="req">*</span></label>
           <input type="text" id="plateFront" maxlength="4">
         </div>
-        <div class="field">
+        <div class="field" id="plateRearField">
           <label>車牌後段 <span class="req">*</span></label>
           <input type="text" id="plateRear" maxlength="4">
         </div>
-        <div class="field">
+        <div class="field" id="driverIdField">
           <label>駕照號碼（身分證） <span class="req">*</span></label>
           <input type="text" id="driverIdNo">
         </div>
@@ -214,27 +217,31 @@
     <div class="form-section">
       <h3>保險生效日</h3>
       <div class="date-row date-group" id="compelDateGroup">
-        <div class="field" style="max-width:180px;">
+        <div class="field" style="max-width:180px;" id="compelBeginField">
           <label>強制險生效日 <span class="req">*</span></label>
-          <input type="text" value="2026-08-01" id="compelBegin">
+          <input type="date" id="compelBegin" onchange="onEffectiveDateChange('compel')">
         </div>
         <div class="arrow-sep">→</div>
         <div class="field readonly" style="max-width:180px;">
           <label>強制險到期日（唯讀）</label>
-          <input type="text" value="2027-08-01" id="compelEnd" readonly>
+          <input type="date" id="compelEnd" readonly>
         </div>
       </div>
       <div class="date-row date-group" id="choiceDateGroup" style="margin-top:16px;">
-        <div class="field" style="max-width:180px;">
+        <div class="field" style="max-width:180px;" id="choiceBeginField">
           <label>任意險生效日 <span class="req">*</span></label>
-          <input type="text" value="2026-08-01" id="choiceBegin">
+          <input type="date" id="choiceBegin" onchange="onEffectiveDateChange('choice')">
         </div>
         <div class="arrow-sep">→</div>
         <div class="field readonly" style="max-width:180px;">
           <label>任意險到期日（唯讀）</label>
-          <input type="text" value="2027-08-01" id="choiceEnd" readonly>
+          <input type="date" id="choiceEnd" readonly>
         </div>
       </div>
+    </div>
+    <div style="margin-top:20px; display:flex; align-items:center; gap:12px;">
+      <button class="pv-btn primary" id="submitPrequalBtn" onclick="submitPrequal()">送出預查</button>
+      <div id="prequalResultMsg" style="display:none;"></div>
     </div>
     </div>
 
@@ -243,7 +250,7 @@
   <div class="page-actions">
     <div class="page-actions-inner">
       <button class="pv-btn outlined" disabled>上一步</button>
-      <button class="pv-btn primary" id="nextBtn" onclick="location.href='02-vehicle-data.html'">下一步：車輛資料</button>
+      <button class="pv-btn primary" id="nextBtn" disabled onclick="location.href='02-vehicle-data.html'">下一步：車輛資料</button>
     </div>
   </div>
 
@@ -276,9 +283,40 @@
       document.getElementById('lightboxOverlay').classList.remove('open');
     }
     /* ---- 上傳／OCR辨識(需按鈕觸發，不是上傳後自動辨識) ---- */
-    function toggleUpload(id){
+    /* 檔案格式白名單已由PRD確認為JPG/PNG/PDF；大小上限PRD 7.4自己尚未定案(見PO清單第4項)，此處10MB為示意值 */
+    const UPLOAD_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
+    const UPLOAD_MAX_BYTES = 10 * 1024 * 1024;
+    function onDropzoneClick(id){
       const el = document.getElementById(id);
-      el.dataset.state = (el.dataset.state === 'empty') ? 'uploaded' : 'empty';
+      if(el.dataset.state === 'empty'){
+        document.getElementById(id+'File').click();
+      } else {
+        el.dataset.state = 'empty';
+        renderDropzone(el);
+        document.getElementById('ocrResultMsg').style.display = 'none';
+        updateOcrState();
+      }
+    }
+    function showUploadError(message){
+      const el = document.getElementById('uploadErrorMsg');
+      el.innerHTML = '<span class="ocr-status fail"><span>✕</span> '+message+'</span>';
+      el.style.display = 'block';
+    }
+    function onFilePicked(id, inputEl){
+      const file = inputEl.files[0];
+      inputEl.value = '';
+      if(!file) return;
+      document.getElementById('uploadErrorMsg').style.display = 'none';
+      if(UPLOAD_ALLOWED_TYPES.indexOf(file.type) === -1){
+        showUploadError('僅支援 JPG／PNG／PDF 格式');
+        return;
+      }
+      if(file.size > UPLOAD_MAX_BYTES){
+        showUploadError('檔案大小不可超過 10MB，請壓縮後重新上傳');
+        return;
+      }
+      const el = document.getElementById(id);
+      el.dataset.state = 'uploaded';
       renderDropzone(el);
       document.getElementById('ocrResultMsg').style.display = 'none';
       updateOcrState();
@@ -336,12 +374,15 @@
       document.getElementById('ocrTriggerBtn').disabled = !anyPending;
       const busyEl = document.getElementById('ocrBusy');
       busyEl.style.display = anyRecognized ? 'inline-flex' : 'none';
-      if(!anyRecognized){ setLookupState(busyEl, 'busy'); }
+      if(anyRecognized){ setLookupState(busyEl, 'done'); }
     }
     function setLookupState(el, state){
       if(state === 'fail'){
         el.className = 'ocr-status fail';
         el.innerHTML = '<span>✕</span> 查無此廠牌車型資料，請確認車牌後手動填寫';
+      } else if(state === 'done'){
+        el.className = 'ocr-status done';
+        el.innerHTML = '<span>✓</span> 廠代碼工具查詢成功，資料已代入';
       } else {
         el.className = 'ocr-status busy';
         el.innerHTML = '<span class="spin"></span> 廠代碼工具查詢中…';
@@ -350,7 +391,7 @@
     function toggleLookupFail(){
       const el = document.getElementById('ocrBusy');
       const isFail = el.classList.contains('fail');
-      setLookupState(el, isFail ? 'busy' : 'fail');
+      setLookupState(el, isFail ? 'done' : 'fail');
     }
 
     /* ---- T牌種類跟車輛種類代號連動:非07/15時鎖定「不適用」;選21時彈窗阻擋 ---- */
@@ -365,13 +406,40 @@
     function onVehicleTypeChange(){
       updateTaxiOptions();
       const vt = document.getElementById('vehicleType').value;
-      const nextBtn = document.getElementById('nextBtn');
       if(vt === '21'){
         document.getElementById('vehicleTypeBlockModal').classList.add('open');
-        nextBtn.disabled = true;
-      } else {
-        nextBtn.disabled = false;
       }
+      updateNextBtnState();
+    }
+
+    /* ---- 送出預查:通過後「下一步」才可點擊,對應PRD 9.3「預查通過後可進入下一步」情境 ---- */
+    let prequalPassed = false;
+    function updateNextBtnState(){
+      const vt = document.getElementById('vehicleType').value;
+      document.getElementById('nextBtn').disabled = !prequalPassed || vt === '21';
+    }
+    function validatePrequalForm(){
+      let ok = true;
+      ['plateFrontField', 'plateRearField', 'driverIdField'].forEach(clearFieldError);
+      if(!document.getElementById('plateFront').value.trim()){ setFieldError('plateFrontField', '請輸入車牌前段'); ok = false; }
+      if(!document.getElementById('plateRear').value.trim()){ setFieldError('plateRearField', '請輸入車牌後段'); ok = false; }
+      if(!document.getElementById('driverIdNo').value.trim()){ setFieldError('driverIdField', '請輸入駕照號碼（身分證）'); ok = false; }
+      if(document.getElementById('compelBeginField').classList.contains('error')) ok = false;
+      if(document.getElementById('choiceBeginField').classList.contains('error')) ok = false;
+      return ok;
+    }
+    function submitPrequal(){
+      const msgEl = document.getElementById('prequalResultMsg');
+      if(!validatePrequalForm()){
+        msgEl.style.display = 'none';
+        prequalPassed = false;
+        updateNextBtnState();
+        return;
+      }
+      prequalPassed = true;
+      msgEl.innerHTML = '<span class="pv-tag tag-success"><span class="dot"></span>預查通過</span>';
+      msgEl.style.display = 'block';
+      updateNextBtnState();
     }
 
     /* ---- 方案清冊:最多3組,各自一個Dropdown選PlanCode ---- */
@@ -413,15 +481,87 @@
       const tags = [].slice.call(document.querySelectorAll('.plan-select')).map(function(s){ return s.value; }).filter(Boolean);
       setDatePairState('compel', tags.some(function(t){ return t === '強+任' || t === '單強'; }));
       setDatePairState('choice', tags.some(function(t){ return t === '強+任' || t === '單任'; }));
+      onEffectiveDateChange('compel');
+      onEffectiveDateChange('choice');
     }
     function setDatePairState(prefix, needed){
       document.getElementById(prefix+'Begin').disabled = !needed;
       document.getElementById(prefix+'DateGroup').style.opacity = needed ? '1' : '.45';
     }
 
+    /* ---- 生效日驗證:當日不可選/不得早於系統日/需在60天內(對應PO清單第5項採60天版本) ---- */
+    const DATE_MAX_DAYS_AHEAD = 60;
+    function toDateOnly(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+    function formatDate(d){
+      const p = function(n){ return String(n).padStart(2, '0'); };
+      return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    }
+    function addDays(d, n){ const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+    function addYears(d, n){ const r = new Date(d); r.setFullYear(r.getFullYear() + n); return r; }
+
+    function setFieldError(fieldId, message){
+      const field = document.getElementById(fieldId);
+      field.classList.add('error');
+      if(!field.querySelector('.err-msg')){
+        field.insertAdjacentHTML('beforeend', '<div class="err-msg">⚠ '+message+'</div>');
+      }
+    }
+    function clearFieldError(fieldId){
+      const field = document.getElementById(fieldId);
+      field.classList.remove('error');
+      const msg = field.querySelector('.err-msg');
+      if(msg) msg.remove();
+    }
+
+    function onEffectiveDateChange(prefix){
+      const beginInput = document.getElementById(prefix+'Begin');
+      const endInput = document.getElementById(prefix+'End');
+      const fieldId = prefix+'BeginField';
+      clearFieldError(fieldId);
+      if(beginInput.disabled || !beginInput.value) return;
+
+      const today = toDateOnly(new Date());
+      const begin = toDateOnly(new Date(beginInput.value + 'T00:00:00'));
+
+      if(begin.getTime() === today.getTime()){
+        setFieldError(fieldId, '保險生效日不可為當日');
+        endInput.value = '';
+        return;
+      }
+      if(begin.getTime() < today.getTime()){
+        setFieldError(fieldId, '生效日不得小於系統日');
+        endInput.value = '';
+        return;
+      }
+      const diffDays = Math.round((begin.getTime() - today.getTime()) / 86400000);
+      if(diffDays > DATE_MAX_DAYS_AHEAD){
+        setFieldError(fieldId, '保險生效日需為60天內');
+        endInput.value = '';
+        return;
+      }
+      endInput.value = formatDate(addYears(begin, 1));
+    }
+
+    function initEffectiveDates(){
+      const today = toDateOnly(new Date());
+      const min = formatDate(addDays(today, 1));
+      const max = formatDate(addDays(today, DATE_MAX_DAYS_AHEAD));
+      const demoDefault = formatDate(addDays(today, 7));
+      ['compelBegin', 'choiceBegin'].forEach(function(id){
+        const input = document.getElementById(id);
+        input.min = min;
+        input.max = max;
+        input.value = demoDefault;
+      });
+      onEffectiveDateChange('compel');
+      onEffectiveDateChange('choice');
+    }
+
     updateOcrState();
     updatePlanBlocksUI();
     updateDateRequirements();
+    initEffectiveDates();
+    updateNextBtnState();
   </script>
 </body>
 </html>
