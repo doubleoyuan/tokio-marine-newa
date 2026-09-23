@@ -914,16 +914,18 @@ section{padding-top:8px; margin-bottom:64px; scroll-margin-top:24px;}
       <table class="semantic-table">
         <tr><th>畫面欄位</th><th>API 欄位</th><th>型態／規則</th><th>備註</th></tr>
         <tr><td>車牌前段＋車牌後段</td><td class="mono" style="font-family:'Roboto Mono',monospace;">TagID</td><td>string(12)</td><td>送出前組合為單一欄位</td></tr>
-        <tr><td>駕照號碼（身分證）</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredID</td><td>string(10)，需通過身分證檢核演算法</td><td>此階段先暫存，實際送出於被保險人資料階段</td></tr>
+        <tr><td>駕照號碼（身分證）／統一編號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">AssuredID</td><td>string(10)，需通過身分證檢核演算法；法人則為統一編號string(8)</td><td>此階段先暫存，實際送出於被保險人資料階段。勾選「被保險人為法人」時，本欄位改為統一編號，且不可上傳駕照(2026-09-23起，PRD v2.5)</td></tr>
+        <tr><td>被保險人為法人（checkbox）</td><td class="mono" style="font-family:'Roboto Mono',monospace;">—（無對應API，畫面邏輯用）</td><td>checkbox，選填</td><td>勾選後駕照上傳停用、駕照號碼欄位改標「統一編號」；PRD v2.5新增，因法人無駕照可供OCR</td></tr>
         <tr><td>駕照用途</td><td class="mono" style="font-family:'Roboto Mono',monospace;">—（無對應API，畫面邏輯用）</td><td>radio，選填</td><td>決定 OCR 姓名/性別/生日/住址是否代入階段3被保險人資料；這4個欄位本身不在階段1顯示</td></tr>
         <tr><td>車輛種類代號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">VehicleType</td><td>Dropdown，必填</td><td>07/14/15；21 為預留碼，選擇時阻擋</td></tr>
         <tr><td>T 牌種類</td><td class="mono" style="font-family:'Roboto Mono',monospace;">IsDiversifiedTaxi</td><td>radio，必填</td><td>Y:多元／N:小黃或不適用</td></tr>
         <tr><td>方案清冊（每組各一個 Dropdown）</td><td class="mono" style="font-family:'Roboto Mono',monospace;">PlanCode</td><td>Dropdown，必填，最多新增3組</td><td>依車種與 T 牌種類顯示可投保方案；系統仍逐筆送出</td></tr>
         <tr><td>強制險生效日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">CompelDateBegin</td><td>YYYYMMDD，條件必填</td><td>選擇的方案中有強制險時才需要，其餘停用</td></tr>
-        <tr><td>強制險到期日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">CompelDateEnd</td><td>唯讀</td><td>生效日 + 1 年，系統自動計算</td></tr>
+        <tr><td>強制險到期日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">CompelDateEnd</td><td>唯讀</td><td>畫面採「生效日 + 1 年，系統自動計算」。⚠️PRD v2.5同時也把「強制險到期日／任意險到期日」列為廠代碼工具查詢的回傳欄位之一，兩種來源沒有講清楚是否為同一件事，已列入待跟PO確認事項，暫維持現行「生效日+1年」算法不變</td></tr>
         <tr><td>任意險生效日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ChoiceDateBegin</td><td>YYYYMMDD，條件必填</td><td>選擇的方案中有任意險時才需要，其餘停用</td></tr>
-        <tr><td>任意險到期日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ChoiceDateEnd</td><td>唯讀</td><td>生效日 + 1 年，系統自動計算</td></tr>
+        <tr><td>任意險到期日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ChoiceDateEnd</td><td>唯讀</td><td>同上，暫維持「生效日+1年」算法</td></tr>
       </table>
+      <p class="section-desc" style="margin-top:8px;">PRD v2.5起，廠代碼工具改由「牌照號碼」＋「駕照號碼(身分證)／統一編號」兩者都填妥才觸發查詢(不論透過OCR或手動輸入)，不是v2.2版的「任一項OCR辨識成功即觸發」。查詢成功後代入本表的強制/任意險到期日，以及下方「2.車輛資料」表格中標註「廠代碼工具可自動代入」的欄位。</p>
       </div>
 
       <h4 style="font-size:14px;margin:22px 0 10px;">2. 車輛資料</h4>
@@ -939,9 +941,9 @@ section{padding-top:8px; margin-bottom:64px; scroll-margin-top:24px;}
         <tr><td>排氣量／馬力</td><td class="mono" style="font-family:'Roboto Mono',monospace;">Cylinder</td><td>number,decimal，必填</td><td>錯誤對應C0006/C2103/C2114；為空時前端阻擋</td></tr>
         <tr><td>重置價格</td><td class="mono" style="font-family:'Roboto Mono',monospace;">VehiclePrice</td><td>number,int，必填</td><td>廠代碼工具可自動代入</td></tr>
         <tr><td>配備金額</td><td class="mono" style="font-family:'Roboto Mono',monospace;">VehicleEquipmentPrice</td><td>number,decimal，選填</td><td>—</td></tr>
-        <tr><td>原始發照日期</td><td class="mono" style="font-family:'Roboto Mono',monospace;">RegistrationIssueDate</td><td>date picker，必填</td><td>OCR辨識行照可自動代入，若無手動填寫；錯誤對應C0009/C2113（PRD欄位表誤植為駕照OCR，以6.1功能描述之行照OCR為準）</td></tr>
+        <tr><td>原始發照日期</td><td class="mono" style="font-family:'Roboto Mono',monospace;">RegistrationIssueDate</td><td>date picker，必填</td><td>廠代碼工具可自動代入，若無手動填寫；錯誤對應C0009/C2113（PRD v2.5起明確改為廠代碼工具來源，取代v2.2「行照OCR代入」的舊寫法，一併解決了v2.2欄位表誤植駕照OCR的矛盾）</td></tr>
         <tr><td>乘載單位</td><td class="mono" style="font-family:'Roboto Mono',monospace;">TransportUnit</td><td>radio，必填</td><td>預設：1(乘載人數)</td></tr>
-        <tr><td>載運人數</td><td class="mono" style="font-family:'Roboto Mono',monospace;">TransportAmount</td><td>Dropdown 2~9，必填</td><td>OCR辨識行照可自動代入，若無手動填寫；錯誤對應C0007</td></tr>
+        <tr><td>載運人數</td><td class="mono" style="font-family:'Roboto Mono',monospace;">TransportAmount</td><td>Dropdown 2~9，必填</td><td>廠代碼工具可自動代入，若無手動填寫；錯誤對應C0007（同上，PRD v2.5改為廠代碼工具來源）</td></tr>
         <tr><td>引擎號碼／車身號碼</td><td class="mono" style="font-family:'Roboto Mono',monospace;">EngineID（同一API欄位）</td><td>text(25)，條件必填</td><td>兩者擇一，皆空時前端阻擋</td></tr>
         <tr><td>配備1~6、9</td><td class="mono" style="font-family:'Roboto Mono',monospace;">Equipment1~Equipment6,Equipment9</td><td>checkbox，選填</td><td>勾選1未勾0，預設0</td></tr>
         <tr><td>配備-其他說明</td><td class="mono" style="font-family:'Roboto Mono',monospace;">Nequipment9</td><td>text(50)，條件必填</td><td>Equipment9勾選時前端阻擋必填</td></tr>
@@ -978,10 +980,10 @@ section{padding-top:8px; margin-bottom:64px; scroll-margin-top:24px;}
       <table class="semantic-table">
         <tr><th>畫面欄位</th><th>API 欄位</th><th>型態／規則</th><th>備註</th></tr>
         <tr><td>與被保險人為同一人</td><td class="mono" style="font-family:'Roboto Mono',monospace;">—（畫面邏輯用）</td><td>checkbox</td><td>勾選時鎖定性質/關係並一鍵代入階段3資料；取消則清空並改用系統預設值</td></tr>
-        <tr><td>與被保險人關係</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantRelationDescription</td><td>Dropdown 本人/配偶/父母/子女/其他，必填</td><td>同一人時回傳「本人」；非本人但ID與被保險人相同→錯誤(E0020，見下方阻礙項)</td></tr>
+        <tr><td>與被保險人關係</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantRelationDescription</td><td>Dropdown 本人/配偶/父母/子女/其他，必填</td><td>同一人時回傳「本人」（E0020已於PRD v2.5移除，不再檢核）</td></tr>
         <tr><td>關係補充說明</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantRelationDescription(併入)</td><td>text，條件必填</td><td>關係選「其他」時必填</td></tr>
         <tr><td>要保人性質</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantType</td><td>radio，必填</td><td>同一人時鎖定並代入被保險人性質</td></tr>
-        <tr><td>要保人ID</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantID</td><td>string(10)，必填</td><td>同一人時代入；自然人做身分證檢核；關係=本人但ID與被保險人不同→錯誤(E0017)</td></tr>
+        <tr><td>要保人ID</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantID</td><td>string(10)，必填</td><td>同一人時代入；自然人做身分證檢核（E0017已於PRD v2.5移除，不再檢核）</td></tr>
         <tr><td>姓名／公司名稱</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantName</td><td>string(50)，必填</td><td>同一人時代入</td></tr>
         <tr><td>生日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantBirthday</td><td>date picker，條件必填</td><td>自然人必填，法人空白；同一人時代入</td></tr>
         <tr><td>性別</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ApplicantSex</td><td>唯讀，條件必填</td><td>依身分證第2碼自動判斷(1/8=男,2/9=女)；<b>無婚姻欄位</b></td></tr>

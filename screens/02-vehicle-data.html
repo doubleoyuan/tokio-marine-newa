@@ -292,8 +292,10 @@
       document.getElementById('model').innerHTML = models.map(function(m){ return '<option>'+m+'</option>'; }).join('');
     }
 
-    /* ---- 廠代碼工具查無此車牌:相關欄位開放手動填寫(這裡示範清空讓使用者能重新輸入) ---- */
-    const BRAND_LOOKUP_FIELDS = ['manufacturedDate','cylinder','vehiclePrice','engineId','chassisId'];
+    /* ---- 廠代碼工具查無此車牌:相關欄位開放手動填寫(這裡示範清空讓使用者能重新輸入) ----
+       PRD v2.5:廠代碼工具實際觸發點在階段1(牌照號碼+駕照號碼/統一編號)，查詢結果代入本頁這些欄位;
+       本頁的查詢狀態tag與toggle是延續階段1那次查詢結果的demo呈現，不是本頁自己重新觸發一次查詢 */
+    const BRAND_LOOKUP_FIELDS = ['manufacturedDate','cylinder','vehiclePrice','engineId','chassisId','registrationDate','transportAmount'];
     let brandLookupDefaults = null;
     function toggleBrandLookupFail(){
       const statusEl = document.getElementById('brandLookupStatus');

@@ -463,18 +463,6 @@
       } else if(relation === '其他' && !document.getElementById('relationNote').value.trim()){
         setFieldError('relationNoteField', '請填寫關係補充說明'); ok = false;
       }
-      /* PRD情境:關係非本人但兩者ID相同(E0020) / 關係本人但ID不同(E0017)。
-         這兩個錯誤代碼在API規格v1.3/1.4的異動紀錄中被標記過刪除線(可能已停用)，
-         但PRD 6.4自己的情境表仍要求做這兩條檢核，故先依PRD實作，列為已知阻礙項待確認。 */
-      if(idVal){
-        const sameId = idVal.toUpperCase() === ASSURED_DEMO.id;
-        if(relation && relation !== '本人' && sameId){
-          setFieldError('relationField', '要保人與被保人的關係描述請回傳［本人］'); ok = false;
-        } else if(relation === '本人' && !sameId){
-          setFieldError('applicantIdField', '要保人與被保險人資料不相符'); ok = false;
-        }
-      }
-
       if(!isCorp){
         const birthday = document.getElementById('applicantBirthday').value;
         if(!birthday){
@@ -515,11 +503,6 @@
       const relation = document.getElementById('relationDesc').value;
       if(!relation) return false;
       if(relation === '其他' && !document.getElementById('relationNote').value.trim()) return false;
-      if(idVal){
-        const sameId = idVal.toUpperCase() === ASSURED_DEMO.id;
-        if(relation && relation !== '本人' && sameId) return false;
-        if(relation === '本人' && !sameId) return false;
-      }
       if(!isCorp){
         if(!document.getElementById('applicantBirthday').value) return false;
         if(!document.getElementById('applicantSex').value) return false;
