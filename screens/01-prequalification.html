@@ -161,18 +161,24 @@
         </div>
       </div>
 
+      <div class="field" style="margin-top:16px;">
+        <label style="display:flex; align-items:center; gap:6px; font-weight:400; font-size:var(--font-size-body-md); color:var(--page-text); cursor:pointer;">
+          <input type="checkbox" id="assuredIsCorp" onchange="onAssuredIsCorpChange()"> 被保險人為法人（無駕照，改用統一編號查詢廠代碼）
+        </label>
+      </div>
+
       <div class="fields-row" style="margin-top:20px;">
         <div class="field" id="plateFrontField">
           <label>車牌前段 <span class="req">*</span></label>
-          <input type="text" id="plateFront" maxlength="4">
+          <input type="text" id="plateFront" maxlength="4" oninput="checkBrandLookupTrigger()">
         </div>
         <div class="field" id="plateRearField">
           <label>車牌後段 <span class="req">*</span></label>
-          <input type="text" id="plateRear" maxlength="4">
+          <input type="text" id="plateRear" maxlength="4" oninput="checkBrandLookupTrigger()">
         </div>
         <div class="field" id="driverIdField">
-          <label>駕照號碼（身分證） <span class="req">*</span></label>
-          <input type="text" id="driverIdNo">
+          <label id="driverIdLabel">駕照號碼（身分證） <span class="req">*</span></label>
+          <input type="text" id="driverIdNo" oninput="checkBrandLookupTrigger()">
         </div>
       </div>
       <div class="fields-row" style="margin-top:16px;">
@@ -287,6 +293,7 @@
     const UPLOAD_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
     const UPLOAD_MAX_BYTES = 10 * 1024 * 1024;
     function onDropzoneClick(id){
+      if(id === 'ocrDriver' && document.getElementById('assuredIsCorp').checked) return;
       const el = document.getElementById(id);
       if(el.dataset.state === 'empty'){
         document.getElementById(id+'File').click();
@@ -370,11 +377,36 @@
     function updateOcrState(){
       const ids = ['ocrLicense','ocrDriver'];
       const anyPending = ids.some(function(id){ return document.getElementById(id).dataset.state === 'uploaded'; });
-      const anyRecognized = ids.some(function(id){ return document.getElementById(id).dataset.state === 'recognized'; });
       document.getElementById('ocrTriggerBtn').disabled = !anyPending;
+      checkBrandLookupTrigger();
+    }
+    /* PRD v2.5:廠代碼工具由「牌照號碼」+「駕照號碼(身分證)/統一編號」共同觸發(不論是OCR代入或手動輸入)，
+       不是像v2.2那樣只要任一項OCR辨識成功就觸發 */
+    function checkBrandLookupTrigger(){
       const busyEl = document.getElementById('ocrBusy');
-      busyEl.style.display = anyRecognized ? 'inline-flex' : 'none';
-      if(anyRecognized){ setLookupState(busyEl, 'done'); }
+      const ready = document.getElementById('plateFront').value.trim() &&
+                    document.getElementById('plateRear').value.trim() &&
+                    document.getElementById('driverIdNo').value.trim();
+      busyEl.style.display = ready ? 'inline-flex' : 'none';
+      if(ready && !busyEl.classList.contains('fail')){ setLookupState(busyEl, 'done'); }
+    }
+    function onAssuredIsCorpChange(){
+      const isCorp = document.getElementById('assuredIsCorp').checked;
+      const driverDropzone = document.getElementById('ocrDriver');
+      const driverIdInput = document.getElementById('driverIdNo');
+      const driverIdLabel = document.getElementById('driverIdLabel');
+      driverDropzone.style.opacity = isCorp ? '.45' : '1';
+      driverDropzone.style.pointerEvents = isCorp ? 'none' : 'auto';
+      if(isCorp && driverDropzone.dataset.state !== 'empty'){
+        driverDropzone.dataset.state = 'empty';
+        renderDropzone(driverDropzone);
+      }
+      driverIdLabel.innerHTML = isCorp
+        ? '統一編號 <span class="req">*</span>'
+        : '駕照號碼（身分證） <span class="req">*</span>';
+      driverIdInput.value = '';
+      driverIdInput.placeholder = isCorp ? '請輸入統一編號（8碼）' : '';
+      updateOcrState();
     }
     function setLookupState(el, state){
       if(state === 'fail'){
