@@ -920,12 +920,13 @@ section{padding-top:8px; margin-bottom:64px; scroll-margin-top:24px;}
         <tr><td>車輛種類代號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">VehicleType</td><td>Dropdown，必填</td><td>07/14/15；21 為預留碼，選擇時阻擋</td></tr>
         <tr><td>T 牌種類</td><td class="mono" style="font-family:'Roboto Mono',monospace;">IsDiversifiedTaxi</td><td>radio，必填</td><td>Y:多元／N:小黃或不適用</td></tr>
         <tr><td>方案清冊（每組各一個 Dropdown）</td><td class="mono" style="font-family:'Roboto Mono',monospace;">PlanCode</td><td>Dropdown，必填，最多新增3組</td><td>依車種與 T 牌種類顯示可投保方案；系統仍逐筆送出</td></tr>
-        <tr><td>強制險生效日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">CompelDateBegin</td><td>YYYYMMDD，條件必填</td><td>選擇的方案中有強制險時才需要，其餘停用</td></tr>
-        <tr><td>強制險到期日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">CompelDateEnd</td><td>唯讀</td><td>畫面採「生效日 + 1 年，系統自動計算」。⚠️PRD v2.5同時也把「強制險到期日／任意險到期日」列為廠代碼工具查詢的回傳欄位之一，兩種來源沒有講清楚是否為同一件事，已列入待跟PO確認事項，暫維持現行「生效日+1年」算法不變</td></tr>
-        <tr><td>任意險生效日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ChoiceDateBegin</td><td>YYYYMMDD，條件必填</td><td>選擇的方案中有任意險時才需要，其餘停用</td></tr>
-        <tr><td>任意險到期日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ChoiceDateEnd</td><td>唯讀</td><td>同上，暫維持「生效日+1年」算法</td></tr>
+        <tr><td>強制險生效日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">CompelDateBegin</td><td>YYYYMMDD，條件必填</td><td>選擇的方案中有強制險時才需要，其餘停用；廠代碼工具查詢成功後，自動代入「前一份保單到期日」作為續保建議生效日（PRD v2.6）</td></tr>
+        <tr><td>強制險到期日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">CompelDateEnd</td><td>唯讀</td><td>生效日 + 1 年，系統自動計算。（PRD v2.6已釐清：廠代碼工具回傳的「強制/任意險到期日」是前一份保單的到期日，代入為新保單的建議生效日，不是這裡的新保單到期日，兩者不是同一件事，v2.5時的疑問已解決）</td></tr>
+        <tr><td>任意險生效日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ChoiceDateBegin</td><td>YYYYMMDD，條件必填</td><td>選擇的方案中有任意險時才需要，其餘停用；同上，廠代碼工具查詢成功後自動代入續保建議生效日</td></tr>
+        <tr><td>任意險到期日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ChoiceDateEnd</td><td>唯讀</td><td>同上，生效日+1年算法</td></tr>
       </table>
       <p class="section-desc" style="margin-top:8px;">PRD v2.5起，廠代碼工具改由「牌照號碼」＋「駕照號碼(身分證)／統一編號」兩者都填妥才觸發查詢(不論透過OCR或手動輸入)，不是v2.2版的「任一項OCR辨識成功即觸發」。查詢成功後代入本表的強制/任意險到期日，以及下方「2.車輛資料」表格中標註「廠代碼工具可自動代入」的欄位。</p>
+      <p class="section-desc" style="margin-top:8px;">PRD v2.6新增續保情境：查詢成功後把「前一份保單到期日」直接代入為新保單的建議生效日；若代入後的生效日距今超過60天或已早於今日，畫面會顯示分險種的專屬警示（取代通用的日期驗證訊息）。實際畫面裡，這是依附在「牌照+駕照/統一編號都填妥」這個真實觸發動作上的示範，點擊查詢狀態燈號可依序看到「正常續保／距到期日超過60天／已超過到期日／查無資料」四種結果，不需要另外切到Design System確認。</p>
       </div>
 
       <h4 style="font-size:14px;margin:22px 0 10px;">2. 車輛資料</h4>

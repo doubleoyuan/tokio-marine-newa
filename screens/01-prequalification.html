@@ -147,7 +147,7 @@
         <button class="pv-btn primary" id="ocrTriggerBtn" disabled onclick="runOcr()" title="點擊可依序示範成功／逾時／失敗三種辨識結果">OCR 辨識</button>
         <div id="ocrResultMsg" style="display:none;"></div>
       </div>
-      <div class="ocr-status busy" id="ocrBusy" style="margin-top:10px; display:none; cursor:pointer;" onclick="toggleLookupFail()" title="點擊示範查無資料狀態"><span class="spin"></span> 廠代碼工具查詢中…</div>
+      <div class="ocr-status busy" id="ocrBusy" style="margin-top:10px; display:none; cursor:pointer;" onclick="cycleContinuationState()" title="點擊可依序示範續保生效日：正常／距到期日超過60天／已超過到期日／查無資料"><span class="spin"></span> 廠代碼工具查詢中…</div>
 
       <div class="field" style="margin-top:20px;">
         <label>駕照用途</label>
@@ -382,13 +382,57 @@
     }
     /* PRD v2.5:廠代碼工具由「牌照號碼」+「駕照號碼(身分證)/統一編號」共同觸發(不論是OCR代入或手動輸入)，
        不是像v2.2那樣只要任一項OCR辨識成功就觸發 */
+    let brandLookupResolved = false;
     function checkBrandLookupTrigger(){
       const busyEl = document.getElementById('ocrBusy');
       const ready = document.getElementById('plateFront').value.trim() &&
                     document.getElementById('plateRear').value.trim() &&
                     document.getElementById('driverIdNo').value.trim();
       busyEl.style.display = ready ? 'inline-flex' : 'none';
-      if(ready && !busyEl.classList.contains('fail')){ setLookupState(busyEl, 'done'); }
+      if(ready && !brandLookupResolved){
+        brandLookupResolved = true;
+        continuationStateIndex = 0;
+        applyContinuationDate('normal');
+      } else if(!ready){
+        brandLookupResolved = false;
+      }
+    }
+    /* PRD v2.6:廠代碼工具回傳的「強制/任意險到期日」是前一份保單的到期日，代入為新保單的建議生效日(續保情境)。
+       若代入後的生效日超出可投保範圍，顯示分險種的專屬警示，取代原本通用的日期驗證訊息。
+       用跟「查無資料」同一顆狀態燈號(#ocrBusy)依序循環示範：正常續保／距到期日超過60天／已超過到期日／查無資料 */
+    const CONTINUATION_DEMO_OFFSETS = { normal: 30, tooFar: 90, expired: -10 };
+    const CONTINUATION_STATES = ['normal', 'tooFar', 'expired', 'fail'];
+    let continuationStateIndex = 0;
+    function applyContinuationDate(state){
+      const busyEl = document.getElementById('ocrBusy');
+      if(state === 'fail'){
+        setLookupState(busyEl, 'fail');
+        return;
+      }
+      setLookupState(busyEl, 'done');
+      const offsetDays = CONTINUATION_DEMO_OFFSETS[state];
+      const dateStr = formatDate(addDays(toDateOnly(new Date()), offsetDays));
+      ['compel', 'choice'].forEach(function(prefix){
+        const beginInput = document.getElementById(prefix+'Begin');
+        if(beginInput.disabled) return;
+        beginInput.value = dateStr;
+        const fieldId = prefix+'BeginField';
+        const label = prefix === 'compel' ? '強制險' : '任意險';
+        clearFieldError(fieldId);
+        if(state === 'tooFar'){
+          setFieldError(fieldId, label+'距離到期日超過60日，尚未能進行投保');
+          document.getElementById(prefix+'End').value = '';
+        } else if(state === 'expired'){
+          setFieldError(fieldId, label+'已超過到期日，請調整生效日');
+          document.getElementById(prefix+'End').value = '';
+        } else {
+          onEffectiveDateChange(prefix);
+        }
+      });
+    }
+    function cycleContinuationState(){
+      continuationStateIndex = (continuationStateIndex + 1) % CONTINUATION_STATES.length;
+      applyContinuationDate(CONTINUATION_STATES[continuationStateIndex]);
     }
     function onAssuredIsCorpChange(){
       const isCorp = document.getElementById('assuredIsCorp').checked;
@@ -420,12 +464,6 @@
         el.innerHTML = '<span class="spin"></span> 廠代碼工具查詢中…';
       }
     }
-    function toggleLookupFail(){
-      const el = document.getElementById('ocrBusy');
-      const isFail = el.classList.contains('fail');
-      setLookupState(el, isFail ? 'done' : 'fail');
-    }
-
     /* ---- T牌種類跟車輛種類代號連動:非07/15時鎖定「不適用」;選21時彈窗阻擋 ---- */
     function updateTaxiOptions(){
       const vt = document.getElementById('vehicleType').value;
