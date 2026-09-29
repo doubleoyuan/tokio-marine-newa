@@ -262,34 +262,33 @@
   </div>
 
   <script src="../design/header.js"></script>
+  <script src="../design/taiwan-address-data.js"></script>
   <script>
     /* ---- 被保險人(階段3)的示意資料,用於「一鍵代入」demo ---- */
     const ASSURED_DEMO = {
       id: 'A123456789', name: '王小明', birthday: '1990-05-20',
-      city: '台北市', district: '大安區', detail: '忠孝東路四段1號',
+      city: '臺北市', district: '大安區', detail: '忠孝東路四段1號',
       mobile: '0912-345-678'
     };
 
-    /* ---- 地址連動:縣市→鄉鎮市區→自動代入郵遞區號(示意資料,與階段3共用同一份demo資料) ---- */
-    const ADDRESS_DATA = {
-      '台北市': { '大安區':'106', '信義區':'110', '中山區':'104' },
-      '新北市': { '板橋區':'220', '三重區':'241' }
-    };
+    /* ---- 地址連動:縣市→鄉鎮市區→自動代入郵遞區號
+       資料來源：台灣地址_縣市_鄉鎮市區.xlsx（PO 2026-09提供，22縣市368筆，與階段3共用 design/taiwan-address-data.js）
+       ⚠️ 郵遞區號非PO直接提供，另外核對中華郵政公告後補上，正式對外交付前請再次確認 ---- */
     function initApplicantAddressOptions(){
       const citySel = document.getElementById('applicantCity');
-      citySel.innerHTML = Object.keys(ADDRESS_DATA).map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+      citySel.innerHTML = Object.keys(TAIWAN_ADDRESS_DATA).map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
       updateApplicantDistrict();
     }
     function updateApplicantDistrict(){
       const city = document.getElementById('applicantCity').value;
-      const districts = ADDRESS_DATA[city];
+      const districts = TAIWAN_ADDRESS_DATA[city];
       document.getElementById('applicantDistrict').innerHTML = Object.keys(districts).map(function(d){ return '<option value="'+d+'">'+d+'</option>'; }).join('');
       updateApplicantZip();
     }
     function updateApplicantZip(){
       const city = document.getElementById('applicantCity').value;
       const district = document.getElementById('applicantDistrict').value;
-      document.getElementById('applicantZip').value = ADDRESS_DATA[city][district] || '';
+      document.getElementById('applicantZip').value = TAIWAN_ADDRESS_DATA[city][district] || '';
     }
 
     /* ---- 要保人性質:自然人/法人動態顯示欄位 ---- */

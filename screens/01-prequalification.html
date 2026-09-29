@@ -209,7 +209,7 @@
         <div class="plan-block">
           <select class="plan-select" onchange="updatePlanTag(this)">
             <option value="">請選擇方案</option>
-            <option value="強+任" selected>T15-100200-300　強制險＋任意險（示例方案 A）</option>
+            <option value="強+任" selected>T15-21-100200-300　強制險＋任意險（示例方案 A）</option>
             <option value="單強">T15-21　單一強制險（示例方案 B）</option>
             <option value="單任">T15-300-10000-1　單一任意險（示例方案 C）</option>
           </select>
@@ -514,8 +514,12 @@
 
     /* ---- 方案清冊:最多3組,各自一個Dropdown選PlanCode ---- */
     let planBlockCount = 1;
+    /* 方案代碼格式對齊PRD v2.6揭露的「方案判斷」規則(用"-"切割字串):
+       第二段="21"且無第三段(共2段)→單強制險；第二段="21"且總段數>2→強制+任意；其餘→單任意險。
+       ⚠️ 這只是格式對齊，不是真正的71種方案內容——PlanCode正式清單(新安-商品報價方案_1150701.xlsx)PO尚未提供檔案本身，
+       待PO確認/提供後才能替換成真實方案，見PO-CONFIRMATION-ITEMS.md第1項 */
     const PLAN_OPTIONS = '<option value="">請選擇方案</option>'
-      + '<option value="強+任">T15-100200-300　強制險＋任意險（示例方案 A）</option>'
+      + '<option value="強+任">T15-21-100200-300　強制險＋任意險（示例方案 A）</option>'
       + '<option value="單強">T15-21　單一強制險（示例方案 B）</option>'
       + '<option value="單任">T15-300-10000-1　單一任意險（示例方案 C）</option>';
     function addPlanBlock(){

@@ -250,6 +250,7 @@
   </div>
 
   <script src="../design/header.js"></script>
+  <script src="../design/taiwan-address-data.js"></script>
   <script>
     /* ---- 被保險人性質:自然人/法人動態顯示欄位 ---- */
     function onAssuredTypeChange(){
@@ -287,29 +288,29 @@
       }
     }
 
-    /* ---- 地址連動:縣市→鄉鎮市區→自動代入郵遞區號(示意資料) ---- */
-    const ADDRESS_DATA = {
-      '台北市': { '大安區':'106', '信義區':'110', '中山區':'104' },
-      '新北市': { '板橋區':'220', '三重區':'241' }
-    };
+    /* ---- 地址連動:縣市→鄉鎮市區→自動代入郵遞區號
+       資料來源：台灣地址_縣市_鄉鎮市區.xlsx（PO 2026-09提供，22縣市368筆，經 design/taiwan-address-data.js 轉出）
+       ⚠️ 該檔案本身只有縣市/鄉鎮市區兩欄，沒有附郵遞區號；郵遞區號是另外核對中華郵政公告的3碼郵遞區號後補上，
+       不是PO直接提供的資料，正式對外交付前請再次確認 ---- */
     function initAddressOptions(){
       const citySel = document.getElementById('addrCity');
-      citySel.innerHTML = Object.keys(ADDRESS_DATA).map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
-      citySel.value = '台北市';
+      const cities = Object.keys(TAIWAN_ADDRESS_DATA);
+      citySel.innerHTML = cities.map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+      citySel.value = '臺北市';
       updateDistrictOptions();
       document.getElementById('addrDistrict').value = '大安區';
       updateZip();
     }
     function updateDistrictOptions(){
       const city = document.getElementById('addrCity').value;
-      const districts = ADDRESS_DATA[city];
+      const districts = TAIWAN_ADDRESS_DATA[city];
       document.getElementById('addrDistrict').innerHTML = Object.keys(districts).map(function(d){ return '<option value="'+d+'">'+d+'</option>'; }).join('');
       updateZip();
     }
     function updateZip(){
       const city = document.getElementById('addrCity').value;
       const district = document.getElementById('addrDistrict').value;
-      document.getElementById('addrZip').value = ADDRESS_DATA[city][district] || '';
+      document.getElementById('addrZip').value = TAIWAN_ADDRESS_DATA[city][district] || '';
     }
 
     /* ---- 職業別:非一般職才顯示且必填高風險代號;改回一般職自動清空並隱藏 ---- */
