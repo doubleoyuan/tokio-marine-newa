@@ -313,6 +313,10 @@
       for(let i=0;i<9;i++){ sum += n[i]*weights[i]; }
       return sum % 10 === 0;
     }
+    /* ---- PRD規定手機號碼格式為09xx-xxx-xxx(10碼),之前只檢查有沒有填,沒檢查有沒有填完 ---- */
+    function isValidMobile(v){
+      return /^09[0-9]{8}$/.test(v.replace(/[^0-9]/g,''));
+    }
     function onApplicantIdInput(){
       const isCorp = document.getElementById('applicantTypeCorp').checked;
       if(isCorp) return;
@@ -430,8 +434,11 @@
 
       ['applicantIdField','applicantNameField','applicantDeputyField','applicantDetailField','applicantMobileField','applicantOccupyCodeField','applicantCntryNameField','relationField','relationNoteField'].forEach(clearFieldError);
 
-      if(!document.getElementById('applicantMobile').value.trim()){
+      const applicantMobileVal = document.getElementById('applicantMobile').value.trim();
+      if(!applicantMobileVal){
         setFieldError('applicantMobileField', '請輸入要保人手機號碼'); ok = false;
+      } else if(!isValidMobile(applicantMobileVal)){
+        setFieldError('applicantMobileField', '手機號碼格式錯誤，請輸入09xx-xxx-xxx共10碼'); ok = false;
       }
       const idVal = document.getElementById('applicantId').value.trim();
       if(!idVal){
@@ -489,7 +496,7 @@
     /* ---- 即時判斷必填是否都已填妥,控制「下一步」是否可點擊(不顯示錯誤訊息,對應PRD「所有必填欄位正確填寫→下一步啟用」) ---- */
     function isFormValid(){
       const isCorp = document.getElementById('applicantTypeCorp').checked;
-      if(!document.getElementById('applicantMobile').value.trim()) return false;
+      if(!isValidMobile(document.getElementById('applicantMobile').value.trim())) return false;
       const idVal = document.getElementById('applicantId').value.trim();
       if(!idVal) return false;
       if(!isCorp && !isValidTaiwanId(idVal.toUpperCase())) return false;
