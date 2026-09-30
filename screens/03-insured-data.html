@@ -245,7 +245,10 @@
   <div class="page-actions">
     <div class="page-actions-inner">
       <button class="pv-btn outlined" onclick="location.href='02-vehicle-data.html'">上一步</button>
-      <button class="pv-btn primary" id="nextBtn" disabled onclick="handleSubmit()">下一步：要保人資料</button>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span id="nextBtnHint" style="display:none; align-items:center; gap:4px; font-size:var(--font-size-caption); color:var(--danger-700);">⚠ 請完成以上必填欄位</span>
+        <button class="pv-btn primary" id="nextBtn" disabled onclick="handleSubmit()">下一步：要保人資料</button>
+      </div>
     </div>
   </div>
 
@@ -444,14 +447,19 @@
       }
       return true;
     }
+    /* ---- 使用者開始操作後,改用會即時標紅框/顯示錯誤訊息的validateForm()做即時檢查;
+       操作前(剛載入畫面)維持安靜檢查,不要一開始就整頁紅框 ---- */
+    let userInteracted = false;
     function updateNextBtnState(){
-      document.getElementById('nextBtn').disabled = !isFormValid();
+      const ok = userInteracted ? validateForm() : isFormValid();
+      document.getElementById('nextBtn').disabled = !ok;
+      document.getElementById('nextBtnHint').style.display = ok ? 'none' : 'flex';
     }
 
     initAddressOptions();
     onAssuredIdInput();
-    document.addEventListener('input', updateNextBtnState);
-    document.addEventListener('change', updateNextBtnState);
+    document.addEventListener('input', function(){ userInteracted = true; updateNextBtnState(); });
+    document.addEventListener('change', function(){ userInteracted = true; updateNextBtnState(); });
     updateNextBtnState();
   </script>
 </body>
