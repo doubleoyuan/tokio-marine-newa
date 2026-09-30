@@ -91,6 +91,9 @@
   border:1px solid var(--neutral-200); background:#fff; color:var(--page-text, #232a2d);
   width:100%;
 }
+.field input[type="checkbox"],.field input[type="radio"]{
+  width:auto; padding:0; border:none; background:none; flex:none;
+}
 .field input:focus,.field select:focus{outline:none; border-color:var(--primary-500); box-shadow:0 0 0 3px var(--primary-100);}
 .field.error input,.field.error select{border-color:var(--danger-500); background:var(--danger-50);}
 .field .err-msg{font-size:var(--font-size-caption); color:var(--danger-700); display:flex; gap:4px; align-items:center;}
