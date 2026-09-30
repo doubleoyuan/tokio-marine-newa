@@ -131,15 +131,11 @@
       <div class="fields-row">
         <div class="field readonly">
           <label>廠牌車型代號（唯讀）</label>
-          <input type="text" id="brandId" value="8Y3K2N91" readonly>
+          <input type="text" id="brandId" readonly>
         </div>
         <div class="field">
           <label>廠牌 <span class="req">*</span></label>
-          <select id="brand" onchange="updateSeriesOptions()">
-            <option value="TOYOTA" selected>TOYOTA</option>
-            <option value="HONDA">HONDA</option>
-            <option value="NISSAN">NISSAN</option>
-          </select>
+          <select id="brand" onchange="updateSeriesOptions()"></select>
         </div>
         <div class="field">
           <label>車系 <span class="req">*</span></label>
@@ -147,7 +143,7 @@
         </div>
         <div class="field">
           <label>車款 <span class="req">*</span></label>
-          <select id="model"></select>
+          <select id="model" onchange="applyModelSelection()"></select>
         </div>
       </div>
       <div class="fields-row" style="margin-top:16px;">
@@ -250,6 +246,7 @@
   </div>
 
   <script src="../design/header.js"></script>
+  <script src="../design/vehicle-brand-data.js"></script>
   <script>
     /* ---- T牌種類跟車輛種類代號連動:非07/15時鎖定「不適用」;選21時彈窗阻擋 ---- */
     function updateTaxiOptions(){
@@ -272,24 +269,46 @@
       }
     }
 
-    /* ---- 廠牌→車系→車款 連動下拉(示意資料，待保發中心正式清冊替換) ---- */
-    const BRAND_DATA = {
-      TOYOTA: { series: { COROLLA:{label:'COROLLA', models:['1.8 經典款','1.8 豪華款']}, ALTIS:{label:'ALTIS', models:['1.8 標準款']} } },
-      HONDA:  { series: { CIVIC:{label:'CIVIC', models:['1.5 VTEC豪華款','1.5 VTEC旗艦款']} } },
-      NISSAN: { series: { SENTRA:{label:'SENTRA', models:['1.6 經典款']} } }
-    };
+    /* ---- 廠牌→車系→車款 連動下拉
+       資料來源：保發中心_1150601_汽車_廠代碼分類_v1.5.xlsx（PO 2026-09提供，經 design/vehicle-brand-data.js 轉出）
+       結構：VEHICLE_BRAND_DATA[廠牌][車系] = [[車款, 8碼廠代碼, 重置價格, 座位數], ...] */
+    function initBrandOptions(){
+      const brandSel = document.getElementById('brand');
+      const brands = Object.keys(VEHICLE_BRAND_DATA).sort(function(a,b){ return a.localeCompare(b, 'zh-Hant'); });
+      brandSel.innerHTML = brands.map(function(b){ return '<option value="'+b+'">'+b+'</option>'; }).join('');
+      const defaultBrand = brands.indexOf('Toyota豐田(日本)') !== -1 ? 'Toyota豐田(日本)' : brands[0];
+      brandSel.value = defaultBrand;
+      updateSeriesOptions();
+    }
     function updateSeriesOptions(){
       const brand = document.getElementById('brand').value;
       const seriesSel = document.getElementById('series');
-      const seriesData = BRAND_DATA[brand].series;
-      seriesSel.innerHTML = Object.keys(seriesData).map(function(key){ return '<option value="'+key+'">'+seriesData[key].label+'</option>'; }).join('');
+      const seriesData = VEHICLE_BRAND_DATA[brand];
+      const seriesKeys = Object.keys(seriesData);
+      seriesSel.innerHTML = seriesKeys.map(function(key){ return '<option value="'+key+'">'+key+'</option>'; }).join('');
       updateModelOptions();
     }
     function updateModelOptions(){
       const brand = document.getElementById('brand').value;
       const series = document.getElementById('series').value;
-      const models = BRAND_DATA[brand].series[series].models;
-      document.getElementById('model').innerHTML = models.map(function(m){ return '<option>'+m+'</option>'; }).join('');
+      const models = VEHICLE_BRAND_DATA[brand][series];
+      document.getElementById('model').innerHTML = models.map(function(m, i){ return '<option value="'+i+'">'+m[0]+'</option>'; }).join('');
+      applyModelSelection();
+    }
+    /* 選定車款後,代入該筆真實資料的8碼廠代碼／重置價格；座位數落在既有2~9下拉範圍內才代入載運人數 */
+    function applyModelSelection(){
+      const brand = document.getElementById('brand').value;
+      const series = document.getElementById('series').value;
+      const modelIndex = document.getElementById('model').value;
+      const row = VEHICLE_BRAND_DATA[brand][series][modelIndex];
+      if(!row) return;
+      const [, code8, price, seats] = row;
+      document.getElementById('brandId').value = code8;
+      if(price){ document.getElementById('vehiclePrice').value = price; }
+      const transportSel = document.getElementById('transportAmount');
+      if(seats && transportSel.querySelector('option[value="'+seats+'"]')){
+        transportSel.value = String(seats);
+      }
     }
 
     /* ---- 廠代碼工具查無此車牌:相關欄位開放手動填寫(這裡示範清空讓使用者能重新輸入) ----
@@ -392,7 +411,7 @@
     }
 
 
-    updateSeriesOptions();
+    initBrandOptions();
   </script>
 </body>
 </html>
