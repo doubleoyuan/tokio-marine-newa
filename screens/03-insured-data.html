@@ -245,7 +245,10 @@
   <div class="page-actions">
     <div class="page-actions-inner">
       <button class="pv-btn outlined" onclick="location.href='02-vehicle-data.html'">上一步</button>
-      <button class="pv-btn primary" id="nextBtn" disabled onclick="handleSubmit()">下一步：要保人資料</button>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span id="nextBtnHint" style="display:none; align-items:center; gap:4px; font-size:var(--font-size-caption); color:var(--danger-700);">⚠ 請完成以上必填欄位</span>
+        <button class="pv-btn primary" id="nextBtn" disabled onclick="handleSubmit()">下一步：要保人資料</button>
+      </div>
     </div>
   </div>
 
@@ -273,6 +276,10 @@
       let sum = d1*1 + d2*9;
       for(let i=0;i<9;i++){ sum += n[i]*weights[i]; }
       return sum % 10 === 0;
+    }
+    /* ---- PRD規定手機號碼格式為09xx-xxx-xxx(10碼),之前只檢查有沒有填,沒檢查有沒有填完 ---- */
+    function isValidMobile(v){
+      return /^09[0-9]{8}$/.test(v.replace(/[^0-9]/g,''));
     }
     /* ---- 依身分證第2碼自動判斷性別(唯讀欄位);格式不正確則留白 ---- */
     function onAssuredIdInput(){
@@ -355,8 +362,11 @@
 
       ['assuredIdField','assuredNameField','assuredDeputyField','addrDetailField','assuredMobileField','occupyCodeField','cntryNameField'].forEach(clearFieldError);
 
-      if(!document.getElementById('assuredMobile').value.trim()){
+      const mobileVal = document.getElementById('assuredMobile').value.trim();
+      if(!mobileVal){
         setFieldError('assuredMobileField', '請輸入被保險人手機號碼'); ok = false;
+      } else if(!isValidMobile(mobileVal)){
+        setFieldError('assuredMobileField', '手機號碼格式錯誤，請輸入09xx-xxx-xxx共10碼'); ok = false;
       }
       const idVal = document.getElementById('assuredId').value.trim();
       if(!idVal){
@@ -417,7 +427,7 @@
     /* ---- 即時判斷必填是否都已填妥,控制「下一步」是否可點擊(不顯示錯誤訊息,對應PRD「所有必填欄位正確填寫→下一步啟用」) ---- */
     function isFormValid(){
       const isCorp = document.getElementById('assuredTypeCorp').checked;
-      if(!document.getElementById('assuredMobile').value.trim()) return false;
+      if(!isValidMobile(document.getElementById('assuredMobile').value.trim())) return false;
       const idVal = document.getElementById('assuredId').value.trim();
       if(!idVal) return false;
       if(!isCorp && !isValidTaiwanId(idVal.toUpperCase())) return false;
@@ -437,14 +447,19 @@
       }
       return true;
     }
+    /* ---- 使用者開始操作後,改用會即時標紅框/顯示錯誤訊息的validateForm()做即時檢查;
+       操作前(剛載入畫面)維持安靜檢查,不要一開始就整頁紅框 ---- */
+    let userInteracted = false;
     function updateNextBtnState(){
-      document.getElementById('nextBtn').disabled = !isFormValid();
+      const ok = userInteracted ? validateForm() : isFormValid();
+      document.getElementById('nextBtn').disabled = !ok;
+      document.getElementById('nextBtnHint').style.display = ok ? 'none' : 'flex';
     }
 
     initAddressOptions();
     onAssuredIdInput();
-    document.addEventListener('input', updateNextBtnState);
-    document.addEventListener('change', updateNextBtnState);
+    document.addEventListener('input', function(){ userInteracted = true; updateNextBtnState(); });
+    document.addEventListener('change', function(){ userInteracted = true; updateNextBtnState(); });
     updateNextBtnState();
   </script>
 </body>
