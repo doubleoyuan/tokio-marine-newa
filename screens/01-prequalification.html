@@ -41,15 +41,6 @@
   .stage-title p{font-size:var(--font-size-body-md); color:var(--page-text-muted); margin:0;}
   .date-row{display:flex; gap:20px; flex-wrap:wrap; align-items:flex-end;}
   .arrow-sep{padding-bottom:9px; color:var(--neutral-400);}
-  .plan-block{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
-  .plan-block select{
-    flex:1; font-family:inherit; font-size:var(--font-size-body-md); padding:9px 11px; border-radius:6px;
-    border:1px solid var(--neutral-200); background:#fff; color:var(--page-text, #232a2d);
-  }
-  .plan-block select:focus{outline:none; border-color:var(--primary-500); box-shadow:0 0 0 3px var(--primary-100);}
-  .plan-tag{font-size:11px; padding:2px 8px; border-radius:999px; background:var(--neutral-100); color:var(--neutral-600); flex:none; white-space:nowrap;}
-  .plan-remove{background:none; border:none; color:var(--neutral-400); cursor:pointer; font-size:14px; padding:4px 6px; flex:none; line-height:1;}
-  .plan-remove:hover{color:var(--danger-600);}
   .taxi-radio-group{display:flex; gap:20px; margin-top:8px;}
   .taxi-radio-group label{display:flex; align-items:center; gap:6px; font-weight:400; font-size:var(--font-size-body-md); color:var(--page-text); cursor:pointer; white-space:nowrap;}
   .taxi-radio-group input:disabled + span{color:var(--neutral-400);}
@@ -194,30 +185,21 @@
         <div class="field">
           <label>T 牌種類 <span class="req">*</span></label>
           <div class="taxi-radio-group">
-            <label><input type="radio" name="taxiType" id="taxiN" checked><span>小黃（N）</span></label>
-            <label><input type="radio" name="taxiType" id="taxiY"><span>多元（Y）</span></label>
-            <label><input type="radio" name="taxiType" id="taxiNA"><span>不適用</span></label>
+            <label><input type="radio" name="taxiType" id="taxiN" onchange="renderPlanOptions()"><span>小黃（N）</span></label>
+            <label><input type="radio" name="taxiType" id="taxiY" onchange="renderPlanOptions()" checked><span>多元（Y）</span></label>
+            <label><input type="radio" name="taxiType" id="taxiNA" onchange="renderPlanOptions()"><span>不適用</span></label>
           </div>
         </div>
       </div>
     </div>
 
     <div class="form-section">
-      <h3>方案清冊 <span class="req-note">最多可新增 3 組方案</span></h3>
-      <p class="section-hint">依車種與 T 牌種類顯示可投保方案；15＋多元共 25 種、07＋多元共 17 種、14 短租共 29 種。</p>
-      <div id="planBlocks">
-        <div class="plan-block">
-          <select class="plan-select" onchange="updatePlanTag(this)">
-            <option value="">請選擇方案</option>
-            <option value="強+任" selected>T15-21-100200-300　強制險＋任意險（示例方案 A）</option>
-            <option value="單強">T15-21　單一強制險（示例方案 B）</option>
-            <option value="單任">T15-300-10000-1　單一任意險（示例方案 C）</option>
-          </select>
-          <span class="plan-tag">強+任</span>
-          <button class="plan-remove" onclick="removePlanBlock(this)" aria-label="移除方案" style="display:none;">✕</button>
-        </div>
+      <h3>方案清冊</h3>
+      <p class="section-hint">依車種與 T 牌種類顯示可投保方案；15＋多元共 25 種、07＋多元共 17 種、14 短租共 29 種；僅能選擇一個方案進行試算。</p>
+      <div class="field" id="planField">
+        <select id="planSelect" onchange="updateDateRequirements()"></select>
+        <div class="hint" id="planEmptyHint" style="display:none;"></div>
       </div>
-      <button class="pv-btn text" id="addPlanBtn" onclick="addPlanBlock()" style="margin-top:6px;">＋ 新增方案（最多 3 組）</button>
     </div>
 
     <div class="form-section">
@@ -245,10 +227,6 @@
         </div>
       </div>
     </div>
-    <div class="form-section" style="display:flex; align-items:center; gap:12px;">
-      <button class="pv-btn primary" id="submitPrequalBtn" onclick="submitPrequal()">送出預查</button>
-      <div id="prequalResultMsg" style="display:none;"></div>
-    </div>
     </div>
 
   </div>
@@ -256,7 +234,10 @@
   <div class="page-actions">
     <div class="page-actions-inner">
       <button class="pv-btn outlined" disabled>上一步</button>
-      <button class="pv-btn primary" id="nextBtn" disabled onclick="location.href='02-vehicle-data.html'">下一步：車輛資料</button>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span id="nextBtnHint" style="display:none; align-items:center; gap:4px; font-size:var(--font-size-caption); color:var(--danger-700);">⚠ 請完成以上必填欄位</span>
+        <button class="pv-btn primary" id="nextBtn" disabled onclick="location.href='02-vehicle-data.html'">下一步：車輛資料</button>
+      </div>
     </div>
   </div>
 
@@ -279,6 +260,7 @@
   </div>
 
   <script src="../design/header.js"></script>
+  <script src="../design/plan-code-data.js"></script>
   <script>
     function openLightbox(src, filename){
       document.getElementById('lightboxImg').src = src;
@@ -380,20 +362,23 @@
       document.getElementById('ocrTriggerBtn').disabled = !anyPending;
       checkBrandLookupTrigger();
     }
-    /* PRD v2.5:廠代碼工具由「牌照號碼」+「駕照號碼(身分證)/統一編號」共同觸發(不論是OCR代入或手動輸入)，
-       不是像v2.2那樣只要任一項OCR辨識成功就觸發 */
+    /* PRD v2.7:廠代碼工具觸發分兩種情境，不再像v2.5那樣一定要牌照+駕照都填妥才觸發——
+       (1) 只有「牌照號碼」:取得廠牌車型代號、到期日、原發照日期、載運人數、出廠年月、排氣量、重置價格
+       (2) 牌照號碼+駕照號碼(身分證)/統一編號:額外再取得引擎號碼、車身號碼 */
     let brandLookupResolved = false;
     function checkBrandLookupTrigger(){
       const busyEl = document.getElementById('ocrBusy');
-      const ready = document.getElementById('plateFront').value.trim() &&
-                    document.getElementById('plateRear').value.trim() &&
-                    document.getElementById('driverIdNo').value.trim();
-      busyEl.style.display = ready ? 'inline-flex' : 'none';
-      if(ready && !brandLookupResolved){
+      const plateReady = document.getElementById('plateFront').value.trim() &&
+                          document.getElementById('plateRear').value.trim();
+      busyEl.style.display = plateReady ? 'inline-flex' : 'none';
+      if(plateReady && !brandLookupResolved){
         brandLookupResolved = true;
         continuationStateIndex = 0;
         applyContinuationDate('normal');
-      } else if(!ready){
+      } else if(plateReady && busyEl.classList.contains('done')){
+        /* 已經是plate-only的查詢成功狀態,這時補填駕照/統編,更新提示文字反映多拿到引擎/車身號碼 */
+        setLookupState(busyEl, 'done');
+      } else if(!plateReady){
         brandLookupResolved = false;
       }
     }
@@ -407,6 +392,7 @@
       const busyEl = document.getElementById('ocrBusy');
       if(state === 'fail'){
         setLookupState(busyEl, 'fail');
+        updateNextBtnState();
         return;
       }
       setLookupState(busyEl, 'done');
@@ -429,6 +415,10 @@
           onEffectiveDateChange(prefix);
         }
       });
+      /* 這個demo機關是直接改DOM、不是靠使用者打字,document的input/change監聽器不會被觸發,
+         要手動呼叫一次才能讓「下一步」的鎖定狀態跟著更新 */
+      userInteracted = true;
+      updateNextBtnState();
     }
     function cycleContinuationState(){
       continuationStateIndex = (continuationStateIndex + 1) % CONTINUATION_STATES.length;
@@ -457,8 +447,9 @@
         el.className = 'ocr-status fail';
         el.innerHTML = '<span>✕</span> 查無此廠牌車型資料，請確認車牌後手動填寫';
       } else if(state === 'done'){
+        const hasId = document.getElementById('driverIdNo').value.trim();
         el.className = 'ocr-status done';
-        el.innerHTML = '<span>✓</span> 廠代碼工具查詢成功，資料已代入';
+        el.innerHTML = '<span>✓</span> 廠代碼工具查詢成功，資料已代入' + (hasId ? '' : '（僅車牌，尚未取得引擎號碼／車身號碼）');
       } else {
         el.className = 'ocr-status busy';
         el.innerHTML = '<span class="spin"></span> 廠代碼工具查詢中…';
@@ -475,6 +466,7 @@
     }
     function onVehicleTypeChange(){
       updateTaxiOptions();
+      renderPlanOptions();
       const vt = document.getElementById('vehicleType').value;
       if(vt === '21'){
         document.getElementById('vehicleTypeBlockModal').classList.add('open');
@@ -482,79 +474,80 @@
       updateNextBtnState();
     }
 
-    /* ---- 送出預查:通過後「下一步」才可點擊,對應PRD 9.3「預查通過後可進入下一步」情境 ---- */
-    let prequalPassed = false;
-    function updateNextBtnState(){
-      const vt = document.getElementById('vehicleType').value;
-      document.getElementById('nextBtn').disabled = !prequalPassed || vt === '21';
-    }
-    function validatePrequalForm(){
+    /* ---- v2.7移除「送出預查」機制(新安東京確認不會提供預查API),改成比照階段3、4:
+       必填欄位即時判斷,操作前安靜檢查、操作後標紅框+顯示引導文字,不需要再按一次送出 ---- */
+    function validateForm(){
       let ok = true;
-      ['plateFrontField', 'plateRearField', 'driverIdField'].forEach(clearFieldError);
+      ['plateFrontField', 'plateRearField', 'driverIdField', 'planField'].forEach(clearFieldError);
       if(!document.getElementById('plateFront').value.trim()){ setFieldError('plateFrontField', '請輸入車牌前段'); ok = false; }
       if(!document.getElementById('plateRear').value.trim()){ setFieldError('plateRearField', '請輸入車牌後段'); ok = false; }
       if(!document.getElementById('driverIdNo').value.trim()){ setFieldError('driverIdField', '請輸入駕照號碼（身分證）'); ok = false; }
+      if(!document.getElementById('planSelect').value){
+        if(currentPlanGroup()) setFieldError('planField', '請選擇投保方案');
+        ok = false;
+      }
       if(document.getElementById('compelBeginField').classList.contains('error')) ok = false;
       if(document.getElementById('choiceBeginField').classList.contains('error')) ok = false;
       return ok;
     }
-    function submitPrequal(){
-      const msgEl = document.getElementById('prequalResultMsg');
-      if(!validatePrequalForm()){
-        msgEl.style.display = 'none';
-        prequalPassed = false;
-        updateNextBtnState();
-        return;
+    function isFormValid(){
+      if(!document.getElementById('plateFront').value.trim()) return false;
+      if(!document.getElementById('plateRear').value.trim()) return false;
+      if(!document.getElementById('driverIdNo').value.trim()) return false;
+      if(!document.getElementById('planSelect').value) return false;
+      if(document.getElementById('compelBeginField').classList.contains('error')) return false;
+      if(document.getElementById('choiceBeginField').classList.contains('error')) return false;
+      return true;
+    }
+    let userInteracted = false;
+    function updateNextBtnState(){
+      const vt = document.getElementById('vehicleType').value;
+      const ok = (userInteracted ? validateForm() : isFormValid()) && vt !== '21';
+      document.getElementById('nextBtn').disabled = !ok;
+      document.getElementById('nextBtnHint').style.display = ok ? 'none' : 'flex';
+    }
+
+    /* ---- 方案清冊:真實71組PlanCode(design/plan-code-data.js),依車種＋T牌種類過濾,僅能單選 ----
+       PRD只提供「15+多元」25種、「07+多元」17種、「14短租」29種三份清單;
+       15/07搭配「小黃／不適用」沒有對應清單,PRD未說明,見PO-CONFIRMATION-ITEMS.md第23項 */
+    const PLAN_TYPE_LABEL = { '強+任':'強制險＋任意險', '單強':'單一強制險', '單任':'單一任意險' };
+    function currentPlanGroup(){
+      const vt = document.getElementById('vehicleType').value;
+      if(vt === '14') return '14短租';
+      if(document.getElementById('taxiY').checked){
+        if(vt === '15') return '15+多元';
+        if(vt === '07') return '07+多元';
       }
-      prequalPassed = true;
-      msgEl.innerHTML = '<span class="pv-tag tag-success"><span class="dot"></span>預查通過</span>';
-      msgEl.style.display = 'block';
-      updateNextBtnState();
+      return null;
     }
-
-    /* ---- 方案清冊:最多3組,各自一個Dropdown選PlanCode ---- */
-    let planBlockCount = 1;
-    /* 方案代碼格式對齊PRD v2.6揭露的「方案判斷」規則(用"-"切割字串):
-       第二段="21"且無第三段(共2段)→單強制險；第二段="21"且總段數>2→強制+任意；其餘→單任意險。
-       ⚠️ 這只是格式對齊，不是真正的71種方案內容——PlanCode正式清單(新安-商品報價方案_1150701.xlsx)PO尚未提供檔案本身，
-       待PO確認/提供後才能替換成真實方案，見PO-CONFIRMATION-ITEMS.md第1項 */
-    const PLAN_OPTIONS = '<option value="">請選擇方案</option>'
-      + '<option value="強+任">T15-21-100200-300　強制險＋任意險（示例方案 A）</option>'
-      + '<option value="單強">T15-21　單一強制險（示例方案 B）</option>'
-      + '<option value="單任">T15-300-10000-1　單一任意險（示例方案 C）</option>';
-    function addPlanBlock(){
-      if(planBlockCount >= 3) return;
-      planBlockCount++;
-      const wrapper = document.createElement('div');
-      wrapper.className = 'plan-block';
-      wrapper.innerHTML = '<select class="plan-select" onchange="updatePlanTag(this)">'+PLAN_OPTIONS+'</select><span class="plan-tag" style="display:none;"></span><button class="plan-remove" onclick="removePlanBlock(this)" aria-label="移除方案">✕</button>';
-      document.getElementById('planBlocks').appendChild(wrapper);
-      updatePlanBlocksUI();
-      updateDateRequirements();
+    function planTypeOf(code){
+      const g = Object.keys(PLAN_CODE_DATA);
+      for(let i = 0; i < g.length; i++){
+        const hit = PLAN_CODE_DATA[g[i]].filter(function(p){ return p[0] === code; })[0];
+        if(hit) return hit[1];
+      }
+      return '';
     }
-    function removePlanBlock(btn){
-      btn.closest('.plan-block').remove();
-      planBlockCount--;
-      updatePlanBlocksUI();
-      updateDateRequirements();
-    }
-    function updatePlanBlocksUI(){
-      document.getElementById('addPlanBtn').style.display = (planBlockCount >= 3) ? 'none' : 'inline-flex';
-      document.querySelectorAll('.plan-remove').forEach(function(b){ b.style.display = (planBlockCount > 1) ? 'inline-flex' : 'none'; });
-    }
-    function updatePlanTag(sel){
-      const opt = sel.selectedOptions[0];
-      const tagEl = sel.nextElementSibling;
-      if(opt && opt.value){ tagEl.textContent = opt.value; tagEl.style.display = 'inline-flex'; }
-      else { tagEl.style.display = 'none'; }
+    function renderPlanOptions(){
+      const sel = document.getElementById('planSelect');
+      const hint = document.getElementById('planEmptyHint');
+      const group = currentPlanGroup();
+      const plans = group ? PLAN_CODE_DATA[group] : [];
+      sel.innerHTML = '<option value="">請選擇方案</option>' + plans.map(function(p){
+        return '<option value="'+p[0]+'">'+p[0]+'　'+PLAN_TYPE_LABEL[p[1]]+'</option>';
+      }).join('');
+      sel.disabled = !group;
+      hint.style.display = group ? 'none' : 'block';
+      hint.textContent = group ? '' : '此車種與 T 牌種類的組合目前沒有可選方案（方案清冊只提供：15＋多元、07＋多元、14 短租）。';
+      clearFieldError('planField');
       updateDateRequirements();
     }
 
-    /* ---- 生效日依選擇的方案是否含強制/任意險決定是否需要 ---- */
+    /* ---- 生效日依選擇的方案是否含強制/任意險決定是否需要(類型依PRD「方案判斷」規則) ---- */
     function updateDateRequirements(){
-      const tags = [].slice.call(document.querySelectorAll('.plan-select')).map(function(s){ return s.value; }).filter(Boolean);
-      setDatePairState('compel', tags.some(function(t){ return t === '強+任' || t === '單強'; }));
-      setDatePairState('choice', tags.some(function(t){ return t === '強+任' || t === '單任'; }));
+      const type = planTypeOf(document.getElementById('planSelect').value);
+      setDatePairState('compel', type === '強+任' || type === '單強');
+      setDatePairState('choice', type === '強+任' || type === '單任');
       onEffectiveDateChange('compel');
       onEffectiveDateChange('choice');
     }
@@ -628,9 +621,10 @@
     }
 
     updateOcrState();
-    updatePlanBlocksUI();
-    updateDateRequirements();
+    renderPlanOptions();
     initEffectiveDates();
+    document.addEventListener('input', function(){ userInteracted = true; updateNextBtnState(); });
+    document.addEventListener('change', function(){ userInteracted = true; updateNextBtnState(); });
     updateNextBtnState();
   </script>
 </body>

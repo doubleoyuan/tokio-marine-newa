@@ -287,14 +287,6 @@ section{padding-top:8px; margin-bottom:64px; scroll-margin-top:24px;}
 .spin{display:inline-block; width:10px; height:10px; border-radius:50%; border:2px solid currentColor; border-right-color:transparent; animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-.plan-block{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
-.plan-block select{
-  flex:1; font-family:inherit; font-size:12.5px; padding:9px 11px; border-radius:6px;
-  border:1px solid var(--page-border); background:#fff; color:var(--page-text, #232a2d);
-}
-.plan-tag{font-size:11px; padding:2px 8px; border-radius:999px; background:var(--page-surface-2); color:var(--page-text-muted); flex:none; white-space:nowrap;}
-.plan-remove{background:none; border:none; color:var(--neutral-400); cursor:pointer; font-size:14px; padding:4px 6px; flex:none; line-height:1;}
-
 .file-dropzone{border:1.5px dashed var(--neutral-300); border-radius:10px; padding:16px; text-align:center; background:var(--neutral-50); cursor:pointer; display:flex; align-items:center; justify-content:center; min-height:24px;}
 .file-dropzone .title{font-size:12.5px; font-weight:600; color:var(--page-text);}
 .file-dropzone.attached{border-style:solid; border-color:var(--secondary-400); background:var(--secondary-50); justify-content:space-between; padding:12px 16px;}
@@ -692,7 +684,7 @@ section{padding-top:8px; margin-bottom:64px; scroll-margin-top:24px;}
             <td>2026/09/15 10:30</td>
             <td>15</td>
             <td>AAA-0001</td>
-            <td>T15-21-100200-300</td>
+            <td>T15-21-100200-300-300-0</td>
             <td>A123456789</td>
             <td>王小明</td>
             <td>
@@ -802,17 +794,14 @@ section{padding-top:8px; margin-bottom:64px; scroll-margin-top:24px;}
       </div>
 
       <div class="card pad comp-block">
-        <h4>方案清冊 Dropdown 區塊 <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 用於階段1，PlanCode 每組各自一個Dropdown，最多可新增3組</span></h4>
-        <div class="plan-block">
-          <select><option>T15-21-100200-300　強制險＋任意險（示例方案 A）</option></select>
-          <span class="plan-tag">強+任</span>
+        <h4>方案清冊 Dropdown <span style="font-weight:400;font-size:11.5px;color:var(--page-text-muted);">— 用於階段1，PlanCode僅能單選（PRD v2.6起）；清單依車種＋T牌種類過濾（真實71組：15＋多元25、07＋多元17、14短租29）</span></h4>
+        <div class="field" style="max-width:520px;">
+          <select><option>T15-21-100200-300-300-0　強制險＋任意險</option></select>
         </div>
-        <div class="plan-block">
-          <select><option>T15-21　單一強制險（示例方案 B）</option></select>
-          <span class="plan-tag">單強</span>
-          <button class="plan-remove" aria-label="移除方案">✕</button>
+        <div class="field" style="max-width:520px; margin-top:12px;">
+          <select disabled><option>請選擇方案</option></select>
+          <div class="hint">此車種與 T 牌種類的組合目前沒有可選方案（方案清冊只提供：15＋多元、07＋多元、14 短租）。</div>
         </div>
-        <button class="pv-btn text" style="margin-top:2px;">＋ 新增方案（最多 3 組）</button>
       </div>
 
       <div class="card pad comp-block">
@@ -919,7 +908,7 @@ section{padding-top:8px; margin-bottom:64px; scroll-margin-top:24px;}
         <tr><td>駕照用途</td><td class="mono" style="font-family:'Roboto Mono',monospace;">—（無對應API，畫面邏輯用）</td><td>radio，選填</td><td>決定 OCR 姓名/性別/生日/住址是否代入階段3被保險人資料；這4個欄位本身不在階段1顯示</td></tr>
         <tr><td>車輛種類代號</td><td class="mono" style="font-family:'Roboto Mono',monospace;">VehicleType</td><td>Dropdown，必填</td><td>07/14/15；21 為預留碼，選擇時阻擋</td></tr>
         <tr><td>T 牌種類</td><td class="mono" style="font-family:'Roboto Mono',monospace;">IsDiversifiedTaxi</td><td>radio，必填</td><td>Y:多元／N:小黃或不適用</td></tr>
-        <tr><td>方案清冊（每組各一個 Dropdown）</td><td class="mono" style="font-family:'Roboto Mono',monospace;">PlanCode</td><td>Dropdown，必填，最多新增3組</td><td>依車種與 T 牌種類顯示可投保方案；系統仍逐筆送出</td></tr>
+        <tr><td>方案清冊（單一 Dropdown）</td><td class="mono" style="font-family:'Roboto Mono',monospace;">PlanCode</td><td>Dropdown，必填，僅能單選</td><td>依車種與 T 牌種類過濾：15＋多元25種、07＋多元17種、14短租29種；15／07搭配「小黃／不適用」PRD沒有對應清單（待PO確認）。類型依「方案判斷」規則：第二段=21且共2段→單強、第二段=21且超過2段→強+任、其餘→單任</td></tr>
         <tr><td>強制險生效日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">CompelDateBegin</td><td>YYYYMMDD，條件必填</td><td>選擇的方案中有強制險時才需要，其餘停用；廠代碼工具查詢成功後，自動代入「前一份保單到期日」作為續保建議生效日（PRD v2.6）</td></tr>
         <tr><td>強制險到期日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">CompelDateEnd</td><td>唯讀</td><td>生效日 + 1 年，系統自動計算。（PRD v2.6已釐清：廠代碼工具回傳的「強制/任意險到期日」是前一份保單的到期日，代入為新保單的建議生效日，不是這裡的新保單到期日，兩者不是同一件事，v2.5時的疑問已解決）</td></tr>
         <tr><td>任意險生效日</td><td class="mono" style="font-family:'Roboto Mono',monospace;">ChoiceDateBegin</td><td>YYYYMMDD，條件必填</td><td>選擇的方案中有任意險時才需要，其餘停用；同上，廠代碼工具查詢成功後自動代入續保建議生效日</td></tr>
