@@ -105,19 +105,20 @@
           <label>牌照號碼 <span class="req">*</span></label>
           <input type="text" id="plateNo" value="AAA-0001">
         </div>
-        <div class="field">
+        <div class="field" id="vehicleTypeField">
           <label>車輛種類代號 <span class="req">*</span></label>
           <select id="vehicleType" onchange="onVehicleTypeChange()">
+            <option value="" selected>請選擇</option>
             <option value="07">07 營小客</option>
-            <option value="15" selected>15 計程車</option>
+            <option value="15">15 計程車</option>
             <option value="14">14 租賃小客車</option>
             <option value="21">21 預留</option>
           </select>
         </div>
-        <div class="field">
+        <div class="field" id="taxiField">
           <label>T 牌種類 <span class="req">*</span></label>
           <div class="option-row" id="taxiGroup">
-            <label><input type="radio" name="taxiType" id="taxiN" checked><span>小黃（N）</span></label>
+            <label><input type="radio" name="taxiType" id="taxiN"><span>小黃（N）</span></label>
             <label><input type="radio" name="taxiType" id="taxiY"><span>多元（Y）</span></label>
             <label><input type="radio" name="taxiType" id="taxiNA"><span>不適用</span></label>
           </div>
@@ -253,9 +254,10 @@
       const vt = document.getElementById('vehicleType').value;
       const eligible = (vt === '07' || vt === '15');
       const n = document.getElementById('taxiN'), y = document.getElementById('taxiY'), na = document.getElementById('taxiNA');
+      if(vt === ''){ n.disabled = false; y.disabled = false; na.disabled = false; return; }
       n.disabled = !eligible; y.disabled = !eligible; na.disabled = eligible;
       if(!eligible){ na.checked = true; }
-      else if(na.checked){ n.checked = true; }
+      else if(na.checked){ na.checked = false; }
     }
     function onVehicleTypeChange(){
       updateTaxiOptions();
@@ -349,6 +351,26 @@
     /* ---- 送出前端驗證 ---- */
     function validateForm(){
       let ok = true;
+
+      const vtField = document.getElementById('vehicleTypeField');
+      vtField.classList.remove('error');
+      const vtMsg = vtField.querySelector('.err-msg');
+      if(vtMsg) vtMsg.remove();
+      if(!document.getElementById('vehicleType').value){
+        vtField.classList.add('error');
+        vtField.insertAdjacentHTML('beforeend', '<div class="err-msg">⚠ 請選擇車輛種類代號</div>');
+        ok = false;
+      }
+
+      const taxiField = document.getElementById('taxiField');
+      taxiField.classList.remove('error');
+      const taxiMsg = taxiField.querySelector('.err-msg');
+      if(taxiMsg) taxiMsg.remove();
+      if(!['taxiN','taxiY','taxiNA'].some(function(id){ return document.getElementById(id).checked; })){
+        taxiField.classList.add('error');
+        taxiField.insertAdjacentHTML('beforeend', '<div class="err-msg">⚠ 請選擇 T 牌種類</div>');
+        ok = false;
+      }
 
       [['plateNoField','plateNo','請輸入牌照號碼'],['manufacturedDateField','manufacturedDate','請輸入出廠年月'],['registrationDateField','registrationDate','請輸入行照原始發照日期']].forEach(function(item){
         const field = document.getElementById(item[0]);
