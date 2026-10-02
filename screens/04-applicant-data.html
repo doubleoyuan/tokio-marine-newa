@@ -103,7 +103,7 @@
     <div class="form-section">
       <h3>與被保險人關係</h3>
       <label class="check-label">
-        <input type="checkbox" id="sameAsAssured" checked onchange="toggleSameAsAssured()">
+        <input type="checkbox" id="sameAsAssured" onchange="toggleSameAsAssured()">
         <span>要保人與被保險人為同一人</span>
       </label>
       <div class="fields-row" style="margin-top:16px;">
@@ -162,11 +162,11 @@
     <div class="form-section">
       <h3>聯絡資訊</h3>
       <div class="fields-row">
-        <div class="field">
+        <div class="field" id="applicantCityField">
           <label>縣市 <span class="req">*</span></label>
           <select id="applicantCity" onchange="updateApplicantDistrict()"></select>
         </div>
-        <div class="field">
+        <div class="field" id="applicantDistrictField">
           <label>鄉鎮市區 <span class="req">*</span></label>
           <select id="applicantDistrict" onchange="updateApplicantZip()"></select>
         </div>
@@ -279,19 +279,19 @@
        ⚠️ 郵遞區號非PO直接提供，另外核對中華郵政公告後補上，正式對外交付前請再次確認 ---- */
     function initApplicantAddressOptions(){
       const citySel = document.getElementById('applicantCity');
-      citySel.innerHTML = Object.keys(TAIWAN_ADDRESS_DATA).map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
+      citySel.innerHTML = '<option value="">請選擇縣市</option>' + Object.keys(TAIWAN_ADDRESS_DATA).map(function(c){ return '<option value="'+c+'">'+c+'</option>'; }).join('');
       updateApplicantDistrict();
     }
     function updateApplicantDistrict(){
       const city = document.getElementById('applicantCity').value;
-      const districts = TAIWAN_ADDRESS_DATA[city];
-      document.getElementById('applicantDistrict').innerHTML = Object.keys(districts).map(function(d){ return '<option value="'+d+'">'+d+'</option>'; }).join('');
+      const districts = TAIWAN_ADDRESS_DATA[city] || {};
+      document.getElementById('applicantDistrict').innerHTML = '<option value="">請選擇鄉鎮市區</option>' + Object.keys(districts).map(function(d){ return '<option value="'+d+'">'+d+'</option>'; }).join('');
       updateApplicantZip();
     }
     function updateApplicantZip(){
       const city = document.getElementById('applicantCity').value;
       const district = document.getElementById('applicantDistrict').value;
-      document.getElementById('applicantZip').value = TAIWAN_ADDRESS_DATA[city][district] || '';
+      document.getElementById('applicantZip').value = (TAIWAN_ADDRESS_DATA[city] && TAIWAN_ADDRESS_DATA[city][district]) || '';
     }
 
     /* ---- 要保人性質:自然人/法人動態顯示欄位 ---- */
@@ -403,6 +403,8 @@
         document.getElementById('applicantId').value = '';
         document.getElementById('applicantName').value = '';
         document.getElementById('applicantBirthday').value = '';
+        document.getElementById('applicantCity').value = '';
+        updateApplicantDistrict();
         document.getElementById('applicantDetail').value = '';
         document.getElementById('applicantEmail').value = '';
         document.getElementById('applicantMobile').value = '';
@@ -435,8 +437,10 @@
       let ok = true;
       const isCorp = document.getElementById('applicantTypeCorp').checked;
 
-      ['applicantIdField','applicantNameField','applicantDeputyField','applicantDetailField','applicantMobileField','applicantOccupyCodeField','applicantCntryNameField','relationField','relationNoteField'].forEach(clearFieldError);
+      ['applicantCityField','applicantDistrictField','applicantIdField','applicantNameField','applicantDeputyField','applicantDetailField','applicantMobileField','applicantOccupyCodeField','applicantCntryNameField','relationField','relationNoteField'].forEach(clearFieldError);
 
+      if(!document.getElementById('applicantCity').value){ setFieldError('applicantCityField', '請選擇縣市'); ok = false; }
+      else if(!document.getElementById('applicantDistrict').value){ setFieldError('applicantDistrictField', '請選擇鄉鎮市區'); ok = false; }
       const applicantMobileVal = document.getElementById('applicantMobile').value.trim();
       if(!applicantMobileVal){
         setFieldError('applicantMobileField', '請輸入要保人手機號碼'); ok = false;
@@ -499,6 +503,7 @@
     /* ---- 即時判斷必填是否都已填妥,控制「下一步」是否可點擊(不顯示錯誤訊息,對應PRD「所有必填欄位正確填寫→下一步啟用」) ---- */
     function isFormValid(){
       const isCorp = document.getElementById('applicantTypeCorp').checked;
+      if(!document.getElementById('applicantCity').value || !document.getElementById('applicantDistrict').value) return false;
       if(!isValidMobile(document.getElementById('applicantMobile').value.trim())) return false;
       const idVal = document.getElementById('applicantId').value.trim();
       if(!idVal) return false;
