@@ -168,7 +168,7 @@
           <input type="text" id="plateRear" maxlength="4" oninput="checkBrandLookupTrigger()">
         </div>
         <div class="field" id="driverIdField">
-          <label id="driverIdLabel">駕照號碼（身分證） <span class="req">*</span></label>
+          <label id="driverIdLabel">駕照號碼（身分證）</label>
           <input type="text" id="driverIdNo" oninput="checkBrandLookupTrigger()">
         </div>
       </div>
@@ -186,9 +186,9 @@
         <div class="field" id="taxiField">
           <label>T 牌種類 <span class="req">*</span></label>
           <div class="taxi-radio-group">
-            <label><input type="radio" name="taxiType" id="taxiN" onchange="renderPlanOptions()"><span>小黃（N）</span></label>
-            <label><input type="radio" name="taxiType" id="taxiY" onchange="renderPlanOptions()"><span>多元（Y）</span></label>
-            <label><input type="radio" name="taxiType" id="taxiNA" onchange="renderPlanOptions()"><span>不適用</span></label>
+            <label><input type="radio" name="taxiType" id="taxiN"><span>小黃（N）</span></label>
+            <label><input type="radio" name="taxiType" id="taxiY"><span>多元（Y）</span></label>
+            <label><input type="radio" name="taxiType" id="taxiNA"><span>不適用</span></label>
           </div>
         </div>
       </div>
@@ -196,7 +196,7 @@
 
     <div class="form-section">
       <h3>方案清冊</h3>
-      <p class="section-hint">依車種與 T 牌種類顯示可投保方案；15＋多元共 25 種、07＋多元共 17 種、14 短租共 29 種；僅能選擇一個方案進行試算。</p>
+      <p class="section-hint">依車輛種類代號顯示可投保方案：15＝15＋多元共 25 種、07＝07＋多元共 17 種、14＝短租共 29 種；僅能選擇一個方案進行試算。</p>
       <div class="field" id="planField">
         <select id="planSelect" onchange="updateDateRequirements()"></select>
         <div class="hint" id="planEmptyHint" style="display:none;"></div>
@@ -444,8 +444,8 @@
         renderDropzone(driverDropzone);
       }
       driverIdLabel.innerHTML = isCorp
-        ? '統一編號 <span class="req">*</span>'
-        : '駕照號碼（身分證） <span class="req">*</span>';
+        ? '統一編號'
+        : '駕照號碼（身分證）';
       driverIdInput.value = '';
       driverIdInput.placeholder = isCorp ? '請輸入統一編號（8碼）' : '';
       updateOcrState();
@@ -490,7 +490,6 @@
       ['plateFrontField', 'plateRearField', 'driverIdField', 'vehicleTypeField', 'taxiField', 'planField'].forEach(clearFieldError);
       if(!document.getElementById('plateFront').value.trim()){ setFieldError('plateFrontField', '請輸入車牌前段'); ok = false; }
       if(!document.getElementById('plateRear').value.trim()){ setFieldError('plateRearField', '請輸入車牌後段'); ok = false; }
-      if(!document.getElementById('driverIdNo').value.trim()){ setFieldError('driverIdField', '請輸入駕照號碼（身分證）'); ok = false; }
       if(!document.getElementById('vehicleType').value){ setFieldError('vehicleTypeField', '請選擇車輛種類代號'); ok = false; }
       if(!taxiSelected()){ setFieldError('taxiField', '請選擇 T 牌種類'); ok = false; }
       if(!document.getElementById('planSelect').value){
@@ -509,7 +508,6 @@
     function isFormValid(){
       if(!document.getElementById('plateFront').value.trim()) return false;
       if(!document.getElementById('plateRear').value.trim()) return false;
-      if(!document.getElementById('driverIdNo').value.trim()) return false;
       if(!document.getElementById('vehicleType').value) return false;
       if(!taxiSelected()) return false;
       if(!document.getElementById('planSelect').value) return false;
@@ -538,10 +536,8 @@
       const vt = document.getElementById('vehicleType').value;
       if(vt === '') return null;
       if(vt === '14') return '14短租';
-      if(document.getElementById('taxiY').checked){
-        if(vt === '15') return '15+多元';
-        if(vt === '07') return '07+多元';
-      }
+      if(vt === '15') return '15+多元';
+      if(vt === '07') return '07+多元';
       return null;
     }
     function planTypeOf(code){
@@ -562,10 +558,9 @@
       }).join('');
       sel.disabled = !group;
       hint.style.display = group ? 'none' : 'block';
-      const vtChosen = document.getElementById('vehicleType').value !== '';
-      hint.textContent = group ? '' : ((vtChosen && taxiSelected())
-        ? '此車種與 T 牌種類的組合目前沒有可選方案（方案清冊只提供：15＋多元、07＋多元、14 短租）。'
-        : '請先選擇車輛種類代號與 T 牌種類。');
+      hint.textContent = group ? '' : (document.getElementById('vehicleType').value === '21'
+        ? '新安東京不支援此車輛種類代號。'
+        : '請先選擇車輛種類代號。');
       clearFieldError('planField');
       updateDateRequirements();
     }
